@@ -54,3 +54,6 @@ dist/
 playwright/.auth
 .playwright-mcp/
 .playwright/
+
+
+.pnpm-store/

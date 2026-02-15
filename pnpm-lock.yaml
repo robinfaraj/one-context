@@ -23,6 +23,9 @@ importers:
       dotenv-cli:
         specifier: ^8.0.0
         version: 8.0.0
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
       tsx:
         specifier: ^4.19.2
         version: 4.21.0
@@ -153,6 +156,9 @@ importers:
       tailwindcss:
         specifier: 4.1.18
         version: 4.1.18
+      typescript:
+        specifier: 5.7.2
+        version: 5.7.2
 
   config:
     devDependencies:
@@ -2774,6 +2780,11 @@ packages:
 
   humanize-duration@3.33.2:
     resolution: {integrity: sha512-K7Ny/ULO1hDm2nnhvAY+SJV1skxFb61fd073SG1IWJl+D44ULrruCuTyjHKjBVVcSuTlnY99DKtgEG39CM5QOQ==}
+
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
@@ -6295,6 +6306,8 @@ snapshots:
   human-signals@5.0.0: {}
 
   humanize-duration@3.33.2: {}
+
+  husky@9.1.7: {}
 
   iconv-lite@0.7.2:
     dependencies:

@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+	turbopack: {
+		root: "../..",
+	},
 	transpilePackages: ["@onecontext/api", "@onecontext/auth"],
 	images: {
 		remotePatterns: [

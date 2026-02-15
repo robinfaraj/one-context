@@ -45,6 +45,7 @@
 		"@types/react": "19.1.6",
 		"@types/react-dom": "19.1.5",
 		"postcss": "8.4.49",
-		"tailwindcss": "4.1.18"
+		"tailwindcss": "4.1.18",
+		"typescript": "5.7.2"
 	}
 }
