@@ -1,0 +1,32 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    open-pull-requests-limit: 20
+    schedule:
+      interval: "daily"
+    groups:
+      content-collections:
+        patterns:
+          - "@content-collections/*"
+      prisma:
+        patterns:
+          - "@prisma/*"
+          - "prisma"
+      radix-ui:
+        patterns:
+          - "@radix-ui/*"
+      next-intl:
+        patterns:
+          - "next-intl"
+          - "use-intl"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      fumadocs:
+        patterns:
+          - "fumadocs-*"
+          - "@fumadocs/*"
