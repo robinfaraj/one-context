@@ -1,0 +1,21 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    open-pull-requests-limit: 15
+    schedule:
+      interval: "daily"
+    groups:
+      prisma:
+        patterns:
+          - "@prisma/*"
+          - "prisma"
+      shadcn:
+        patterns:
+          - "@radix-ui/*"
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"

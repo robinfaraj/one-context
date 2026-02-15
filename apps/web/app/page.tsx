@@ -1,7 +1,27 @@
+"use client";
+
+import {
+	CTASection,
+	Features,
+	Footer,
+	Hero,
+	HowItWorks,
+	IntegrationSection,
+	Navbar,
+	ProblemSection,
+} from "@ui/components/landing";
+
 export default function HomePage() {
 	return (
-		<div className="flex min-h-screen items-center justify-center">
-			<h1 className="text-4xl font-bold">OneContext</h1>
-		</div>
+		<main className="min-h-screen bg-background text-foreground">
+			<Navbar />
+			<Hero />
+			<ProblemSection />
+			<HowItWorks />
+			<Features />
+			<IntegrationSection />
+			<CTASection />
+			<Footer />
+		</main>
 	);
 }

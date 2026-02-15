@@ -35,6 +35,7 @@
 			".next",
 			".turbo",
 			"node_modules/*",
+			".pnpm-store",
 			".claude",
 			".cursor",
 			".cursorrules",

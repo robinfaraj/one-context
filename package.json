@@ -7,12 +7,14 @@
 		"lint": "biome check .",
 		"lint:fix": "biome check . --write --unsafe",
 		"clean": "turbo clean",
-		"format": "biome format . --write"
+		"format": "biome format . --write",
+		"prepare": "husky"
 	},
 	"engines": { "node": ">=20" },
 	"packageManager": "pnpm@9.3.0",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"husky": "^9.1.7",
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "^22.10.5",
 		"dotenv": "^16.4.7",
