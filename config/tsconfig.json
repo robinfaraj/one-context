@@ -1,0 +1,5 @@
+{
+	"extends": "@onecontext/tsconfig/base.json",
+	"include": ["**/*.ts"],
+	"exclude": ["dist", "build", "node_modules"]
+}

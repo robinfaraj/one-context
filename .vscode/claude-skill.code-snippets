@@ -1,0 +1,40 @@
+{
+	"Claude Skill Template": {
+		"prefix": "claude-skill",
+		"scope": "markdown",
+		"body": [
+			"---",
+			"name: my-skill-name",
+			"description: What this skill does",
+			"argument-hint: [arg1] [arg2]",
+			"allowed-tools: Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, Task, Glob, NotebookEdit",
+			"disable-model-invocation: false",
+			"user-invocable: true",
+			"model: sonnet",
+			"context: fork",
+			"agent: my-agent-name",
+			"hooks:",
+			"  PreToolUse:",
+			"    - matcher: \"Read|Edit|Write\"",
+			"      hooks:",
+			"        - type: command",
+			"          command: \"./scripts/validate.sh\"",
+			"          once: true",
+			"  PostToolUse:",
+			"    - matcher: \"Write\"",
+			"      hooks:",
+			"        - type: command",
+			"          command: \"./scripts/post-write.sh\"",
+			"  Stop:",
+			"    - hooks:",
+			"        - type: command",
+			"          command: \"./scripts/cleanup.sh\"",
+			"---",
+			"",
+			"# Skill Instructions",
+			"",
+			"Your markdown instructions here. Use $$ARGUMENTS or $$1, $$2 for arguments."
+		],
+		"description": "Claude Skill template with frontmatter and hooks"
+	}
+}

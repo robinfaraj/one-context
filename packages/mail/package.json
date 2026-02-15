@@ -1,0 +1,25 @@
+{
+	"dependencies": {
+		"@react-email/components": "^0.0.32",
+		"@react-email/render": "^1.0.4",
+		"nodemailer": "^6.9.16",
+		"react": "19.0.0",
+		"react-dom": "19.0.0",
+		"react-email": "^3.0.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "22.10.5",
+		"@types/nodemailer": "^6.4.17",
+		"@types/react": "19.0.3"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/mail",
+	"scripts": {
+		"preview": "email dev --port 3005",
+		"type-check": "tsc --noEmit"
+	},
+	"types": "./index.ts",
+	"version": "0.0.0"
+}

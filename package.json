@@ -1,0 +1,24 @@
+{
+	"name": "onecontext",
+	"private": true,
+	"scripts": {
+		"build": "dotenv -c -- turbo build",
+		"dev": "dotenv -c -- turbo dev --concurrency 15",
+		"lint": "biome check .",
+		"lint:fix": "biome check . --write --unsafe",
+		"clean": "turbo clean",
+		"format": "biome format . --write"
+	},
+	"engines": { "node": ">=20" },
+	"packageManager": "pnpm@9.3.0",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "^22.10.5",
+		"dotenv": "^16.4.7",
+		"dotenv-cli": "^8.0.0",
+		"tsx": "^4.19.2",
+		"turbo": "^2.8.4",
+		"typescript": "5.7.2"
+	}
+}

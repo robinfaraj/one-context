@@ -1,0 +1,19 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"compilerOptions": {
+		"jsx": "preserve",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"module": "esnext",
+		"noEmit": true,
+		"plugins": [
+			{
+				"name": "next"
+			}
+		],
+		"target": "ES2021"
+	},
+	"display": "Next.js",
+	"exclude": ["node_modules"],
+	"extends": "./base.json",
+	"include": ["next-env.d.ts"]
+}

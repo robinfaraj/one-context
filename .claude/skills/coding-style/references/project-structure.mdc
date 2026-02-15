@@ -1,0 +1,72 @@
+---
+description: Monorepo directory structure. Where to place new code.
+globs: "**/*"
+alwaysApply: false
+---
+# Project Structure
+
+pnpm workspace monorepo with a Next.js App Router app and shared backend packages.
+
+## Root
+
+- `pnpm-workspace.yaml`, `turbo.json`, `package.json` — workspace and build orchestration
+- `tsconfig.json`, `tooling/typescript/*.json` — TypeScript bases
+- `biome.json` — lint and format (Biome, not ESLint/Prettier)
+- `config/` — shared runtime config and types
+- `tooling/` — scripts, Tailwind preset, TypeScript presets
+- `prompts/` — brand guide and prompt references
+
+## App (frontend)
+
+`apps/web/` — Next.js App Router application (SSR-first)
+
+- **Pages and routing:** `apps/web/app/**`
+  - `app/api/**/route.ts` — API routes (edge/server)
+  - `app/layout.tsx`, `app/page.tsx`, `app/global-error.tsx` — global files
+- **Feature modules:** `apps/web/modules/**`
+  - `modules/ui/` — UI components (shadcn/ui, Radix, Tailwind)
+  - `modules/shared/` — cross-domain shared code (keep minimal)
+- **Public assets:** `apps/web/public/**`
+- **Config:** `apps/web/next.config.ts`, `apps/web/postcss.config.cjs`
+
+Place all browser/UI-only code in `apps/web`. Prefer Server Components; limit `use client` to interactive UI concerns.
+
+## Backend and Shared Packages
+
+| Package | Purpose | Status |
+|---------|---------|--------|
+| `packages/api/` | HonoJS API server — routes, middleware, shared utils | Active (`health`, `auth` routes) |
+| `packages/auth/` | better-auth config, helpers, plugins | Active |
+| `packages/database/` | Prisma schema, migrations, client | Active |
+| `packages/integrations/` | Third-party integrations | Scaffolded |
+| `packages/logs/` | Logging config and helper | Active |
+| `packages/mail/` | Email providers and templates | Scaffolded |
+| `packages/storage/` | File storage providers | Scaffolded |
+| `packages/tasks/` | Background tasks / Trigger.dev | Scaffolded |
+| `packages/utils/` | Shared utilities (dates, html, links, errors, types) | Active |
+
+### Key Paths
+
+- API entry: `packages/api/src/app.ts`
+- API routes: `packages/api/src/routes/**`
+- Database schema: `packages/database/prisma/schema.prisma`
+- Migrations: `packages/database/prisma/migrations/**`
+
+## Conventions
+
+- Frontend-only code → `apps/web`
+- API routes/endpoints → `packages/api/src/routes/**`
+- Database schema/migrations → `packages/database/prisma/**`
+- Shared utilities/types → `packages/utils/**`
+- UI components (design system) → `apps/web/modules/ui/`
+- Emails → `packages/mail/`
+
+## Adding New Code
+
+- **UI/feature work:** create components and modules under `apps/web/modules/**` and routes under `apps/web/app/**`
+- **Server endpoints:** add Hono routes under `packages/api/src/routes/**` and wire in `src/app.ts`
+- **Data model changes:** update `packages/database/prisma/schema.prisma`, create migrations, update affected services
+- **Shared logic:** prefer `packages/utils/**` for reusable helpers; avoid duplication in `apps/web`
+- **New domain package:** create under `packages/[domain]/` following the existing package structure
+
+Keep TypeScript strict, prefer functional patterns, and follow naming/style conventions.

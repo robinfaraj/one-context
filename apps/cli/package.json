@@ -1,0 +1,20 @@
+{
+	"name": "@onecontext/cli",
+	"version": "0.0.0",
+	"bin": {
+		"onecontext": "./dist/index.js"
+	},
+	"main": "./src/index.ts",
+	"scripts": {
+		"build": "tsc",
+		"dev": "tsx src/index.ts",
+		"type-check": "tsc --noEmit"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "^22.10.5",
+		"tsx": "^4.19.2",
+		"typescript": "5.7.2"
+	}
+}

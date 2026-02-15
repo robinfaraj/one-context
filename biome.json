@@ -1,0 +1,72 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"formatter": {
+		"enabled": true
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"recommended": true,
+			"suspicious": {
+				"noExplicitAny": "off",
+				"noArrayIndexKey": "off"
+			},
+			"complexity": {
+				"noForEach": "off"
+			},
+			"correctness": {
+				"useExhaustiveDependencies": "off",
+				"noUnusedImports": "error"
+			},
+			"style": {
+				"noUnusedTemplateLiteral": {
+					"level": "error",
+					"fix": "safe"
+				},
+				"noNonNullAssertion": "warn"
+			}
+		}
+	},
+	"organizeImports": {
+		"enabled": true
+	},
+	"files": {
+		"ignore": [
+			".next",
+			".turbo",
+			"node_modules/*",
+			".claude",
+			".cursor",
+			".cursorrules",
+			".github",
+			".gitignore",
+			".idea",
+			".prisma",
+			".vscode",
+			"dev.log",
+			"**/dist",
+			"tooling/tailwind/tailwind-animate.css",
+			"packages/database/src/generated"
+		]
+	},
+	"javascript": {
+		"jsxRuntime": "transparent"
+	},
+	"overrides": [
+		{
+			"include": ["**/*.tsx"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useFilenamingConvention": {
+							"level": "error",
+							"options": {
+								"filenameCases": ["kebab-case"]
+							}
+						}
+					}
+				}
+			}
+		}
+	]
+}

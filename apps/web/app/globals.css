@@ -1,0 +1,5 @@
+@import "tailwindcss";
+@import "@onecontext/tailwind-config/theme.css";
+@import "@onecontext/tailwind-config/tailwind-animate.css";
+
+@custom-variant dark (&:where(.dark, .dark *));

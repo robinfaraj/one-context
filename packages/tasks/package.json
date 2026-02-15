@@ -1,0 +1,18 @@
+{
+	"dependencies": {
+		"@trigger.dev/sdk": "4.3.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@trigger.dev/build": "4.3.3"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/tasks",
+	"scripts": {
+		"type-check": "tsc --noEmit",
+		"dev-trigger": "pnpm dlx trigger.dev@latest dev --env-file ../../.env.local",
+		"deploy": "pnpm dlx trigger.dev@latest deploy"
+	},
+	"version": "0.0.0"
+}

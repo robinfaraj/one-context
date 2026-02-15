@@ -1,0 +1,10 @@
+{
+	"name": "@onecontext/config",
+	"private": true,
+	"version": "0.0.0",
+	"main": "index.ts",
+	"types": "index.ts",
+	"devDependencies": {
+		"@onecontext/tsconfig": "workspace:*"
+	}
+}

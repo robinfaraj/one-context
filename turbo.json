@@ -1,0 +1,61 @@
+{
+	"$schema": "https://turborepo.dev/schema.json",
+	"globalDependencies": ["**/.env.*local"],
+	"globalEnv": [
+		"DATABASE_URL",
+		"SHADOW_DATABASE_URL",
+		"MIGRATION_DATABASE_URL",
+		"BETTER_AUTH_SECRET",
+		"NEXT_PUBLIC_SITE_URL",
+		"SITE_URL",
+		"VERCEL_URL",
+		"GITHUB_CLIENT_ID",
+		"GITHUB_CLIENT_SECRET",
+		"TWITTER_CLIENT_ID",
+		"TWITTER_CLIENT_SECRET",
+		"DEV_API_KEY",
+		"DEV_API_USER_EMAIL",
+		"PORT",
+		"NODE_ENV",
+		"MAIL_HOST",
+		"MAIL_PORT",
+		"MAIL_USER",
+		"MAIL_PASS",
+		"RESEND_API_KEY",
+		"S3_ENDPOINT",
+		"S3_ACCESS_KEY_ID",
+		"S3_SECRET_ACCESS_KEY",
+		"S3_BUCKET_NAME",
+		"S3_REGION",
+		"TRIGGER_SECRET_KEY",
+		"TRIGGER_API_URL"
+	],
+	"tasks": {
+		"build": {
+			"dependsOn": ["^generate", "^build"],
+			"outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+		},
+		"type-check": {},
+		"clean": {
+			"cache": false
+		},
+		"generate": {
+			"cache": false
+		},
+		"dev": {
+			"cache": false,
+			"dependsOn": ["^generate"],
+			"persistent": true
+		},
+		"export": {
+			"outputs": ["out/**"]
+		},
+		"lint": {},
+		"test": {
+			"dependsOn": ["^generate"]
+		},
+		"test:run": {
+			"dependsOn": ["^generate"]
+		}
+	}
+}

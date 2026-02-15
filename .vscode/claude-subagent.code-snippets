@@ -1,0 +1,37 @@
+{
+	"Claude Subagent Template": {
+		"prefix": "claude-agent",
+		"scope": "markdown",
+		"body": [
+			"---",
+			"name: my-agent-name",
+			"description: When Claude should delegate to this subagent",
+			"tools: Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, Task, NotebookEdit",
+			"disallowedTools: Read, Grep, Glob, Edit, Write, Bash, WebFetch, WebSearch, Task, NotebookEdit",
+			"model: inherit",
+			"permissionMode: default",
+			"skills: ",
+			"hooks:",
+			"  PreToolUse:",
+			"    - matcher: \"Read|Edit|Write\"",
+			"      hooks:",
+			"        - type: command",
+			"          command: \"./scripts/validate.sh\"",
+			"  PostToolUse:",
+			"    - matcher: \"Write\"",
+			"      hooks:",
+			"        - type: command",
+			"          command: \"./scripts/post-write.sh\"",
+			"  Stop:",
+			"    - hooks:",
+			"        - type: command",
+			"          command: \"./scripts/cleanup.sh\"",
+			"---",
+			"",
+			"# Agent Instructions",
+			"",
+			"Your system prompt here that guides the subagent's behavior."
+		],
+		"description": "Claude Subagent template with all frontmatter options"
+	}
+}

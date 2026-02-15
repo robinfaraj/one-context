@@ -1,0 +1,120 @@
+---
+description: React component patterns, composition, hooks, and frontend module organization
+globs: apps/web/**/*.{ts,tsx}
+alwaysApply: false
+---
+# Frontend Patterns
+
+## Component Structure
+
+- Single responsibility, under 200 lines (refactor at 300+)
+- One component per file, props interface at top
+- Use unions for variants (`"compact" | "default"` not `string`)
+- Early returns for edge cases, logic before JSX
+
+```typescript
+interface ComponentNameProps {
+  variant: "compact" | "default";
+  onAction: (value: string) => void;
+}
+
+export const ComponentName = ({ variant, onAction }: ComponentNameProps) => {
+  if (variant === "compact") return <CompactView onAction={onAction} />;
+  return <DefaultView onAction={onAction} />;
+};
+```
+
+**Naming:** `ComponentNameProps`, `ComponentNameConfig`
+
+## Composition
+
+- **Container/Presentational**: Container handles state, passes to presentational children
+- **Extract when**: repeated in 2+ places, exceeds 30-40 lines, distinct responsibility
+- **Parent computes, child displays**: Don't recalculate derived values in children
+- **Avoid prop drilling**: Pass directly to consumers, not through intermediary wrappers
+
+```typescript
+// ✅ Good: Parent calculates, child displays
+const displayTime = useMemo(() => data?.naturalTime || data?.scheduledTime, [data]);
+<Child displayTime={displayTime} />
+
+// ❌ Bad: Child recalculates parent's work
+const Child = ({ data }) => {
+  const displayTime = data?.naturalTime || data?.scheduledTime; // Don't duplicate
+}
+```
+
+## Custom Hooks
+
+Extract when the same `useState` + mutation pattern appears in 3+ components.
+
+```typescript
+// hooks/[domain]/use[Domain][Action].ts
+export function useManageDialog<T>(mutationFn: (item: T) => Promise<void>) {
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<T | null>(null);
+
+  const openDialog = (item: T) => { setSelectedItem(item); setShowDialog(true); };
+  const closeDialog = () => { setShowDialog(false); setSelectedItem(null); };
+
+  const handleConfirm = async () => {
+    if (!selectedItem) return;
+    await mutationFn(selectedItem);
+    closeDialog();
+  };
+
+  return { showDialog, selectedItem, openDialog, closeDialog, handleConfirm };
+}
+```
+
+**Naming:** `use[Domain][Action]` — **Location:** `hooks/[domain]/`
+
+## Configuration Object Pattern
+
+Use when 3+ conditions affect 3+ UI properties. Centralizes conditional logic.
+
+```typescript
+const getConfig = (isPaused: boolean, isTrialing: boolean) => {
+  if (isPaused) return { title: "Paused", icon: PauseIcon };
+  if (isTrialing) return { title: "Trial Ended", icon: ClockIcon };
+  return { title: "Confirmed", icon: CheckIcon };
+};
+```
+
+## Module Organization
+
+All frontend features live under `apps/web/modules/`. Organize by domain first.
+
+### Feature Pattern Template
+
+```
+domain/
+└── feature-name/
+    ├── components/    # React components
+    ├── hooks/         # React hooks
+    ├── lib/           # Business logic, API calls
+    ├── utils/         # Pure utilities
+    ├── types/         # TypeScript types
+    └── index.ts       # Public exports
+```
+
+### Key Rules
+
+1. **Domain first** — start domain-specific, move to shared only when proven
+2. **Consistent pattern** — every feature gets components/hooks/utils structure
+3. **Minimal shared** — most code lives in domains; `shared/` is for truly cross-domain concerns
+4. **Keep related code together** — hooks with their features, not separated
+
+```typescript
+// ✅ Good - Domain import
+import { FeatureCard } from '@/modules/saas/domain/shared/components';
+
+// ❌ Bad - Everything in global shared
+import { FeatureCard } from '@/modules/shared/components';
+
+// ✅ Good - Feature contains its hooks
+domain/feature/hooks/use-feature.ts
+
+// ❌ Bad - Hooks separated from feature
+shared/hooks/domain/feature.ts
+```

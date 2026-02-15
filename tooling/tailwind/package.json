@@ -1,0 +1,13 @@
+{
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"tailwindcss": "^4.1.18"
+	},
+	"main": "index.ts",
+	"name": "@onecontext/tailwind-config",
+	"private": true,
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	},
+	"version": "0.0.0"
+}

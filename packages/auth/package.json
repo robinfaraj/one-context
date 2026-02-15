@@ -1,0 +1,23 @@
+{
+	"dependencies": {
+		"@onecontext/config": "workspace:*",
+		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*",
+		"@onecontext/utils": "workspace:*",
+		"better-auth": "1.4.18",
+		"cookie": "^1.0.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "^22.10.5"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/auth",
+	"scripts": {
+		"migrate": "dotenv -e ../../.env.local -- pnpm dlx @better-auth/cli@latest generate --config ./auth.ts --output ../database/prisma/schema.prisma",
+		"type-check": "tsc --noEmit"
+	},
+	"types": "./**/.tsx",
+	"version": "0.0.0"
+}

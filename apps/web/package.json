@@ -1,0 +1,50 @@
+{
+	"name": "@onecontext/web",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"build": "next build",
+		"dev": "next dev --turbopack",
+		"lint": "biome lint .",
+		"shadcn-ui": "pnpm dlx shadcn@latest",
+		"start": "next start",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@onecontext/api": "workspace:*",
+		"@onecontext/auth": "workspace:*",
+		"@onecontext/config": "workspace:*",
+		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*",
+		"@onecontext/utils": "workspace:*",
+		"@radix-ui/react-slot": "^1.1.1",
+		"@tailwindcss/postcss": "^4.1.18",
+		"@tanstack/react-query": "^5.90.12",
+		"better-auth": "1.4.18",
+		"class-variance-authority": "^0.7.1",
+		"clsx": "^2.1.1",
+		"framer-motion": "^11.16.1",
+		"hono": "^4.11.7",
+		"lucide-react": "^0.469.0",
+		"next": "16.1.1",
+		"next-themes": "^0.4.4",
+		"react": "19.2.3",
+		"react-dom": "19.2.3",
+		"react-hook-form": "^7.71.1",
+		"server-only": "^0.0.1",
+		"sonner": "^2.0.3",
+		"tailwind-merge": "^2.6.0",
+		"zod": "^4.2.1",
+		"zustand": "^5.0.9"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tailwind-config": "workspace:*",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "25.0.3",
+		"@types/react": "19.1.6",
+		"@types/react-dom": "19.1.5",
+		"postcss": "8.4.49",
+		"tailwindcss": "4.1.18"
+	}
+}

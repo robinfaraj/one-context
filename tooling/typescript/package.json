@@ -1,0 +1,11 @@
+{
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4"
+	},
+	"name": "@onecontext/tsconfig",
+	"private": true,
+	"publishConfig": {
+		"access": "public"
+	},
+	"version": "0.0.0"
+}

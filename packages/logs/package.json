@@ -1,0 +1,16 @@
+{
+	"dependencies": {
+		"consola": "^3.3.3"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/logs",
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	},
+	"types": "./**/.tsx",
+	"version": "0.0.0"
+}

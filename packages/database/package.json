@@ -1,0 +1,35 @@
+{
+	"dependencies": {
+		"@prisma/adapter-pg": "^7.3.0",
+		"@prisma/client": "^7.3.0",
+		"pg": "^8.16.3",
+		"zod": "^4.2.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "22.10.5",
+		"@types/pg": "^8.15.5",
+		"dotenv": "^16.4.7",
+		"dotenv-cli": "^8.0.0",
+		"prisma": "^7.3.0"
+	},
+	"main": "./index.ts",
+	"exports": {
+		".": "./index.ts",
+		"./server": "./src/client.ts"
+	},
+	"name": "@onecontext/database",
+	"scripts": {
+		"generate": "prisma generate",
+		"push": "dotenv -c -e ../../.env.local -- prisma db push --skip-generate",
+		"pull": "dotenv -c -e ../../.env.local -- prisma db pull",
+		"migrate": "dotenv -c -e ../../.env.local -- prisma migrate dev",
+		"migrate-reset": "dotenv -c -e ../../.env.local -- prisma migrate reset",
+		"deploy-prod": "dotenv -c -e ../../.env.local -- prisma migrate deploy",
+		"studio": "dotenv -c -e ../../.env.local -- prisma studio",
+		"execute-sql": "dotenv -c -e ../../.env.local -- prisma db execute",
+		"type-check": "tsc --noEmit"
+	},
+	"version": "0.0.0"
+}

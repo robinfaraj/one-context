@@ -1,0 +1,17 @@
+{
+	"dependencies": {
+		"@aws-sdk/client-s3": "3.437.0",
+		"@aws-sdk/s3-request-presigner": "3.437.0"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"@types/node": "^22.10.5"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/storage",
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	},
+	"version": "0.0.0"
+}

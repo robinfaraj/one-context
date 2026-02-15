@@ -1,0 +1,186 @@
+---
+description: Coding style and best practices for the project.
+alwaysApply: true
+---
+# Coding Style and Best Practices
+
+## Code Commenting Best Practices
+
+**Core Principle:** The best comment is the one you found a way not to write. Clear, self-documenting code is always preferable to cluttered code with extensive comments.
+
+### When to Use Comments
+
+**Good Comments:**
+- **Legal/Copyright**: Required copyright notices and authorship information
+- **Clarification**: When translating complex logic into readable intent (but prefer refactoring)
+- **Warning**: Alert other developers about consequences (e.g., performance implications, side effects)
+- **Critical gotchas**: Use `**Critical:**` prefix for behavior that could cause bugs if misunderstood
+- **TODO**: Mark future improvements with `//TODO` comments
+- **Intent Explanation**: Document why a decision was made, not what the code does
+- **High-signal only**: Keep comments only when they explain why or make the code much faster to understand than skimming
+
+**Examples:**
+```typescript
+// TODO: Optimize this query when we have user metrics
+const posts = await db.post.findMany({ take: 1000 });
+
+// Using 5 retries based on observed API rate limits
+const MAX_RETRIES = 5;
+
+// WARNING: This operation is expensive - cache results when possible
+const analysis = await performDeepAnalysis(data);
+
+// **Critical:** Timezone changes regenerate slots but posts keep absolute UTC time
+export function regenerateSlots() { ... }
+```
+
+### When NOT to Use Comments
+
+**Avoid These Patterns:**
+- **Redundant Comments**: Don't describe what code clearly shows
+- **Commented-Out Code**: Delete it - version control remembers everything
+- **Noise Comments**: Avoid obvious statements that add no value
+- **Journal/Attribution Comments**: Use git history instead
+- **Closing Brace Comments**: If you need these, your functions are too long
+- **Mandated Comments**: Don't require comments on every function/variable
+
+**Bad Examples:**
+```typescript
+// ❌ BAD: Redundant comment
+let count = 0; // Initialize count to zero
+
+// ❌ BAD: Commented-out code
+// const oldImplementation = () => { ... }
+
+// ❌ BAD: Noise comment
+/* getter for name */
+getName() { return this.name; }
+```
+
+### Better Alternatives to Comments
+
+**Instead of commenting, prefer:**
+1. **Descriptive Names**: `isUserAuthenticated` instead of `flag // true if user logged in`
+2. **Extract Functions**: Replace comment blocks with well-named functions
+3. **Constants**: Use named constants instead of magic numbers with comments
+
+**Example Refactoring:**
+```typescript
+// ❌ Instead of:
+// Check if user has permission to edit
+if (user.role === 'admin' || user.id === post.authorId) { ... }
+
+// ✅ Better:
+const canEditPost = (user: User, post: Post) => 
+  user.role === 'admin' || user.id === post.authorId;
+
+if (canEditPost(user, post)) { ... }
+```
+
+### Project-Specific Guidelines
+
+- Focus on writing self-documenting code that doesn't need comments
+- When comments are necessary, keep them concise and valuable
+- Use TypeScript's type system to document function parameters and return values
+- Prefer JSDoc only for public APIs that need documentation generation
+- Public API = exported functions/types intended for other packages; internal helpers in the same file should not use JSDoc
+- If JSDoc is really needed, keep it super minimal (1-2 lines)
+- Remove all commented-out code before committing
+- Update or remove comments when refactoring code
+
+Remember: If you need to explain bad code with comments, rewrite the code instead.
+
+## Clean If-Else, Early Returns, and Avoiding Nesting
+
+The best practices for writing **clean if-else code** focus on improving readability, maintainability, and reducing complexity by following structured patterns and refactoring techniques.
+
+## Type Sources and Duplication
+
+- Prefer deriving types from authoritative sources (Prisma → Zod → API → frontend).
+- Avoid creating duplicate types or manual mapping layers when types can be inferred.
+- Create new DTO types only when there is a real boundary (public API, security, or performance).
+
+## Business Logic Hygiene (non-UI)
+
+- Applies to backend/services, API handlers, queries, and React hooks with business logic.
+- Keep logic top-down with small helpers and named booleans; avoid deep nesting.
+- Make side effects explicit and grouped; avoid hidden writes or implicit state changes.
+- If functions get too big, extract methods with descriptive names and single responsibility
+
+### Key Best Practices
+
+- **Use clear, meaningful conditions**: Write conditions that are self-explanatory and avoid deep nesting for clarity.
+- **Return early**: Handle error or edge cases with early returns to reduce nested if-else statements.
+- **Encapsulate condition logic**: Move complex or repeated conditions into descriptive functions for better readability.
+- **Avoid excessive nesting**: Refactor nested if-else trees using early returns, guard clauses, or switch/case patterns to flatten logic.
+- **Consistent use of braces and parentheses**: Even for single statements, use braces for explicit structure and maintain consistency.
+- **Decompose conditionals**: Extract both conditions and actions into named variables or methods, improving modularity and code intent.
+
+### Descriptive Variables vs Function Extraction
+
+**Balance is key:** Use descriptive boolean variables for complex conditions, keep simple checks inline, extract functions when logic is complex or reusable.
+
+**Use descriptive variables when:**
+- Conditions combine multiple checks: `const shouldReturnLimitError = isLimitExceeded && tokenUsageStatus`
+- Conditions are non-obvious: `const shouldTrackUsage = hasOrganization && hasUsage && totalTokens > 0`
+
+**Keep simple checks inline:**
+- `if (!chat)` is clearer than `const doesChatExist = chat !== null; if (!doesChatExist)`
+
+**Extract to functions when:**
+- Logic is complex or reusable: `extractUserMessage()` encapsulates nested operations
+- Logic has side effects: `ensureChatAuthorized()` handles authorization checks
+- Function name clearly describes intent: `saveUserMessageIfPresent()`
+
+**Example:**
+```typescript
+// ✅ Good: Descriptive variable for complex condition
+const shouldReturnLimitError = isLimitExceeded && tokenUsageStatus;
+if (shouldReturnLimitError) { ... }
+
+// ✅ Good: Simple check stays inline
+if (!chat) { ... }
+
+// ✅ Good: Extract complex logic
+const userMessage = extractUserMessage(message, messages, messagesFromDb);
+```
+
+### Alternatives to Complex If-Else
+
+- **Maps/Objects for Lookup**: When mapping values to actions/results, use dictionaries or `switch/case` statements for clearer intent.
+- **Switch Statements**: For multiple branches based on a single value, TypeScript's `switch/case` is often cleaner than a long chain of `if-else if` statements.
+- **Functional Approaches**: Use higher-order functions and other functional patterns to replace complex branching logic.
+
+### Example: Refactoring If-Else
+
+```typescript
+// Bad: deeply nested if-else
+if (user.isAdmin) {
+  if (user.isActive) {
+    accessDashboard();
+  } else {
+    showInactiveMessage();
+  }
+} else {
+  showNoAccess();
+}
+
+// Good: early return and function extraction
+if (!user.isAdmin) return showNoAccess();
+if (!user.isActive) return showInactiveMessage();
+accessDashboard();
+```
+This structure improves the code's intent, reduces nesting, and is easier to maintain.
+
+### Summary Table
+
+| Technique/Pattern         | Description                                      |
+|--------------------------|--------------------------------------------------|
+| Early return/guard clause| Handle exit conditions up-front, flatten logic   |
+| Helper functions         | Move logic to named methods for readability      |
+| Descriptive variables    | Use boolean variables for complex conditions     |
+| Lookup maps/objects      | Replace chained conditionals with mappings       |
+| Switch statements        | Use TypeScript's native multi-condition features |
+
+Applying these practices will help produce **clean, readable, and maintainable if-else code**.
+

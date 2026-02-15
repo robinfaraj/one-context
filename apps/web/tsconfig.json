@@ -1,0 +1,12 @@
+{
+	"extends": "@onecontext/tsconfig/nextjs.json",
+	"compilerOptions": {
+		"plugins": [{ "name": "next" }],
+		"paths": {
+			"@ui/*": ["./modules/ui/*"],
+			"@shared/*": ["./modules/shared/*"]
+		}
+	},
+	"include": ["**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+	"exclude": ["node_modules"]
+}

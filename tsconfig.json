@@ -1,0 +1,3 @@
+{
+	"extends": "@onecontext/tsconfig/base.json"
+}

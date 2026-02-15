@@ -1,0 +1,102 @@
+---
+description: Backend layered architecture, Hono route patterns, Zod validation, and API design
+globs: packages/api/**/*.ts
+alwaysApply: false
+---
+# Backend Architecture & API Design
+
+## Layered Architecture
+
+Target pattern for new features:
+
+**Router → Service → Query → Database**
+
+| Layer | Location | Responsibility |
+|-------|----------|----------------|
+| Router | `packages/api/src/routes/` | HTTP: validation, auth, responses |
+| Service | `packages/{domain}/src/services/` | Business logic, orchestration |
+| Query | `packages/database/src/queries/` | Prisma calls |
+
+Keep Prisma imports in the query layer only — this keeps services testable without mocking the database.
+
+## Code Organization
+
+**Top-down readability:** Structure files so they read top-to-bottom:
+1. Constants & internal type definitions
+2. Public API (exported functions)
+3. Internal helpers
+
+**Function ordering:** Callers before callees. Code reads naturally top-to-bottom.
+
+**Single responsibility:** Each file should have one clear purpose. A focused 200-line service is fine; a 500-line grab-bag is not. Don't over-split into micro-files either.
+
+## Resource Naming
+
+- Nouns in paths, not verbs: `GET /posts` not `GET /getPosts`
+- Plural nouns for collections: `/posts`, `/users`
+- Nest max 2-3 levels: `/posts/:postId/comments`
+
+## Status Codes
+
+Standard codes apply. Project-specific:
+- **409** — Conflict (slot occupied, duplicate resource)
+- **503** — Service Unavailable (external service failure)
+
+```typescript
+return c.json({ error: "Clear, actionable message" }, 400);
+```
+
+## Hono + Zod Route Pattern
+
+All endpoints MUST validate with Zod. Create `types.ts` per router:
+
+```typescript
+// routes/[resource]/types.ts
+export const CreateResourceSchema = z.object({
+  name: z.string().min(1),
+  description: z.string().optional(),
+});
+
+export type CreateResource = z.infer<typeof CreateResourceSchema>;
+```
+
+### Route Definition
+
+```typescript
+import { validator } from "hono-openapi/zod";
+import { describeRoute } from "hono-openapi";
+
+export const resourceRouter = new Hono()
+  .post("/resources",
+    validator("json", CreateResourceSchema),
+    describeRoute({ summary: "Create a resource", tags: ["Resources"] }),
+    async (c) => {
+      const body = c.req.valid("json");
+      const resource = await createResource(body);
+      return c.json(resource, 201);
+    }
+  );
+```
+
+Use `z.coerce.number()` for query params. Use `satisfies z.ZodType<T>` to match existing types.
+
+## Router Organization
+
+**Split when:** Multiple distinct resources under shared namespace (`/admin` → `users.ts` + `orgs.ts`)
+
+**Don't split when:** Single resource with multiple operations, tightly coupled workflows, heavy type sharing
+
+```typescript
+// admin/router.ts - Composition pattern
+export const adminRouter = new Hono()
+  .basePath("/admin")
+  .route("/", userRouter)
+  .route("/", organizationRouter);
+```
+
+**Principle:** Split by sub-resources, not file size. Cohesion > line count.
+
+## Security
+
+- `authMiddleware` for authenticated endpoints
+- 401 for unauthenticated, 403 for forbidden
