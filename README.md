@@ -61,7 +61,7 @@ Apache 2.0 — free to use, modify, and distribute. See LICENSE file.
 
 ## Credits
 
-Built by [Robin Sadeghpour](https://github.com/robinfaraj) ([X](https://x.com/robin_faraj), [LinkedIn](https://www.linkedin.com/in/robin-sadeghpour-faraj-204196230/)), inspired by the pain of AI tool setup. Thanks to Anthropic (MCP), Vercel, shadcn, and the open source community.
+Built by [Robin Faraj](https://github.com/robinfaraj) ([X](https://x.com/robin_faraj), [LinkedIn](https://www.linkedin.com/in/robin-sadeghpour-faraj-204196230/)), inspired by the pain of AI tool setup. Thanks to Anthropic (MCP), Vercel, shadcn, and the open source community.
 
 ---
 
