@@ -3,6 +3,10 @@ import type { Config } from "./types";
 export type { Config } from "./types";
 
 export const config: Config = {
+	links: {
+		github: "https://github.com/robinfaraj/one-context",
+		twitter: "https://twitter.com/onecontext",
+	},
 	auth: {
 		enableSignup: true,
 		enableSocialLogin: true,

@@ -1,12 +1,13 @@
 "use client";
 
+import { config } from "@onecontext/config";
 import { Github } from "lucide-react";
 import { Logo } from "./logo";
 
 const navLinks = [
 	{ href: "#how-it-works", label: "How it works" },
 	{ href: "#features", label: "Features" },
-	{ href: "https://github.com/onecontext", label: "GitHub", external: true },
+	{ href: config.links.github, label: "GitHub", external: true },
 	{ href: "/docs", label: "Docs" },
 ];
 
@@ -32,7 +33,7 @@ export function Navbar() {
 				</div>
 				<div className="flex items-center gap-3">
 					<a
-						href="https://github.com/onecontext"
+						href={config.links.github}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="hidden rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground sm:inline-flex"

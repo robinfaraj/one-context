@@ -1,5 +1,6 @@
 "use client";
 
+import { config } from "@onecontext/config";
 import { fadeUp, stagger } from "@ui/lib/animations";
 import { motion } from "framer-motion";
 import { ArrowRight, Github } from "lucide-react";
@@ -76,7 +77,7 @@ export function Hero() {
 							Get Early Access
 						</Button>
 						<Button
-							href="https://github.com/onecontext"
+							href={config.links.github}
 							variant="secondary"
 							icon={<Github className="h-4 w-4" />}
 							iconPosition="left"

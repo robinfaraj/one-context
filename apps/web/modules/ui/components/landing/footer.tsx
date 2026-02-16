@@ -1,17 +1,18 @@
 "use client";
 
+import { config } from "@onecontext/config";
 import { Github, Twitter } from "lucide-react";
 import { Logo } from "./logo";
 
 const footerLinks = [
 	{ href: "/docs", label: "Docs" },
 	{
-		href: "https://github.com/onecontext",
+		href: config.links.github,
 		label: "GitHub",
 		external: true,
 	},
 	{
-		href: "https://twitter.com/onecontext",
+		href: config.links.twitter,
 		label: "Twitter",
 		external: true,
 	},
@@ -20,12 +21,12 @@ const footerLinks = [
 
 const socialLinks = [
 	{
-		href: "https://github.com/onecontext",
+		href: config.links.github,
 		icon: Github,
 		label: "GitHub",
 	},
 	{
-		href: "https://twitter.com/onecontext",
+		href: config.links.twitter,
 		icon: Twitter,
 		label: "Twitter",
 	},
