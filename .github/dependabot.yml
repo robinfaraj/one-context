@@ -10,7 +10,7 @@ updates:
         patterns:
           - "@prisma/*"
           - "prisma"
-      shadcn:
+      radix-ui:
         patterns:
           - "@radix-ui/*"
       react:

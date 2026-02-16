@@ -13,6 +13,8 @@ OneContext is the universal AI identity platform. Our visual identity is **clean
 
 **Source:** `prompts/brand-guide-and-visual-identity.md`
 
+For **tone, voice, and copy** (headlines, CTAs, landing text, docs, social), use the **brand-copy-guidelines** skill.
+
 ---
 
 ## Color System

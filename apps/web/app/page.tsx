@@ -10,6 +10,7 @@ import {
 	Navbar,
 	ProblemSection,
 } from "@ui/components/landing";
+import IntegrationsHubSection from "@ui/components/ui/integrations-component";
 
 export default function HomePage() {
 	return (
@@ -19,6 +20,7 @@ export default function HomePage() {
 			<ProblemSection />
 			<HowItWorks />
 			<Features />
+			<IntegrationsHubSection />
 			<IntegrationSection />
 			<CTASection />
 			<Footer />

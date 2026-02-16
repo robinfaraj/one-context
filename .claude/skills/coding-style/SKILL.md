@@ -28,3 +28,4 @@ Apply these conventions when writing or refactoring code in this monorepo.
 - **Follow project structure** — domain-first organization; place code where it belongs
 - **Biome for formatting** — do not manually format; let the toolchain handle it
 - **Prefer Server Components** — limit `use client` to interactive UI concerns
+- **UI / visual:** Apply **brand-guidelines** for colors, typography, spacing. **Copy / messaging:** Apply **brand-copy-guidelines** for headlines, CTAs, landing copy, docs, social (tone, voice, word choice).
