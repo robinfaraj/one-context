@@ -1,0 +1,14 @@
+{
+	"dependencies": {
+		"ai": "^6.0.0",
+		"zod": "^4.2.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/ai",
+	"version": "0.0.0"
+}

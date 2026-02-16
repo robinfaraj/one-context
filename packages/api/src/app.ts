@@ -5,15 +5,23 @@ import { Hono } from "hono";
 import { openAPIRouteHandler } from "hono-openapi";
 import { corsMiddleware } from "./middleware/cors";
 import { loggerMiddleware } from "./middleware/logger";
+import { aiRouter } from "./routes/ai";
 import { authRouter } from "./routes/auth";
 import { healthRouter } from "./routes/health";
+import { memoriesRouter } from "./routes/memories";
+import { sourcesRouter } from "./routes/sources";
 
 export const app = new Hono().basePath("/api");
 
 app.use(loggerMiddleware);
 app.use(corsMiddleware);
 
-const appRouter = app.route("/", healthRouter).route("/", authRouter);
+const appRouter = app
+	.route("/", healthRouter)
+	.route("/", authRouter)
+	.route("/", memoriesRouter)
+	.route("/", aiRouter)
+	.route("/", sourcesRouter);
 
 app.get("/app-openapi", async (c) => {
 	try {

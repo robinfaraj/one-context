@@ -9,23 +9,29 @@ datasource db {
 }
 
 model User {
-  id                 String    @id
+  id                 String          @id
   name               String
   email              String
-  emailVerified      Boolean   @default(false)
+  emailVerified      Boolean         @default(false)
   image              String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
   username           String?
-  displayUsername    String?
+  displayUsername     String?
   role               String?
-  banned             Boolean?  @default(false)
+  banned             Boolean?        @default(false)
   banReason          String?
   banExpires         DateTime?
   onboardingComplete Boolean?
+  profileSummary     String?
+  syncEnabled        Boolean         @default(true)
   sessions           Session[]
   accounts           Account[]
   apikeys            Apikey[]
+  chats              Chat[]
+  sources            Source[]
+  contentItems       ContentItem[]
+  pinnedMemories     PinnedMemory[]
 
   @@unique([email])
   @@unique([username])
@@ -108,4 +114,79 @@ model Apikey {
   @@index([key])
   @@index([userId])
   @@map("apikey")
+}
+
+model Chat {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String        @default("New Chat")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId])
+  @@map("chat")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  parentId  String?
+  role      String
+  parts     Json
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([chatId])
+  @@map("chat_message")
+}
+
+model Source {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     String
+  status       String        @default("connected")
+  lastSyncAt   DateTime?
+  memoryCount  Int           @default(0)
+  metadata     Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  contentItems ContentItem[]
+
+  @@unique([userId, provider])
+  @@index([userId])
+  @@map("source")
+}
+
+model ContentItem {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId    String
+  source      Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  externalId  String
+  type        String
+  rawData     Json
+  contentDate DateTime
+  importedAt  DateTime @default(now())
+
+  @@unique([sourceId, externalId])
+  @@index([userId])
+  @@index([sourceId])
+  @@map("content_item")
+}
+
+model PinnedMemory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  memoryId  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, memoryId])
+  @@index([userId])
+  @@map("pinned_memory")
 }

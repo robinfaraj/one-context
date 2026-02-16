@@ -42,3 +42,28 @@ export type Verification = Prisma.VerificationModel
  * 
  */
 export type Apikey = Prisma.ApikeyModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model Source
+ * 
+ */
+export type Source = Prisma.SourceModel
+/**
+ * Model ContentItem
+ * 
+ */
+export type ContentItem = Prisma.ContentItemModel
+/**
+ * Model PinnedMemory
+ * 
+ */
+export type PinnedMemory = Prisma.PinnedMemoryModel

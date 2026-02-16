@@ -1,14 +1,14 @@
 {
 	"dependencies": {
-		"@onecontext/database": "workspace:*",
-		"zod": "^3.24.2"
+		"mem0ai": "^2.2.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"@onecontext/tsconfig": "workspace:*"
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
 	},
 	"main": "./index.ts",
-	"name": "@onecontext/integrations",
+	"name": "@onecontext/mem0",
 	"scripts": {
 		"type-check": "tsc --noEmit"
 	},

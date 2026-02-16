@@ -39,6 +39,8 @@ export type UserMinAggregateOutputType = {
   banReason: string | null
   banExpires: Date | null
   onboardingComplete: boolean | null
+  profileSummary: string | null
+  syncEnabled: boolean | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -56,6 +58,8 @@ export type UserMaxAggregateOutputType = {
   banReason: string | null
   banExpires: Date | null
   onboardingComplete: boolean | null
+  profileSummary: string | null
+  syncEnabled: boolean | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -73,6 +77,8 @@ export type UserCountAggregateOutputType = {
   banReason: number
   banExpires: number
   onboardingComplete: number
+  profileSummary: number
+  syncEnabled: number
   _all: number
 }
 
@@ -92,6 +98,8 @@ export type UserMinAggregateInputType = {
   banReason?: true
   banExpires?: true
   onboardingComplete?: true
+  profileSummary?: true
+  syncEnabled?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -109,6 +117,8 @@ export type UserMaxAggregateInputType = {
   banReason?: true
   banExpires?: true
   onboardingComplete?: true
+  profileSummary?: true
+  syncEnabled?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -126,6 +136,8 @@ export type UserCountAggregateInputType = {
   banReason?: true
   banExpires?: true
   onboardingComplete?: true
+  profileSummary?: true
+  syncEnabled?: true
   _all?: true
 }
 
@@ -216,6 +228,8 @@ export type UserGroupByOutputType = {
   banReason: string | null
   banExpires: Date | null
   onboardingComplete: boolean | null
+  profileSummary: string | null
+  syncEnabled: boolean
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -254,9 +268,15 @@ export type UserWhereInput = {
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   onboardingComplete?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  profileSummary?: Prisma.StringNullableFilter<"User"> | string | null
+  syncEnabled?: Prisma.BoolFilter<"User"> | boolean
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   apikeys?: Prisma.ApikeyListRelationFilter
+  chats?: Prisma.ChatListRelationFilter
+  sources?: Prisma.SourceListRelationFilter
+  contentItems?: Prisma.ContentItemListRelationFilter
+  pinnedMemories?: Prisma.PinnedMemoryListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -274,9 +294,15 @@ export type UserOrderByWithRelationInput = {
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   onboardingComplete?: Prisma.SortOrderInput | Prisma.SortOrder
+  profileSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncEnabled?: Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   apikeys?: Prisma.ApikeyOrderByRelationAggregateInput
+  chats?: Prisma.ChatOrderByRelationAggregateInput
+  sources?: Prisma.SourceOrderByRelationAggregateInput
+  contentItems?: Prisma.ContentItemOrderByRelationAggregateInput
+  pinnedMemories?: Prisma.PinnedMemoryOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -297,9 +323,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   onboardingComplete?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  profileSummary?: Prisma.StringNullableFilter<"User"> | string | null
+  syncEnabled?: Prisma.BoolFilter<"User"> | boolean
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   apikeys?: Prisma.ApikeyListRelationFilter
+  chats?: Prisma.ChatListRelationFilter
+  sources?: Prisma.SourceListRelationFilter
+  contentItems?: Prisma.ContentItemListRelationFilter
+  pinnedMemories?: Prisma.PinnedMemoryListRelationFilter
 }, "id" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
@@ -317,6 +349,8 @@ export type UserOrderByWithAggregationInput = {
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
   onboardingComplete?: Prisma.SortOrderInput | Prisma.SortOrder
+  profileSummary?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncEnabled?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -340,6 +374,8 @@ export type UserScalarWhereWithAggregatesInput = {
   banReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   onboardingComplete?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
+  profileSummary?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
+  syncEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
 }
 
 export type UserCreateInput = {
@@ -357,9 +393,15 @@ export type UserCreateInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -377,9 +419,15 @@ export type UserUncheckedCreateInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -397,9 +445,15 @@ export type UserUpdateInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -417,9 +471,15 @@ export type UserUncheckedUpdateInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -437,6 +497,8 @@ export type UserCreateManyInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
 }
 
 export type UserUpdateManyMutationInput = {
@@ -454,6 +516,8 @@ export type UserUpdateManyMutationInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -471,6 +535,8 @@ export type UserUncheckedUpdateManyInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -488,6 +554,8 @@ export type UserCountOrderByAggregateInput = {
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
   onboardingComplete?: Prisma.SortOrder
+  profileSummary?: Prisma.SortOrder
+  syncEnabled?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -505,6 +573,8 @@ export type UserMaxOrderByAggregateInput = {
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
   onboardingComplete?: Prisma.SortOrder
+  profileSummary?: Prisma.SortOrder
+  syncEnabled?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -522,6 +592,8 @@ export type UserMinOrderByAggregateInput = {
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
   onboardingComplete?: Prisma.SortOrder
+  profileSummary?: Prisma.SortOrder
+  syncEnabled?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -595,6 +667,62 @@ export type UserUpdateOneRequiredWithoutApikeysNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApikeysInput, Prisma.UserUpdateWithoutApikeysInput>, Prisma.UserUncheckedUpdateWithoutApikeysInput>
 }
 
+export type UserCreateNestedOneWithoutChatsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutChatsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutChatsInput
+  upsert?: Prisma.UserUpsertWithoutChatsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutChatsInput, Prisma.UserUpdateWithoutChatsInput>, Prisma.UserUncheckedUpdateWithoutChatsInput>
+}
+
+export type UserCreateNestedOneWithoutSourcesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSourcesInput, Prisma.UserUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSourcesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSourcesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSourcesInput, Prisma.UserUncheckedCreateWithoutSourcesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSourcesInput
+  upsert?: Prisma.UserUpsertWithoutSourcesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSourcesInput, Prisma.UserUpdateWithoutSourcesInput>, Prisma.UserUncheckedUpdateWithoutSourcesInput>
+}
+
+export type UserCreateNestedOneWithoutContentItemsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentItemsInput, Prisma.UserUncheckedCreateWithoutContentItemsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentItemsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutContentItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutContentItemsInput, Prisma.UserUncheckedCreateWithoutContentItemsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutContentItemsInput
+  upsert?: Prisma.UserUpsertWithoutContentItemsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutContentItemsInput, Prisma.UserUpdateWithoutContentItemsInput>, Prisma.UserUncheckedUpdateWithoutContentItemsInput>
+}
+
+export type UserCreateNestedOneWithoutPinnedMemoriesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPinnedMemoriesInput, Prisma.UserUncheckedCreateWithoutPinnedMemoriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPinnedMemoriesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPinnedMemoriesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPinnedMemoriesInput, Prisma.UserUncheckedCreateWithoutPinnedMemoriesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPinnedMemoriesInput
+  upsert?: Prisma.UserUpsertWithoutPinnedMemoriesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPinnedMemoriesInput, Prisma.UserUpdateWithoutPinnedMemoriesInput>, Prisma.UserUncheckedUpdateWithoutPinnedMemoriesInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -610,8 +738,14 @@ export type UserCreateWithoutSessionsInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -629,8 +763,14 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -664,8 +804,14 @@ export type UserUpdateWithoutSessionsInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -683,8 +829,14 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -702,8 +854,14 @@ export type UserCreateWithoutAccountsInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -721,8 +879,14 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -756,8 +920,14 @@ export type UserUpdateWithoutAccountsInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -775,8 +945,14 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApikeysInput = {
@@ -794,8 +970,14 @@ export type UserCreateWithoutApikeysInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApikeysInput = {
@@ -813,8 +995,14 @@ export type UserUncheckedCreateWithoutApikeysInput = {
   banReason?: string | null
   banExpires?: Date | string | null
   onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApikeysInput = {
@@ -848,8 +1036,14 @@ export type UserUpdateWithoutApikeysInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApikeysInput = {
@@ -867,8 +1061,478 @@ export type UserUncheckedUpdateWithoutApikeysInput = {
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutChatsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutChatsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutChatsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+}
+
+export type UserUpsertWithoutChatsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutChatsInput, Prisma.UserUncheckedUpdateWithoutChatsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutChatsInput, Prisma.UserUncheckedCreateWithoutChatsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutChatsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutChatsInput, Prisma.UserUncheckedUpdateWithoutChatsInput>
+}
+
+export type UserUpdateWithoutChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutChatsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSourcesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSourcesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSourcesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSourcesInput, Prisma.UserUncheckedCreateWithoutSourcesInput>
+}
+
+export type UserUpsertWithoutSourcesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSourcesInput, Prisma.UserUncheckedUpdateWithoutSourcesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSourcesInput, Prisma.UserUncheckedCreateWithoutSourcesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSourcesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSourcesInput, Prisma.UserUncheckedUpdateWithoutSourcesInput>
+}
+
+export type UserUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSourcesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutContentItemsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutContentItemsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutContentItemsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentItemsInput, Prisma.UserUncheckedCreateWithoutContentItemsInput>
+}
+
+export type UserUpsertWithoutContentItemsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutContentItemsInput, Prisma.UserUncheckedUpdateWithoutContentItemsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutContentItemsInput, Prisma.UserUncheckedCreateWithoutContentItemsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutContentItemsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutContentItemsInput, Prisma.UserUncheckedUpdateWithoutContentItemsInput>
+}
+
+export type UserUpdateWithoutContentItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutContentItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPinnedMemoriesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPinnedMemoriesInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPinnedMemoriesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPinnedMemoriesInput, Prisma.UserUncheckedCreateWithoutPinnedMemoriesInput>
+}
+
+export type UserUpsertWithoutPinnedMemoriesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPinnedMemoriesInput, Prisma.UserUncheckedUpdateWithoutPinnedMemoriesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPinnedMemoriesInput, Prisma.UserUncheckedCreateWithoutPinnedMemoriesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPinnedMemoriesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPinnedMemoriesInput, Prisma.UserUncheckedUpdateWithoutPinnedMemoriesInput>
+}
+
+export type UserUpdateWithoutPinnedMemoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPinnedMemoriesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -880,12 +1544,20 @@ export type UserCountOutputType = {
   sessions: number
   accounts: number
   apikeys: number
+  chats: number
+  sources: number
+  contentItems: number
+  pinnedMemories: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   accounts?: boolean | UserCountOutputTypeCountAccountsArgs
   apikeys?: boolean | UserCountOutputTypeCountApikeysArgs
+  chats?: boolean | UserCountOutputTypeCountChatsArgs
+  sources?: boolean | UserCountOutputTypeCountSourcesArgs
+  contentItems?: boolean | UserCountOutputTypeCountContentItemsArgs
+  pinnedMemories?: boolean | UserCountOutputTypeCountPinnedMemoriesArgs
 }
 
 /**
@@ -919,6 +1591,34 @@ export type UserCountOutputTypeCountApikeysArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.ApikeyWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountChatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ChatWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SourceWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountContentItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ContentItemWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPinnedMemoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PinnedMemoryWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -935,9 +1635,15 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   banReason?: boolean
   banExpires?: boolean
   onboardingComplete?: boolean
+  profileSummary?: boolean
+  syncEnabled?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   apikeys?: boolean | Prisma.User$apikeysArgs<ExtArgs>
+  chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
+  sources?: boolean | Prisma.User$sourcesArgs<ExtArgs>
+  contentItems?: boolean | Prisma.User$contentItemsArgs<ExtArgs>
+  pinnedMemories?: boolean | Prisma.User$pinnedMemoriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -956,6 +1662,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   banReason?: boolean
   banExpires?: boolean
   onboardingComplete?: boolean
+  profileSummary?: boolean
+  syncEnabled?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -973,6 +1681,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   banReason?: boolean
   banExpires?: boolean
   onboardingComplete?: boolean
+  profileSummary?: boolean
+  syncEnabled?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -990,13 +1700,19 @@ export type UserSelectScalar = {
   banReason?: boolean
   banExpires?: boolean
   onboardingComplete?: boolean
+  profileSummary?: boolean
+  syncEnabled?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "username" | "displayUsername" | "role" | "banned" | "banReason" | "banExpires" | "onboardingComplete", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "username" | "displayUsername" | "role" | "banned" | "banReason" | "banExpires" | "onboardingComplete" | "profileSummary" | "syncEnabled", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   apikeys?: boolean | Prisma.User$apikeysArgs<ExtArgs>
+  chats?: boolean | Prisma.User$chatsArgs<ExtArgs>
+  sources?: boolean | Prisma.User$sourcesArgs<ExtArgs>
+  contentItems?: boolean | Prisma.User$contentItemsArgs<ExtArgs>
+  pinnedMemories?: boolean | Prisma.User$pinnedMemoriesArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1008,6 +1724,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
     apikeys: Prisma.$ApikeyPayload<ExtArgs>[]
+    chats: Prisma.$ChatPayload<ExtArgs>[]
+    sources: Prisma.$SourcePayload<ExtArgs>[]
+    contentItems: Prisma.$ContentItemPayload<ExtArgs>[]
+    pinnedMemories: Prisma.$PinnedMemoryPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1024,6 +1744,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     banReason: string | null
     banExpires: Date | null
     onboardingComplete: boolean | null
+    profileSummary: string | null
+    syncEnabled: boolean
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -1421,6 +2143,10 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   apikeys<T extends Prisma.User$apikeysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$apikeysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApikeyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  chats<T extends Prisma.User$chatsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$chatsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChatPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sources<T extends Prisma.User$sourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  contentItems<T extends Prisma.User$contentItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contentItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pinnedMemories<T extends Prisma.User$pinnedMemoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pinnedMemoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PinnedMemoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1464,6 +2190,8 @@ export interface UserFieldRefs {
   readonly banReason: Prisma.FieldRef<"User", 'String'>
   readonly banExpires: Prisma.FieldRef<"User", 'DateTime'>
   readonly onboardingComplete: Prisma.FieldRef<"User", 'Boolean'>
+  readonly profileSummary: Prisma.FieldRef<"User", 'String'>
+  readonly syncEnabled: Prisma.FieldRef<"User", 'Boolean'>
 }
     
 
@@ -1921,6 +2649,102 @@ export type User$apikeysArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.ApikeyScalarFieldEnum | Prisma.ApikeyScalarFieldEnum[]
+}
+
+/**
+ * User.chats
+ */
+export type User$chatsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Chat
+   */
+  select?: Prisma.ChatSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Chat
+   */
+  omit?: Prisma.ChatOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChatInclude<ExtArgs> | null
+  where?: Prisma.ChatWhereInput
+  orderBy?: Prisma.ChatOrderByWithRelationInput | Prisma.ChatOrderByWithRelationInput[]
+  cursor?: Prisma.ChatWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ChatScalarFieldEnum | Prisma.ChatScalarFieldEnum[]
+}
+
+/**
+ * User.sources
+ */
+export type User$sourcesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Source
+   */
+  select?: Prisma.SourceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Source
+   */
+  omit?: Prisma.SourceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SourceInclude<ExtArgs> | null
+  where?: Prisma.SourceWhereInput
+  orderBy?: Prisma.SourceOrderByWithRelationInput | Prisma.SourceOrderByWithRelationInput[]
+  cursor?: Prisma.SourceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SourceScalarFieldEnum | Prisma.SourceScalarFieldEnum[]
+}
+
+/**
+ * User.contentItems
+ */
+export type User$contentItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ContentItem
+   */
+  select?: Prisma.ContentItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ContentItem
+   */
+  omit?: Prisma.ContentItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ContentItemInclude<ExtArgs> | null
+  where?: Prisma.ContentItemWhereInput
+  orderBy?: Prisma.ContentItemOrderByWithRelationInput | Prisma.ContentItemOrderByWithRelationInput[]
+  cursor?: Prisma.ContentItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ContentItemScalarFieldEnum | Prisma.ContentItemScalarFieldEnum[]
+}
+
+/**
+ * User.pinnedMemories
+ */
+export type User$pinnedMemoriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PinnedMemory
+   */
+  select?: Prisma.PinnedMemorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PinnedMemory
+   */
+  omit?: Prisma.PinnedMemoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PinnedMemoryInclude<ExtArgs> | null
+  where?: Prisma.PinnedMemoryWhereInput
+  orderBy?: Prisma.PinnedMemoryOrderByWithRelationInput | Prisma.PinnedMemoryOrderByWithRelationInput[]
+  cursor?: Prisma.PinnedMemoryWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PinnedMemoryScalarFieldEnum | Prisma.PinnedMemoryScalarFieldEnum[]
 }
 
 /**
