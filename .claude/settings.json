@@ -3,5 +3,39 @@
     "typescript-lsp@claude-plugins-official": true,
     "commit-commands@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/biome-fix.sh",
+            "timeout": 30
+          }
+        ]
+      },
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/biome-fix.sh",
+            "timeout": 30
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "prompt",
+            "prompt": "Before finishing, you MUST check for TypeScript and linting errors by calling the mcp__ide__getDiagnostics tool. If there are any errors (not warnings) in files you edited during this session, you must fix them before stopping. Return {\"decision\": \"block\", \"reason\": \"Must check IDE diagnostics for type errors before finishing\"} to remind yourself to check, unless you have already checked diagnostics and fixed all errors in this turn."
+          }
+        ]
+      }
+    ]
   }
 }

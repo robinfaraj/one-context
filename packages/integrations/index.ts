@@ -8,6 +8,7 @@ register(githubAdapter);
 
 // Re-export registry functions and types
 export { get, getAvailable, list, register };
+export { getAccessToken, persistSyncResult } from "./sync";
 export type {
 	AvailableIntegration,
 	ContentItemInput,

@@ -1,4 +1,5 @@
 import { db } from "@onecontext/database/server";
+import { get, getAvailable, list } from "@onecontext/integrations";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../app";
 
@@ -14,6 +15,41 @@ describe("API Routes", () => {
 			expect(res.status).toBe(200);
 			const text = await res.text();
 			expect(text).toBe("OK");
+		});
+	});
+
+	describe("Integration Registry", () => {
+		it("should have twitter and github adapters registered", () => {
+			const adapters = list();
+			const providers = adapters.map((a) => a.provider);
+			expect(providers).toContain("twitter");
+			expect(providers).toContain("github");
+		});
+
+		it("should return adapter by provider name", () => {
+			const twitter = get("twitter");
+			expect(twitter).toBeDefined();
+			expect(twitter?.provider).toBe("twitter");
+			expect(twitter?.displayName).toBe("Twitter / X");
+
+			const github = get("github");
+			expect(github).toBeDefined();
+			expect(github?.provider).toBe("github");
+		});
+
+		it("should return undefined for unknown provider", () => {
+			expect(get("nonexistent")).toBeUndefined();
+		});
+
+		it("should list available integrations including coming-soon", () => {
+			const available = getAvailable();
+			expect(available.length).toBeGreaterThanOrEqual(6);
+
+			const comingSoon = available.filter((a) => a.comingSoon);
+			expect(comingSoon.length).toBeGreaterThanOrEqual(4);
+
+			const active = available.filter((a) => a.available);
+			expect(active.length).toBeGreaterThanOrEqual(2);
 		});
 	});
 
@@ -381,9 +417,135 @@ describe("API Routes", () => {
 			expect(res.status).toBe(404);
 			expect(await res.json()).toEqual({ error: "Chat not found" });
 		});
+
+		it("should not crash when POST /api/ai/chat is called with chatId 'new'", async () => {
+			// Regression: the frontend sends chatId: "new" for new chats.
+			// Previously this was treated as a real chatId, causing an FK violation.
+			const res = await app.request("/api/ai/chat", {
+				method: "POST",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({
+					chatId: "new",
+					messages: [
+						{
+							role: "user",
+							parts: [{ type: "text", text: "hello" }],
+						},
+					],
+				}),
+			});
+			// Should not be 500 (FK violation). May fail for other reasons
+			// (e.g., no AI key) but the chat creation itself should succeed.
+			expect(res.status).not.toBe(500);
+
+			// Clean up any chat that was created
+			const chatId = res.headers.get("x-chat-id");
+			if (chatId) {
+				chatIdsToCleanup.push(chatId);
+			}
+		});
+	});
+
+	describe("Sources — Unauthenticated Edge Cases", () => {
+		it("should return 401 for syncing unknown provider without auth", async () => {
+			const res = await app.request("/api/sources/nonexistent-provider/sync", {
+				method: "POST",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for deleting unknown provider without auth", async () => {
+			const res = await app.request("/api/sources/nonexistent-provider", {
+				method: "DELETE",
+			});
+			expect(res.status).toBe(401);
+		});
 	});
 
 	describe.runIf(!!DEV_API_KEY)("Authenticated — Sources", () => {
+		it("should return 404 when syncing source with unknown adapter", async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+
+			// Create a source record with a provider that has no adapter
+			const source = await db.source.create({
+				data: {
+					userId: user.id,
+					provider: "test-no-adapter",
+					status: "connected",
+				},
+			});
+
+			try {
+				const res = await app.request("/api/sources/test-no-adapter/sync", {
+					method: "POST",
+					headers: authHeaders,
+				});
+				expect(res.status).toBe(404);
+				const json = await res.json();
+				expect(json).toEqual({ error: "Integration not available" });
+			} finally {
+				await db.source.delete({ where: { id: source.id } }).catch(() => {});
+			}
+		});
+
+		it("should disconnect a source and remove its content items", async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+
+			const source = await db.source.create({
+				data: {
+					userId: user.id,
+					provider: "test-disconnect",
+					status: "connected",
+				},
+			});
+
+			await db.contentItem.create({
+				data: {
+					userId: user.id,
+					sourceId: source.id,
+					externalId: "test-item-1",
+					type: "test",
+					rawData: { test: true },
+					contentDate: new Date(),
+				},
+			});
+
+			const itemsBefore = await db.contentItem.findMany({
+				where: { sourceId: source.id },
+			});
+			expect(itemsBefore).toHaveLength(1);
+
+			const res = await app.request("/api/sources/test-disconnect", {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+			const json = (await res.json()) as {
+				provider: string;
+				disconnected: boolean;
+			};
+			expect(json.provider).toBe("test-disconnect");
+			expect(json.disconnected).toBe(true);
+
+			const source2 = await db.source.findUnique({
+				where: { id: source.id },
+			});
+			expect(source2).toBeNull();
+
+			const itemsAfter = await db.contentItem.findMany({
+				where: { sourceId: source.id },
+			});
+			expect(itemsAfter).toHaveLength(0);
+		});
+
 		it("should return integrations with correct shape", async () => {
 			const res = await app.request("/api/sources", {
 				headers: authHeaders,
@@ -440,6 +602,23 @@ describe("API Routes", () => {
 			expect(res.status).toBe(404);
 			const json = await res.json();
 			expect(json).toEqual({ error: "Source not connected" });
+		});
+
+		it("should return 404 when syncing nonexistent provider", async () => {
+			const res = await app.request("/api/sources/nonexistent-provider/sync", {
+				method: "POST",
+				headers: authHeaders,
+			});
+			// Either 404 (source not connected) or 404 (integration not available)
+			expect(res.status).toBe(404);
+		});
+
+		it("should return 404 when disconnecting nonexistent provider", async () => {
+			const res = await app.request("/api/sources/nonexistent-provider", {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
 		});
 	});
 

@@ -695,104 +695,112 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 
 ## Execution Strategy: Parallelization & Testing
 
-### Checkpoint Status
+### Detailed Status Audit
 
-- [x] **Checkpoint 1**: App Shell + Onboarding (PR #21)
-- [x] **Wave 1 Backend** (Checkpoints 2-4 backend): AI package, ai-chat orchestrator, Mem0 wrapper, integrations framework, all API routes, database schema
-- [x] **Wave 2 UI** (Checkpoints 2-4 frontend): Chat UI (with custom sidebar + message persistence), Memories UI, Sources UI
-- [ ] **Checkpoint 5**: Dashboard with Real Data
-- [ ] **Checkpoint 6**: API & MCP Page + MCP Server
-- [ ] **Checkpoint 7**: Settings Page + Polish
+#### What's REAL (fully functional)
+| Area | Status | Details |
+|------|--------|---------|
+| App shell + sidebar + onboarding | DONE | PR #21 |
+| Database schema | DONE | Chat, ChatMessage, Source, ContentItem, PinnedMemory all present |
+| `packages/ai` | DONE | AI Gateway config, models, system prompt |
+| `packages/ai-chat` orchestrator | DONE | `streamText` + message persistence + title generation |
+| `packages/mem0` client | DONE | Full CRUD via `mem0ai` SDK (add, search, get, getAll, update, delete, history) |
+| Chat API routes | DONE | POST /chat (streaming), GET/POST/PATCH/DELETE /chats |
+| Memories API routes | DONE | GET /memories, GET /search, PUT/:id, DELETE/:id, POST/DELETE pin |
+| Sources API routes | PARTIAL | GET /sources, POST /sync, DELETE — but OAuth token retrieval is TODO |
+| Chat UI + persistence | DONE | Custom ChatSidebar, `useChat` + `useAISDKRuntime` + `DefaultChatTransport` |
+| Memories UI | DONE | Cards, search, filters, pin/edit/delete |
+| Sources UI | DONE | Connected cards + available integrations grid |
+| AssistantUI components | DONE | Thread, markdown-text, tool-fallback, tooltip-icon-button |
+| Web search tool (Tavily) | DONE | Wired into chat orchestrator |
+| Tests | DONE | 29 passing (auth guards + authenticated CRUD lifecycle) |
+
+#### What's STUB or MISSING
+| Area | Status | What's needed |
+|------|--------|---------------|
+| Chat tools: `addMemory` | MISSING | Tool definition + wire into orchestrator — calls `mem0.add()` |
+| Chat tools: `searchMemories` | MISSING | Tool definition + wire into orchestrator — calls `mem0.search()` |
+| Chat tools: `listSources` | MISSING | Tool definition + wire into orchestrator — queries Source table |
+| Tool UIs (add-memory, search-memories, list-sources) | SCAFFOLD | Components exist but tools don't, so never rendered |
+| Twitter adapter | STUB | `packages/integrations/twitter/adapter.ts` returns empty arrays — needs Twitter API v2 calls |
+| GitHub adapter | STUB | `packages/integrations/github/adapter.ts` returns empty arrays — needs GitHub API calls |
+| OAuth token retrieval | TODO | `packages/api/src/routes/sources.ts:78-79` passes empty `accessToken=""` — needs Account table lookup |
+| Trigger.dev sync jobs | STUB | `packages/tasks/` only has SDK config — no scheduled tasks defined |
+| Dashboard API route | MISSING | `packages/api/src/routes/dashboard.ts` doesn't exist |
+| Dashboard UI | MISSING | Placeholder page only |
+| MCP server package | MISSING | `packages/mcp-server/` doesn't exist |
+| API key management UI | MISSING | No UI for BetterAuth apiKey plugin |
+| Settings page | MISSING | Placeholder page only |
 
 ### Implementation Notes
 
-**Chat UI fix (Wave 2)**: Originally tried `useChatRuntime` + `AssistantChatTransport` + `useRemoteThreadListRuntime` with `ThreadHistoryAdapter`. Discovered that `ThreadHistoryAdapter.load()` is only called by `LocalThreadRuntimeCore`, NOT by the AI SDK runtime. Switched to Postel v2's proven pattern: `useChat` + `useAISDKRuntime` + `DefaultChatTransport` with custom `ChatSidebar` using fetch-based state management. Key detail: `useChat`'s `messages` prop only applies at creation time (not reactive), so `ChatRuntimeProvider` is gated behind `isReadyToRender` to ensure messages are loaded before mount.
+**Chat UI fix**: Originally tried `useChatRuntime` + `AssistantChatTransport` + `useRemoteThreadListRuntime` with `ThreadHistoryAdapter`. Discovered that `ThreadHistoryAdapter.load()` is only called by `LocalThreadRuntimeCore`, NOT by the AI SDK runtime. Switched to Postel v2's proven pattern: `useChat` + `useAISDKRuntime` + `DefaultChatTransport` with custom `ChatSidebar` using fetch-based state management. Key detail: `useChat`'s `messages` prop only applies at creation time (not reactive), so `ChatRuntimeProvider` is gated behind `isReadyToRender` to ensure messages are loaded before mount.
 
-**Tests**: 29 API route tests passing (auth guards + authenticated CRUD lifecycle for chats, memories, sources).
+---
 
-### Parallel Execution Plan
-
-Checkpoints 2-4 have independent backend work that can be built simultaneously. The dependency graph:
+### Remaining Waves (Parallelized)
 
 ```
-Wave 1 (parallel — zero deps between them):
-├── Stream A: packages/ai + packages/ai-chat + chat API routes
-├── Stream B: packages/mem0 + memory API routes
-├── Stream C: packages/integrations (types, registry, adapters) + sources API routes
-└── Shared:   Prisma schema (all new models in one migration)
+Wave 3 (parallel — zero deps between streams):
+├── Stream A: Chat tools — addMemory, searchMemories, listSources tool definitions + wire into orchestrator
+├── Stream B: Integration adapters — real Twitter API v2 + GitHub API calls + OAuth token retrieval from Account table
+└── Stream C: Trigger.dev sync jobs — scheduled daily sync for connected sources
 
-Wave 2 (parallel — depends on Wave 1 backends):
-├── Stream A: Chat UI (AssistantUI components, chat page, ThreadListSidebar)
-├── Stream B: Memories UI (page, cards, filters, search) + chat tools (addMemory, searchMemories)
-└── Stream C: Sources UI (page, cards, connect flow) + chat tool (listSources)
+Wave 4 (parallel — depends on Wave 3):
+├── Stream A: Dashboard — API route (GET /api/dashboard) + UI (profile summary, stats, activity feed, quick actions)
+└── Stream B: MCP server package + API key management UI + MCP setup guide
 
-Wave 3 (sequential — depends on Wave 2):
-├── CP5: Dashboard (aggregates stats from memories, sources, chats)
-├── CP6: MCP server package + API key management UI
-└── CP7: Settings page + polish pass
+Wave 5 (final):
+└── Settings page + polish pass (profile editing, sync prefs, danger zone, loading states, error boundaries, mobile)
 ```
 
-**Key insight**: The Prisma schema should be updated once with ALL new models (Chat, ChatMessage, Source, ContentItem, PinnedMemory) before starting any Wave 1 stream. This avoids multiple migration conflicts.
+#### Wave 3 Details
+
+**Stream A — Chat Tools** (smallest, ~2-3 files):
+- Create `packages/ai-chat/src/tools/add-memory.ts` — zod schema + calls `mem0.add()`
+- Create `packages/ai-chat/src/tools/search-memories.ts` — zod schema + calls `mem0.search()`
+- Create `packages/ai-chat/src/tools/list-sources.ts` — zod schema + queries Source table
+- Update `packages/ai-chat/src/tools/index.ts` — export all tools
+- Update `packages/ai-chat/src/services/chat-orchestrator.ts` — register new tools (pass userId)
+- Update `packages/ai/prompts/chat-agent.ts` — document tool usage in system prompt
+
+**Stream B — Integration Adapters** (~4-5 files):
+- `packages/integrations/twitter/adapter.ts` — Twitter API v2: fetch user tweets (GET /2/users/:id/tweets), map to ContentItems, send to Mem0
+- `packages/integrations/github/adapter.ts` — GitHub API: fetch profile + repos + events, map to ContentItems, send to Mem0
+- `packages/api/src/routes/sources.ts` — fix OAuth token retrieval: lookup Account table by provider + userId to get `accessToken`
+- May need `packages/integrations/types.ts` updates for token handling
+
+**Stream C — Trigger.dev Sync Jobs** (~1-2 files):
+- `packages/tasks/src/sync-sources.ts` — scheduled task: query all Sources with `status=connected`, call adapter.sync() for each
+- Wire into `packages/tasks/index.ts`
+- Configure schedule (daily or configurable)
+
+#### Wave 4 Details
+
+**Stream A — Dashboard**:
+- `packages/api/src/routes/dashboard.ts` — aggregate stats: memory count (Mem0), source count (DB), chat count (DB), recent activity (ContentItems)
+- Dashboard page UI: profile summary card, connected sources strip, quick stats, recent activity feed, quick actions
+
+**Stream B — MCP + API Keys**:
+- `packages/mcp-server/` — MCP server exposing user profile, memories, sources as tools/resources
+- API key management UI: generate, view (masked), copy, revoke (BetterAuth apiKey plugin already handles backend)
+- MCP setup guide with copy-paste config blocks
 
 ### Test Strategy
 
-Pragmatic, low-maintenance tests that catch real regressions. No aim for coverage %, just protect core contracts.
+29 tests currently passing. Pragmatic approach — protect core contracts, no coverage targets.
 
-#### 1. API Route Tests (~10 tests) — Vitest + Hono `app.request()`
-No HTTP server needed. Highest value, lowest effort.
+#### Current Tests (29 passing)
+- Health check (1)
+- Auth guards for all protected endpoints (12)
+- Authenticated chat CRUD lifecycle (8)
+- Authenticated sources shape + error cases (4)
+- Authenticated memories shape + error cases (4)
 
-```
-GET  /api/health                    → 200
-POST /api/ai/chat                   → 401 without auth
-GET  /api/ai/chats                  → 401 without auth
-GET  /api/ai/chats                  → 200 + empty array for authed user
-GET  /api/memories                  → 401 without auth
-GET  /api/memories/search?q=test    → 401 without auth
-GET  /api/sources                   → 401 without auth
-POST /api/sources/unknown/sync      → 404 for unknown provider
-GET  /api/dashboard                 → 401 without auth
-```
-
-#### 2. Package Unit Tests (~15 tests) — Vitest
-Test package contracts with mocked dependencies.
-
-```
-packages/mem0:
-  - client.add() calls SDK with correct params
-  - client.search() passes filters correctly
-  - client.delete() calls correct endpoint
-
-packages/ai-chat/tools:
-  - web-search tool schema validates correctly
-  - add-memory tool schema validates correctly
-  - search-memories tool schema validates correctly
-
-packages/integrations:
-  - registry.register() + registry.get() roundtrips
-  - registry.get() returns undefined for unknown provider
-  - registry.list() returns all registered adapters
-
-config:
-  - config shape snapshot (catches accidental breakage)
-```
-
-#### 3. Schema Validation — CI step (no custom code)
-```bash
-pnpm --filter @onecontext/database generate  # fails if schema is invalid
-```
-
-#### 4. Smoke E2E (3 tests) — Playwright
-```
-- Landing page loads, has "Get Started" CTA
-- /dashboard redirects to /login when unauthenticated
-- /login page renders with OAuth buttons and email form
-```
-
-#### What we deliberately skip
-- React component unit tests (too much mocking for shadcn wrappers)
-- Full OAuth E2E (flaky in CI, BetterAuth handles correctness)
-- Chat streaming tests (hard to test SSE, trust AI SDK)
-- Mem0 integration tests (requires live API key)
+#### Tests to Add Per Wave
+- **Wave 3**: Tool schema validation tests, integration registry tests
+- **Wave 4**: Dashboard route auth guard + response shape, MCP server tool tests
+- **Wave 5**: Settings route tests
 
 ---
 

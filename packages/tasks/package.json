@@ -1,5 +1,7 @@
 {
 	"dependencies": {
+		"@onecontext/database": "workspace:*",
+		"@onecontext/integrations": "workspace:*",
 		"@trigger.dev/sdk": "4.3.3"
 	},
 	"devDependencies": {

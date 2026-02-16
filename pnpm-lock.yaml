@@ -241,6 +241,9 @@ importers:
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
+      '@onecontext/mem0':
+        specifier: workspace:*
+        version: link:../mem0
       '@tavily/ai-sdk':
         specifier: ^0.4.1
         version: 0.4.1(ai@6.0.86(zod@4.3.6))(zod@4.3.6)
@@ -407,6 +410,12 @@ importers:
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
+      '@onecontext/logs':
+        specifier: workspace:*
+        version: link:../logs
+      '@onecontext/mem0':
+        specifier: workspace:*
+        version: link:../mem0
       zod:
         specifier: ^3.24.2
         version: 3.25.76
@@ -505,6 +514,12 @@ importers:
 
   packages/tasks:
     dependencies:
+      '@onecontext/database':
+        specifier: workspace:*
+        version: link:../database
+      '@onecontext/integrations':
+        specifier: workspace:*
+        version: link:../integrations
       '@trigger.dev/sdk':
         specifier: 4.3.3
         version: 4.3.3(ai@6.0.86(zod@3.25.76))(typescript@5.7.2)(zod@3.25.76)

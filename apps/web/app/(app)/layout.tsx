@@ -35,7 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	if (!session) return null;
 
 	return (
-		<SidebarProvider>
+		<SidebarProvider className="h-svh overflow-hidden">
 			<AppSidebar user={session.user} />
 			<SidebarInset>
 				<header className="flex h-16 shrink-0 items-center gap-2">

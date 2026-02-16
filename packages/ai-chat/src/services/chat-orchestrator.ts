@@ -1,7 +1,12 @@
 import { chatAgentSystemPrompt, chatModel } from "@onecontext/ai";
 import { db } from "@onecontext/database/server";
 import { convertToModelMessages, stepCountIs, streamText } from "ai";
-import { getWebSearchTool } from "../tools";
+import {
+	getAddMemoryTool,
+	getListSourcesTool,
+	getSearchMemoriesTool,
+	getWebSearchTool,
+} from "../tools";
 import type { ChatStreamOptions } from "../types";
 import { createChat } from "./chat";
 import { generateChatTitle } from "./title";
@@ -13,7 +18,7 @@ export async function handleChatRequest({
 }: ChatStreamOptions) {
 	let currentChatId: string = chatId ?? "";
 
-	if (!chatId) {
+	if (!chatId || chatId === "new") {
 		const chat = await createChat(userId);
 		currentChatId = chat.id;
 	}
@@ -37,6 +42,9 @@ export async function handleChatRequest({
 		messages: modelMessages,
 		tools: {
 			webSearch: getWebSearchTool(),
+			addMemory: getAddMemoryTool(userId),
+			searchMemories: getSearchMemoriesTool(userId),
+			listSources: getListSourcesTool(userId),
 		},
 		stopWhen: stepCountIs(5),
 		onFinish: async ({ text }) => {

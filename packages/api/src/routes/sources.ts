@@ -2,7 +2,9 @@ import { db } from "@onecontext/database/server";
 import {
 	type AvailableIntegration,
 	get,
+	getAccessToken,
 	getAvailable,
+	persistSyncResult,
 } from "@onecontext/integrations";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
@@ -75,43 +77,16 @@ export const sourcesRouter = new Hono()
 				return c.json({ error: "Integration not available" }, 404);
 			}
 
-			// TODO: Retrieve the actual OAuth access token for this source
-			const accessToken = "";
-
-			const result = await adapter.sync(user.id, accessToken);
-
-			// Upsert content items
-			for (const item of result.contentItems) {
-				await db.contentItem.upsert({
-					where: {
-						sourceId_externalId: {
-							sourceId: source.id,
-							externalId: item.externalId,
-						},
-					},
-					create: {
-						userId: user.id,
-						sourceId: source.id,
-						externalId: item.externalId,
-						type: item.type,
-						rawData: item.rawData,
-						contentDate: item.contentDate,
-					},
-					update: {
-						rawData: item.rawData,
-						contentDate: item.contentDate,
-					},
-				});
+			const accessToken = await getAccessToken(user.id, provider);
+			if (!accessToken) {
+				return c.json(
+					{ error: "No access token found. Please reconnect this source." },
+					400,
+				);
 			}
 
-			// Update source sync timestamp and memory count
-			await db.source.update({
-				where: { id: source.id },
-				data: {
-					lastSyncAt: new Date(),
-					memoryCount: { increment: result.memoriesAdded },
-				},
-			});
+			const result = await adapter.sync(user.id, accessToken);
+			await persistSyncResult(source.id, user.id, result);
 
 			return c.json({
 				provider,

@@ -1,6 +1,8 @@
 {
 	"dependencies": {
 		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*",
+		"@onecontext/mem0": "workspace:*",
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
