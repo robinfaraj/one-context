@@ -1,3 +1,27 @@
+@keyframes glow-pulse {
+	0%,
+	100% {
+		box-shadow: 0 0 12px rgba(4, 120, 87, 0.2), 0 0 24px rgba(4, 120, 87, 0.1);
+	}
+	50% {
+		box-shadow: 0 0 20px rgba(4, 120, 87, 0.4), 0 0 40px rgba(4, 120, 87, 0.2);
+	}
+}
+
+:where(.dark) {
+	@keyframes glow-pulse {
+		0%,
+		100% {
+			box-shadow: 0 0 12px rgba(16, 185, 129, 0.2), 0 0 24px
+				rgba(16, 185, 129, 0.1);
+		}
+		50% {
+			box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 40px
+				rgba(16, 185, 129, 0.2);
+		}
+	}
+}
+
 @theme {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
