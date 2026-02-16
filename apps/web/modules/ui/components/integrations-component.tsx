@@ -2,32 +2,17 @@ import {
 	ChatGPTIcon,
 	ClaudeIcon,
 	GitHubIcon,
+	GoogleDriveIcon,
 	LinkedInIcon,
 	N8NIcon,
+	NotionIcon,
 	OpenclawIcon,
 	TikTokIcon,
 	XIcon,
 	YouTubeIcon,
 } from "@shared/icons/brand-icons";
 import { cn } from "@ui/lib/utils";
-
-// TODO clean up and add OneContext logo
-const PlaceholderLogoIcon = (props: React.SVGProps<SVGSVGElement>) => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth="2"
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		role="img"
-		aria-label="OneContext"
-		{...props}
-	>
-		<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-	</svg>
-);
+import { OneContextLogo } from "../../(marketing)/components/logo";
 
 export default function IntegrationsSection() {
 	return (
@@ -45,6 +30,9 @@ export default function IntegrationsSection() {
 					</div>
 					<div className="relative mx-auto flex max-w-lg items-center justify-between">
 						<div className="space-y-3">
+							<IntegrationCard side="left" angle={45} lineWidth={155}>
+								<NotionIcon />
+							</IntegrationCard>
 							<IntegrationCard side="left" angle={35} lineWidth={145}>
 								<XIcon />
 							</IntegrationCard>
@@ -60,15 +48,18 @@ export default function IntegrationsSection() {
 							<IntegrationCard side="left" angle={-35} lineWidth={145}>
 								<YouTubeIcon />
 							</IntegrationCard>
+							<IntegrationCard side="left" angle={-45} lineWidth={155}>
+								<GoogleDriveIcon />
+							</IntegrationCard>
 						</div>
 
 						<div className="mx-auto my-2 flex w-fit justify-center gap-2">
-							<div className="bg-muted relative z-20 rounded-2xl border p-1">
+							<div className="relative z-20 animate-[glow-pulse_3s_ease-in-out_infinite] rounded-2xl border border-primary/30 bg-muted p-1.5">
 								<IntegrationCard
-									className="shadow-black-950/10 dark:bg-background size-16 border-black/25 shadow-xl dark:border-white/25 dark:shadow-white/10"
+									className="shadow-black-950/10 dark:bg-background size-20 border-primary/40 shadow-xl dark:border-primary/30 dark:shadow-primary/10"
 									isCenter
 								>
-									<PlaceholderLogoIcon />
+									<OneContextLogo className="text-primary" />
 								</IntegrationCard>
 							</div>
 						</div>
@@ -124,7 +115,7 @@ const IntegrationCard = ({
 			<div
 				className={cn(
 					"relative z-20 m-auto size-fit *:size-6",
-					isCenter && "*:size-8",
+					isCenter && "*:size-12",
 				)}
 			>
 				{children}

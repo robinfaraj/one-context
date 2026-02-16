@@ -1,6 +1,10 @@
-# OneContext
+<p align="center">
+  <img src=".github/logo.svg" alt="OneContext" width="200" />
+</p>
 
-**Your AI identity, everywhere.**
+<h1 align="center">OneContext</h1>
+
+<p align="center"><strong>Your AI identity, everywhere.</strong></p>
 
 Set up your profile once. Auto-sync from X, GitHub, and Notion. Use it with any AI tool via MCP or API.
 
@@ -57,7 +61,7 @@ Apache 2.0 — free to use, modify, and distribute. See LICENSE file.
 
 ## Credits
 
-Built by [Robin Sadeghpour](https://github.com/robinfaraj) ([X](https://x.com/robin_faraj), [LinkedIn](https://www.linkedin.com/in/robin-sadeghpour-faraj-204196230/)), inspired by the pain of AI tool setup. Thanks to Anthropic (MCP), Vercel, shadcn, and the open source community.
+Built by [Robin Faraj](https://github.com/robinfaraj) ([X](https://x.com/robin_faraj), [LinkedIn](https://www.linkedin.com/in/robin-sadeghpour-faraj-204196230/)), inspired by the pain of AI tool setup. Thanks to Anthropic (MCP), Vercel, shadcn, and the open source community.
 
 ---
 
