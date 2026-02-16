@@ -1,4 +1,8 @@
 export type Config = {
+	links: {
+		github: string;
+		twitter: string;
+	};
 	auth: {
 		enableSignup: boolean;
 		enableSocialLogin: boolean;
