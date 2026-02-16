@@ -5,7 +5,7 @@ export type { Config } from "./types";
 export const config: Config = {
 	links: {
 		github: "https://github.com/robinfaraj/one-context",
-		twitter: "https://twitter.com/onecontext",
+		twitter: "https://x.com/robin_faraj",
 	},
 	auth: {
 		enableSignup: true,
