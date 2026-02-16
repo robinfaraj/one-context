@@ -2,6 +2,7 @@ export type Config = {
 	links: {
 		github: string;
 		twitter: string;
+		discord: string;
 	};
 	auth: {
 		enableSignup: boolean;
