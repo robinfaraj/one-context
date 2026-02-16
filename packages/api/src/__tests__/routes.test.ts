@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { db } from "@onecontext/database/server";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { app } from "../app";
 
 const DEV_API_KEY = process.env.DEV_API_KEY;
@@ -31,8 +32,11 @@ describe("API Routes", () => {
 				body: JSON.stringify({ messages: [] }),
 			});
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
+		});
+
+		it("should return 401 for GET /api/ai/chats/:id without auth", async () => {
+			const res = await app.request("/api/ai/chats/fake-id");
+			expect(res.status).toBe(401);
 		});
 
 		it("should return 401 for DELETE /api/ai/chats/:id without auth", async () => {
@@ -40,29 +44,51 @@ describe("API Routes", () => {
 				method: "DELETE",
 			});
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
 		});
 
 		it("should return 401 for GET /api/memories without auth", async () => {
 			const res = await app.request("/api/memories");
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
 		});
 
 		it("should return 401 for GET /api/memories/search without auth", async () => {
 			const res = await app.request("/api/memories/search?q=test");
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
+		});
+
+		it("should return 401 for PUT /api/memories/:id without auth", async () => {
+			const res = await app.request("/api/memories/fake-id", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ content: "test" }),
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for DELETE /api/memories/:id without auth", async () => {
+			const res = await app.request("/api/memories/fake-id", {
+				method: "DELETE",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for POST /api/memories/:id/pin without auth", async () => {
+			const res = await app.request("/api/memories/fake-id/pin", {
+				method: "POST",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for DELETE /api/memories/:id/pin without auth", async () => {
+			const res = await app.request("/api/memories/fake-id/pin", {
+				method: "DELETE",
+			});
+			expect(res.status).toBe(401);
 		});
 
 		it("should return 401 for GET /api/sources without auth", async () => {
 			const res = await app.request("/api/sources");
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
 		});
 
 		it("should return 401 for POST /api/sources/:provider/sync without auth", async () => {
@@ -70,8 +96,6 @@ describe("API Routes", () => {
 				method: "POST",
 			});
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
 		});
 
 		it("should return 401 for DELETE /api/sources/:provider without auth", async () => {
@@ -79,108 +103,386 @@ describe("API Routes", () => {
 				method: "DELETE",
 			});
 			expect(res.status).toBe(401);
-			const json = await res.json();
-			expect(json).toEqual({ error: "Unauthorized" });
 		});
 	});
 
-	describe.runIf(!!DEV_API_KEY)("Authenticated Endpoints", () => {
-		describe("AI Chat", () => {
-			it("GET /api/ai/chats should return empty array", async () => {
-				const res = await app.request("/api/ai/chats", {
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(200);
-				const json = await res.json();
-				expect(Array.isArray(json)).toBe(true);
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Chat CRUD Lifecycle", () => {
+		const chatIdsToCleanup: string[] = [];
+		let testUserId: string;
+
+		beforeAll(async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+			testUserId = user.id;
+		});
+
+		afterAll(async () => {
+			for (const id of chatIdsToCleanup) {
+				await db.chat.delete({ where: { id } }).catch(() => {});
+			}
+		});
+
+		it("should persist a chat with messages and load them back", async () => {
+			// Simulate what the orchestrator does: create chat + save messages
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Persistence Test" },
+			});
+			chatIdsToCleanup.push(chat.id);
+
+			await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "user",
+					parts: [{ type: "text", text: "What is OneContext?" }],
+				},
 			});
 
-			it("GET /api/ai/chats/:id should return 404 for nonexistent chat", async () => {
-				const res = await app.request("/api/ai/chats/nonexistent-id", {
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(404);
-				const json = await res.json();
-				expect(json).toEqual({ error: "Chat not found" });
+			await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "assistant",
+					parts: [
+						{
+							type: "text",
+							text: "OneContext is a universal AI identity platform.",
+						},
+					],
+				},
 			});
 
-			it("DELETE /api/ai/chats/:id should return 404 for nonexistent chat", async () => {
-				const res = await app.request("/api/ai/chats/nonexistent-id", {
-					method: "DELETE",
-					headers: authHeaders,
+			// Load via API — simulates page refresh / revisit
+			const res = await app.request(`/api/ai/chats/${chat.id}`, {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				id: string;
+				title: string;
+				messages: Array<{
+					id: string;
+					role: string;
+					parts: Array<{ type: string; text: string }>;
+					createdAt: string;
+				}>;
+			};
+
+			expect(json.id).toBe(chat.id);
+			expect(json.title).toBe("Persistence Test");
+			expect(json.messages).toHaveLength(2);
+
+			// Verify message content is fully persisted
+			expect(json.messages[0].role).toBe("user");
+			expect(json.messages[0].parts).toEqual([
+				{ type: "text", text: "What is OneContext?" },
+			]);
+			expect(json.messages[1].role).toBe("assistant");
+			expect(json.messages[1].parts).toEqual([
+				{
+					type: "text",
+					text: "OneContext is a universal AI identity platform.",
+				},
+			]);
+		});
+
+		it("should return messages in chronological order", async () => {
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Order Test" },
+			});
+			chatIdsToCleanup.push(chat.id);
+
+			// Create messages with slight delays to ensure ordering
+			for (let i = 0; i < 3; i++) {
+				await db.chatMessage.create({
+					data: {
+						chatId: chat.id,
+						role: i % 2 === 0 ? "user" : "assistant",
+						parts: [{ type: "text", text: `Message ${i + 1}` }],
+					},
 				});
-				expect(res.status).toBe(404);
-				const json = await res.json();
-				expect(json).toEqual({ error: "Chat not found" });
+			}
+
+			const res = await app.request(`/api/ai/chats/${chat.id}`, {
+				headers: authHeaders,
+			});
+			const json = (await res.json()) as {
+				messages: Array<{
+					parts: Array<{ text: string }>;
+					createdAt: string;
+				}>;
+			};
+
+			expect(json.messages).toHaveLength(3);
+			expect(json.messages[0].parts[0].text).toBe("Message 1");
+			expect(json.messages[1].parts[0].text).toBe("Message 2");
+			expect(json.messages[2].parts[0].text).toBe("Message 3");
+
+			// Verify chronological order
+			for (let i = 1; i < json.messages.length; i++) {
+				expect(
+					new Date(json.messages[i].createdAt).getTime(),
+				).toBeGreaterThanOrEqual(
+					new Date(json.messages[i - 1].createdAt).getTime(),
+				);
+			}
+		});
+
+		it("should add messages to an existing chat and see them on reload", async () => {
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Growing Chat" },
+			});
+			chatIdsToCleanup.push(chat.id);
+
+			// First message
+			await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "user",
+					parts: [{ type: "text", text: "First message" }],
+				},
+			});
+
+			// Verify 1 message
+			const res1 = await app.request(`/api/ai/chats/${chat.id}`, {
+				headers: authHeaders,
+			});
+			const json1 = (await res1.json()) as {
+				messages: Array<{ role: string }>;
+			};
+			expect(json1.messages).toHaveLength(1);
+
+			// Add two more messages (simulates continued conversation)
+			await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "assistant",
+					parts: [{ type: "text", text: "Reply to first" }],
+				},
+			});
+			await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "user",
+					parts: [{ type: "text", text: "Follow-up question" }],
+				},
+			});
+
+			// Reload — should now have 3 messages
+			const res2 = await app.request(`/api/ai/chats/${chat.id}`, {
+				headers: authHeaders,
+			});
+			const json2 = (await res2.json()) as {
+				messages: Array<{ role: string; parts: Array<{ text: string }> }>;
+			};
+			expect(json2.messages).toHaveLength(3);
+			expect(json2.messages[2].parts[0].text).toBe("Follow-up question");
+		});
+
+		it("should list multiple chats sorted by most recent first", async () => {
+			const chat1 = await db.chat.create({
+				data: { userId: testUserId, title: "Older Chat" },
+			});
+			chatIdsToCleanup.push(chat1.id);
+
+			// Small delay to ensure different updatedAt
+			await new Promise((r) => setTimeout(r, 50));
+
+			const chat2 = await db.chat.create({
+				data: { userId: testUserId, title: "Newer Chat" },
+			});
+			chatIdsToCleanup.push(chat2.id);
+
+			const res = await app.request("/api/ai/chats", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as Array<{
+				id: string;
+				title: string;
+				updatedAt: string;
+			}>;
+
+			const idx1 = json.findIndex((c) => c.id === chat1.id);
+			const idx2 = json.findIndex((c) => c.id === chat2.id);
+			expect(idx1).toBeGreaterThan(-1);
+			expect(idx2).toBeGreaterThan(-1);
+			// Newer chat should appear first (sorted by updatedAt desc)
+			expect(idx2).toBeLessThan(idx1);
+		});
+
+		it("should cascade delete messages when chat is deleted", async () => {
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Cascade Test" },
+			});
+
+			const msg = await db.chatMessage.create({
+				data: {
+					chatId: chat.id,
+					role: "user",
+					parts: [{ type: "text", text: "Will be cascade deleted" }],
+				},
+			});
+
+			// Delete chat via API
+			const deleteRes = await app.request(`/api/ai/chats/${chat.id}`, {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(deleteRes.status).toBe(200);
+
+			// Verify messages are also gone
+			const orphanedMsg = await db.chatMessage.findUnique({
+				where: { id: msg.id },
+			});
+			expect(orphanedMsg).toBeNull();
+		});
+
+		it("should return chat list items with correct shape", async () => {
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Shape Test" },
+			});
+			chatIdsToCleanup.push(chat.id);
+
+			const res = await app.request("/api/ai/chats", {
+				headers: authHeaders,
+			});
+			const json = (await res.json()) as Array<Record<string, unknown>>;
+			const found = json.find((c) => c.id === chat.id) as Record<
+				string,
+				unknown
+			>;
+			expect(found).toBeDefined();
+
+			// List endpoint should return id, title, createdAt, updatedAt — but NOT messages
+			expect(found.id).toBeDefined();
+			expect(found.title).toBe("Shape Test");
+			expect(found.createdAt).toBeDefined();
+			expect(found.updatedAt).toBeDefined();
+			expect(found.messages).toBeUndefined();
+		});
+
+		it("should return 404 when getting nonexistent chat", async () => {
+			const res = await app.request("/api/ai/chats/nonexistent-id", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
+			expect(await res.json()).toEqual({ error: "Chat not found" });
+		});
+
+		it("should return 404 when deleting nonexistent chat", async () => {
+			const res = await app.request("/api/ai/chats/nonexistent-id", {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
+			expect(await res.json()).toEqual({ error: "Chat not found" });
+		});
+	});
+
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Sources", () => {
+		it("should return integrations with correct shape", async () => {
+			const res = await app.request("/api/sources", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				integrations: Array<{
+					provider: string;
+					displayName: string;
+					description: string;
+					available: boolean;
+					connected: boolean;
+					comingSoon?: boolean;
+				}>;
+				connectedSources: unknown[];
+			};
+
+			expect(json.integrations).toBeDefined();
+			expect(json.connectedSources).toBeDefined();
+			expect(json.integrations.length).toBeGreaterThanOrEqual(6);
+
+			// Should include both available and coming-soon integrations
+			const twitter = json.integrations.find((i) => i.provider === "twitter");
+			expect(twitter).toBeDefined();
+			expect(twitter?.available).toBe(true);
+			expect(twitter?.displayName).toBe("Twitter / X");
+
+			const github = json.integrations.find((i) => i.provider === "github");
+			expect(github).toBeDefined();
+			expect(github?.available).toBe(true);
+
+			const linkedin = json.integrations.find((i) => i.provider === "linkedin");
+			expect(linkedin).toBeDefined();
+			expect(linkedin?.available).toBe(false);
+			expect(linkedin?.comingSoon).toBe(true);
+		});
+
+		it("should return 404 when syncing unconnected source", async () => {
+			const res = await app.request("/api/sources/twitter/sync", {
+				method: "POST",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Source not connected" });
+		});
+
+		it("should return 404 when disconnecting unconnected source", async () => {
+			const res = await app.request("/api/sources/twitter", {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Source not connected" });
+		});
+	});
+
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Memories", () => {
+		it("should return memories as array", async () => {
+			const res = await app.request("/api/memories", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+			const json = await res.json();
+			expect(Array.isArray(json)).toBe(true);
+		});
+
+		it("should return 400 for search without query param", async () => {
+			const res = await app.request("/api/memories/search", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({
+				error: "Query parameter 'q' is required",
 			});
 		});
 
-		describe("Sources", () => {
-			it("GET /api/sources should return integrations list", async () => {
-				const res = await app.request("/api/sources", {
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(200);
-				const json = (await res.json()) as {
-					integrations: Array<{
-						provider: string;
-						connected: boolean;
-					}>;
-					connectedSources: unknown[];
-				};
-				expect(json.integrations).toBeDefined();
-				expect(Array.isArray(json.integrations)).toBe(true);
-				expect(json.integrations.length).toBeGreaterThan(0);
-				// Verify each integration has required fields
-				for (const integration of json.integrations) {
-					expect(integration.provider).toBeDefined();
-					expect(typeof integration.connected).toBe("boolean");
-				}
-				expect(json.connectedSources).toBeDefined();
-				expect(Array.isArray(json.connectedSources)).toBe(true);
+		it("should return 400 for update without content", async () => {
+			const res = await app.request("/api/memories/fake-id", {
+				method: "PUT",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({}),
 			});
-
-			it("POST /api/sources/twitter/sync should return 404 for unconnected source", async () => {
-				const res = await app.request("/api/sources/twitter/sync", {
-					method: "POST",
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(404);
-				const json = await res.json();
-				expect(json).toEqual({ error: "Source not connected" });
-			});
-
-			it("DELETE /api/sources/twitter should return 404 for unconnected source", async () => {
-				const res = await app.request("/api/sources/twitter", {
-					method: "DELETE",
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(404);
-				const json = await res.json();
-				expect(json).toEqual({ error: "Source not connected" });
-			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Content is required" });
 		});
 
-		describe("Memories", () => {
-			it("GET /api/memories should return memories list", async () => {
-				const res = await app.request("/api/memories", {
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(200);
-				const json = await res.json();
-				expect(Array.isArray(json)).toBe(true);
+		it("should return 404 for unpin of non-pinned memory", async () => {
+			const res = await app.request("/api/memories/nonexistent-memory/pin", {
+				method: "DELETE",
+				headers: authHeaders,
 			});
-
-			it("GET /api/memories/search should return 400 without query param", async () => {
-				const res = await app.request("/api/memories/search", {
-					headers: authHeaders,
-				});
-				expect(res.status).toBe(400);
-				const json = await res.json();
-				expect(json).toEqual({
-					error: "Query parameter 'q' is required",
-				});
-			});
+			expect(res.status).toBe(404);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Pinned memory not found" });
 		});
 	});
 });

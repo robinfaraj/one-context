@@ -1,9 +1,11 @@
 import {
+	createChat,
 	deleteChat,
 	getChat,
 	handleChatRequest,
 	listChats,
 } from "@onecontext/ai-chat";
+import { db } from "@onecontext/database/server";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";
@@ -51,6 +53,52 @@ export const aiRouter = new Hono()
 			const user = c.get("user");
 			const chats = await listChats(user.id);
 			return c.json(chats);
+		},
+	)
+	.post(
+		"/chats",
+		describeRoute({
+			tags: ["AI Chat"],
+			summary: "Create a new chat",
+			description: "Creates an empty chat for the authenticated user",
+			responses: { 200: { description: "Created chat" } },
+		}),
+		async (c) => {
+			const user = c.get("user");
+			const chat = await createChat(user.id);
+			return c.json(chat);
+		},
+	)
+	.patch(
+		"/chats/:id",
+		describeRoute({
+			tags: ["AI Chat"],
+			summary: "Update a chat",
+			description: "Update chat title",
+			responses: {
+				200: { description: "Updated chat" },
+				404: { description: "Chat not found" },
+			},
+		}),
+		async (c) => {
+			const user = c.get("user");
+			const chatId = c.req.param("id");
+			const body = await c.req.json<{ title?: string }>();
+
+			const chat = await db.chat.findFirst({
+				where: { id: chatId, userId: user.id },
+			});
+
+			if (!chat) {
+				return c.json({ error: "Chat not found" }, 404);
+			}
+
+			const updated = await db.chat.update({
+				where: { id: chatId },
+				data: { title: body.title ?? chat.title },
+			});
+
+			return c.json(updated);
 		},
 	)
 	.get(

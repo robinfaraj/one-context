@@ -1,19 +1,32 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/card";
+"use client";
+
+import { ManualEntrySection } from "@shared/components/sources/manual-entry-section";
+import { SourceGrid } from "@shared/components/sources/source-grid";
+import { useSources } from "@shared/lib/sources-api";
 
 export default function SourcesPage() {
+	const { data, isLoading } = useSources();
+
+	const connectedCount = data?.connectedSources.length ?? 0;
+
 	return (
-		<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-			<h1 className="text-2xl font-semibold tracking-tight">Sources</h1>
-			<Card>
-				<CardHeader>
-					<CardTitle>Sources</CardTitle>
-				</CardHeader>
-				<CardContent>
-					<p className="text-muted-foreground">
-						Connect and manage your data sources. Coming soon.
+		<div className="flex flex-1 flex-col gap-6 p-4 pt-0">
+			<div>
+				<h1 className="text-2xl font-semibold tracking-tight">Sources</h1>
+				{connectedCount > 0 && (
+					<p className="text-sm text-muted-foreground">
+						{connectedCount} connected source{connectedCount !== 1 ? "s" : ""}
 					</p>
-				</CardContent>
-			</Card>
+				)}
+			</div>
+
+			<SourceGrid
+				integrations={data?.integrations ?? []}
+				connectedSources={data?.connectedSources ?? []}
+				isLoading={isLoading}
+			/>
+
+			<ManualEntrySection />
 		</div>
 	);
 }

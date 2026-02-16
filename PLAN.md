@@ -97,8 +97,8 @@ packages/
 │  └────┬─────┘  └────┬─────┘  └────┬─────┘  └────┬─────┘  │
 │       │              │              │              │         │
 │       │         AssistantUI         │              │         │
-│       │    + useChatRuntime         │              │         │
-│       │    + AssistantChatTransport │              │         │
+│       │    + useChat                │              │         │
+│       │    + useAISDKRuntime        │              │         │
 │       │              │              │              │         │
 │       └──────────────┼──────────────┼──────────────┘         │
 │                      │              │                         │
@@ -127,9 +127,9 @@ packages/
 4. **Mem0 for all memory** — All user knowledge goes through Mem0 API via official `mem0ai` SDK. No custom vector DB.
 5. **Simplified tools** — 4 tools (addMemory, searchMemories, listSources, webSearch) vs Postel's 6 domain-specific tools.
 6. **shadcn Sidebar** — Already installed. Use the shadcn sidebar component (not Postel's custom NavBar).
-7. **AssistantUI + AI SDK v6** — `@assistant-ui/react` + `useChatRuntime` + `AssistantChatTransport` pattern. Gateway built into `ai` package — no separate provider packages needed.
-8. **Chat persistence** — Same pattern as Postel: messages saved to PostgreSQL, loaded on revisit.
-9. **ThreadListSidebar** — Use assistant-ui's built-in `ThreadListSidebar` component for chat history instead of custom sidebar.
+7. **AssistantUI + AI SDK v6** — `@assistant-ui/react` + `useChat` + `useAISDKRuntime` + `DefaultChatTransport` pattern. Gateway built into `ai` package — no separate provider packages needed.
+8. **Chat persistence** — Same pattern as Postel: messages saved to PostgreSQL, loaded on revisit. `useChat` messages prop is only read at mount time, so we gate rendering with `isReadyToRender` to ensure data is loaded before the provider mounts.
+9. **Custom chat sidebar** — Custom `ChatSidebar` component with fetch-based state management (not assistant-ui's `ThreadListPrimitive`, which requires `useRemoteThreadListRuntime` and has known issues with AI SDK runtime).
 10. **Trigger.dev for background sync** — Use the already-scaffolded `packages/tasks` for scheduled source syncing.
 
 ### Key Simplifications vs Postel
@@ -142,8 +142,8 @@ packages/
 | Prompts | Langfuse-managed with versioning | Inline in prompts/ directory |
 | Observability | Langfuse + OpenTelemetry | Console logging only |
 | Token tracking | Redis sliding window | None for MVP |
-| Chat UI | Complex with post editor panel, context sidebar, viral tweets | Clean chat with ThreadListSidebar, no side panels |
-| Chat runtime | `useChat` + `useAISDKRuntime` (legacy) | `useChatRuntime` + `AssistantChatTransport` (current) |
+| Chat UI | Complex with post editor panel, context sidebar, viral tweets | Clean chat with custom sidebar, no side panels |
+| Chat runtime | `useChat` + `useAISDKRuntime` (legacy) | `useChat` + `useAISDKRuntime` + `DefaultChatTransport` (same as Postel — `useChatRuntime` had issues with thread history) |
 | i18n | next-intl | None |
 | Payments | Stripe integration | None for MVP |
 
@@ -221,9 +221,9 @@ config/index.ts                                    — Update redirectAfterSignI
 - Hono API routes: `POST /api/ai/chat` (streaming), `GET /api/ai/chats`, `GET /api/ai/chats/:id`, `DELETE /api/ai/chats/:id`
 - Database models: `Chat`, `ChatMessage` added to Prisma schema
 - AssistantUI components: thread, markdown-text (or streamdown), tool-fallback
-- Chat runtime provider with `useChatRuntime` + `AssistantChatTransport`
+- Chat runtime provider with `useChat` + `useAISDKRuntime` + `DefaultChatTransport`
 - Chat page with thread, composer, greeting/empty state
-- **ThreadListSidebar** from assistant-ui for chat history (replaces custom sidebar)
+- **Custom ChatSidebar** with fetch-based state management for chat history
 - **Web search tool** (Tavily) — available from the start so chat is immediately useful
 - **Auto chat title generation** — after 2nd user message, generate a 3-5 word title via gateway model (cached on Chat record)
 
@@ -262,7 +262,7 @@ apps/web/modules/shared/lib/chat-api.ts           — React Query hooks for chat
 apps/web/app/(app)/chat/page.tsx                  — Full chat page
 ```
 
-**Note**: Use assistant-ui's built-in `ThreadListSidebar` component (install via `npx shadcn@latest add "https://r.assistant-ui.com/threadlist-sidebar"`). This replaces the need for custom `chat-sidebar.tsx` and `chat-sidebar-item.tsx`.
+**Note**: Originally planned to use assistant-ui's `ThreadListSidebar`, but `ThreadHistoryAdapter.load()` is never called by the AI SDK runtime. Instead, a custom `ChatSidebar` in `ai-chat.tsx` manages chat list/selection via fetch, and `ChatRuntimeProvider` uses `useChat` + `useAISDKRuntime` + `DefaultChatTransport` (same pattern as Postel v2).
 
 **Postel files to reference**:
 - `postel-v2/packages/ai/` — Entire package structure (models.ts, index.ts)
@@ -689,7 +689,7 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 - ~~`MEM0_ORG_ID`~~ — Resolved automatically from MEM0_API_KEY
 - ~~`@ai-sdk/anthropic`~~ — Gateway handles provider routing
 - ~~`@ai-sdk/openai`~~ — Gateway handles provider routing
-- ~~`@ai-sdk/react`~~ — `useChatRuntime` from `@assistant-ui/react-ai-sdk` replaces `useChat`
+- ~~`@ai-sdk/react` as separate dep~~ — Still used (`useChat` from `@ai-sdk/react`), but installed as part of the ai-sdk ecosystem
 
 ---
 
@@ -698,12 +698,17 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 ### Checkpoint Status
 
 - [x] **Checkpoint 1**: App Shell + Onboarding (PR #21)
-- [ ] **Checkpoint 2**: AI Package + Chat Page
-- [ ] **Checkpoint 3**: Mem0 Integration + Memories Page
-- [ ] **Checkpoint 4**: Sources & Integrations + Sources Page
+- [x] **Wave 1 Backend** (Checkpoints 2-4 backend): AI package, ai-chat orchestrator, Mem0 wrapper, integrations framework, all API routes, database schema
+- [x] **Wave 2 UI** (Checkpoints 2-4 frontend): Chat UI (with custom sidebar + message persistence), Memories UI, Sources UI
 - [ ] **Checkpoint 5**: Dashboard with Real Data
 - [ ] **Checkpoint 6**: API & MCP Page + MCP Server
 - [ ] **Checkpoint 7**: Settings Page + Polish
+
+### Implementation Notes
+
+**Chat UI fix (Wave 2)**: Originally tried `useChatRuntime` + `AssistantChatTransport` + `useRemoteThreadListRuntime` with `ThreadHistoryAdapter`. Discovered that `ThreadHistoryAdapter.load()` is only called by `LocalThreadRuntimeCore`, NOT by the AI SDK runtime. Switched to Postel v2's proven pattern: `useChat` + `useAISDKRuntime` + `DefaultChatTransport` with custom `ChatSidebar` using fetch-based state management. Key detail: `useChat`'s `messages` prop only applies at creation time (not reactive), so `ChatRuntimeProvider` is gated behind `isReadyToRender` to ensure messages are loaded before mount.
+
+**Tests**: 29 API route tests passing (auth guards + authenticated CRUD lifecycle for chats, memories, sources).
 
 ### Parallel Execution Plan
 
