@@ -47,7 +47,7 @@ See `CLAUDE.md` for the full list of commands and architecture details.
 
 ## Contributing
 
-Issues and PRs welcome. This project uses Biome for linting/formatting.
+Issues and PRs welcome. Join our [Discord](https://discord.gg/6uNYMBZEEh) to chat with the community. This project uses Biome for linting/formatting.
 
 ```bash
 pnpm lint       # check
