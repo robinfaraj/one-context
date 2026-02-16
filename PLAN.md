@@ -691,6 +691,106 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 - ~~`@ai-sdk/openai`~~ — Gateway handles provider routing
 - ~~`@ai-sdk/react`~~ — `useChatRuntime` from `@assistant-ui/react-ai-sdk` replaces `useChat`
 
+---
+
+## Execution Strategy: Parallelization & Testing
+
+### Checkpoint Status
+
+- [x] **Checkpoint 1**: App Shell + Onboarding (PR #21)
+- [ ] **Checkpoint 2**: AI Package + Chat Page
+- [ ] **Checkpoint 3**: Mem0 Integration + Memories Page
+- [ ] **Checkpoint 4**: Sources & Integrations + Sources Page
+- [ ] **Checkpoint 5**: Dashboard with Real Data
+- [ ] **Checkpoint 6**: API & MCP Page + MCP Server
+- [ ] **Checkpoint 7**: Settings Page + Polish
+
+### Parallel Execution Plan
+
+Checkpoints 2-4 have independent backend work that can be built simultaneously. The dependency graph:
+
+```
+Wave 1 (parallel — zero deps between them):
+├── Stream A: packages/ai + packages/ai-chat + chat API routes
+├── Stream B: packages/mem0 + memory API routes
+├── Stream C: packages/integrations (types, registry, adapters) + sources API routes
+└── Shared:   Prisma schema (all new models in one migration)
+
+Wave 2 (parallel — depends on Wave 1 backends):
+├── Stream A: Chat UI (AssistantUI components, chat page, ThreadListSidebar)
+├── Stream B: Memories UI (page, cards, filters, search) + chat tools (addMemory, searchMemories)
+└── Stream C: Sources UI (page, cards, connect flow) + chat tool (listSources)
+
+Wave 3 (sequential — depends on Wave 2):
+├── CP5: Dashboard (aggregates stats from memories, sources, chats)
+├── CP6: MCP server package + API key management UI
+└── CP7: Settings page + polish pass
+```
+
+**Key insight**: The Prisma schema should be updated once with ALL new models (Chat, ChatMessage, Source, ContentItem, PinnedMemory) before starting any Wave 1 stream. This avoids multiple migration conflicts.
+
+### Test Strategy
+
+Pragmatic, low-maintenance tests that catch real regressions. No aim for coverage %, just protect core contracts.
+
+#### 1. API Route Tests (~10 tests) — Vitest + Hono `app.request()`
+No HTTP server needed. Highest value, lowest effort.
+
+```
+GET  /api/health                    → 200
+POST /api/ai/chat                   → 401 without auth
+GET  /api/ai/chats                  → 401 without auth
+GET  /api/ai/chats                  → 200 + empty array for authed user
+GET  /api/memories                  → 401 without auth
+GET  /api/memories/search?q=test    → 401 without auth
+GET  /api/sources                   → 401 without auth
+POST /api/sources/unknown/sync      → 404 for unknown provider
+GET  /api/dashboard                 → 401 without auth
+```
+
+#### 2. Package Unit Tests (~15 tests) — Vitest
+Test package contracts with mocked dependencies.
+
+```
+packages/mem0:
+  - client.add() calls SDK with correct params
+  - client.search() passes filters correctly
+  - client.delete() calls correct endpoint
+
+packages/ai-chat/tools:
+  - web-search tool schema validates correctly
+  - add-memory tool schema validates correctly
+  - search-memories tool schema validates correctly
+
+packages/integrations:
+  - registry.register() + registry.get() roundtrips
+  - registry.get() returns undefined for unknown provider
+  - registry.list() returns all registered adapters
+
+config:
+  - config shape snapshot (catches accidental breakage)
+```
+
+#### 3. Schema Validation — CI step (no custom code)
+```bash
+pnpm --filter @onecontext/database generate  # fails if schema is invalid
+```
+
+#### 4. Smoke E2E (3 tests) — Playwright
+```
+- Landing page loads, has "Get Started" CTA
+- /dashboard redirects to /login when unauthenticated
+- /login page renders with OAuth buttons and email form
+```
+
+#### What we deliberately skip
+- React component unit tests (too much mocking for shadcn wrappers)
+- Full OAuth E2E (flaky in CI, BetterAuth handles correctness)
+- Chat streaming tests (hard to test SSE, trust AI SDK)
+- Mem0 integration tests (requires live API key)
+
+---
+
 ### Post-MVP considerations (not in scope):
 - Browser extension for knowledge capture
 - CLI app (`apps/cli` is scaffolded)
