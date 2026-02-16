@@ -12,7 +12,7 @@ export const config: Config = {
 		enableSignup: true,
 		enableSocialLogin: true,
 		enablePasswordLogin: true,
-		redirectAfterSignIn: "/app",
+		redirectAfterSignIn: "/dashboard",
 		redirectAfterLogout: "/",
 		sessionCookieMaxAge: 60 * 60 * 24 * 30, // 30 days in seconds
 	},
