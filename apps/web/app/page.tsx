@@ -1,5 +1,6 @@
 "use client";
 
+import IntegrationsHubSection from "@ui/components/integrations-component";
 import {
 	CTASection,
 	Features,
@@ -9,8 +10,7 @@ import {
 	IntegrationSection,
 	Navbar,
 	ProblemSection,
-} from "@ui/components/landing";
-import IntegrationsHubSection from "@ui/components/ui/integrations-component";
+} from "../modules/(marketing)/components";
 
 export default function HomePage() {
 	return (

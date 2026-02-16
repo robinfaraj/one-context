@@ -1,6 +1,10 @@
-# OneContext
+<p align="center">
+  <img src=".github/logo.svg" alt="OneContext" width="200" />
+</p>
 
-**Your AI identity, everywhere.**
+<h1 align="center">OneContext</h1>
+
+<p align="center"><strong>Your AI identity, everywhere.</strong></p>
 
 Set up your profile once. Auto-sync from X, GitHub, and Notion. Use it with any AI tool via MCP or API.
 

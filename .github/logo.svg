@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" fill="none">
+  <!-- Left node (outlined) -->
+  <circle cx="142" cy="40" r="15" stroke="#047857" stroke-width="5.5" fill="none"/>
+  <!-- Connection line left -->
+  <line x1="157" y1="40" x2="185" y2="40" stroke="#047857" stroke-width="5.5"/>
+  <!-- Center hub (filled) -->
+  <circle cx="208" cy="40" r="23" fill="#047857"/>
+  <!-- Connection line right -->
+  <line x1="231" y1="40" x2="259" y2="40" stroke="#047857" stroke-width="5.5"/>
+  <!-- Right node (outlined) -->
+  <circle cx="274" cy="40" r="15" stroke="#047857" stroke-width="5.5" fill="none"/>
+</svg>
