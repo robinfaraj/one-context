@@ -6,6 +6,7 @@ export const config: Config = {
 	links: {
 		github: "https://github.com/robinfaraj/one-context",
 		twitter: "https://x.com/robin_faraj",
+		discord: "https://discord.gg/6uNYMBZEEh",
 	},
 	auth: {
 		enableSignup: true,

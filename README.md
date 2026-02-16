@@ -41,6 +41,10 @@ See `CLAUDE.md` for the full list of commands and architecture details.
 - **Next:** X and GitHub integrations, MCP server, REST API, self-host via Docker
 - **Later:** Notion sync, CLI, webhooks, team profiles, calendar/Linear integrations
 
+## Community
+
+Join the [Discord](https://discord.gg/6uNYMBZEEh) to ask questions, share feedback, or follow development.
+
 ## Contributing
 
 Issues and PRs welcome. This project uses Biome for linting/formatting.
