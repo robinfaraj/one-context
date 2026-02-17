@@ -66,7 +66,7 @@ function Step({
 }: { number: number; children: React.ReactNode }) {
 	return (
 		<div className="flex gap-3">
-			<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-700/10 text-[11px] font-medium text-emerald-700">
+			<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-primary/10 text-[11px] font-medium text-primary">
 				{number}
 			</span>
 			<div className="text-sm text-muted-foreground pt-px">{children}</div>

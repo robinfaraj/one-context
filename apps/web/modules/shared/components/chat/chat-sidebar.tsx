@@ -34,7 +34,7 @@ export function ChatSidebar({
 		<div className="flex flex-col gap-1">
 			<Button
 				variant="outline"
-				className="h-9 justify-start gap-2 rounded-lg border-dashed px-3 text-sm hover:border-emerald-700/30 hover:bg-emerald-700/5"
+				className="h-9 justify-start gap-2 rounded-lg border-dashed px-3 text-sm hover:border-primary/30 hover:bg-primary/5"
 				onClick={onNewChat}
 			>
 				<PlusIcon className="size-4" />
@@ -81,7 +81,7 @@ function ChatSidebarItem({
 		<div
 			className={cn(
 				"group flex h-9 items-center rounded-lg transition-colors hover:bg-muted",
-				isActive && "bg-emerald-700/10",
+				isActive && "bg-primary/10",
 			)}
 		>
 			<button

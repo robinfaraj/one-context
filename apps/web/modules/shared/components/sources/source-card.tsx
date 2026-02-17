@@ -54,7 +54,7 @@ export function SourceCard({ source, icon }: SourceCardProps) {
 											? "bg-red-500"
 											: isSyncing
 												? "bg-yellow-500"
-												: "bg-emerald-500",
+												: "bg-primary",
 									)}
 								/>
 							</div>

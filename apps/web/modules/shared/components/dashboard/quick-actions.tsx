@@ -34,10 +34,10 @@ export function QuickActions() {
 					const Icon = action.icon;
 					return (
 						<Link key={action.href} href={action.href}>
-							<Card className="transition-colors hover:border-emerald-700/30 hover:bg-muted/30">
+							<Card className="transition-colors hover:border-primary/30 hover:bg-muted/30">
 								<CardContent className="flex items-center gap-3 p-4">
-									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-700/10">
-										<Icon className="h-4 w-4 text-emerald-700" />
+									<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+										<Icon className="h-4 w-4 text-primary" />
 									</div>
 									<div className="min-w-0">
 										<p className="text-sm font-medium">{action.label}</p>

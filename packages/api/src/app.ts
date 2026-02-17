@@ -54,24 +54,33 @@ app.get("/app-openapi", async (c) => {
 	}
 });
 
+interface OpenAPISchema {
+	paths?: Record<string, unknown>;
+	components?: {
+		schemas?: Record<string, unknown>;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
+}
+
 app.get("/openapi", async (c) => {
-	const authSchema = await auth.api.generateOpenAPISchema();
-	const appSchema = await (
+	const authSchema = (await auth.api.generateOpenAPISchema()) as OpenAPISchema;
+	const appSchema = (await (
 		app.request("/api/app-openapi") as Promise<Response>
-	).then((res) => res.json());
+	).then((res) => res.json())) as OpenAPISchema;
 
 	// Merge auth and app schemas
 	const mergedSchema = {
 		...appSchema,
 		paths: {
-			...(appSchema as any).paths,
-			...(authSchema as any).paths,
+			...appSchema.paths,
+			...authSchema.paths,
 		},
 		components: {
-			...((appSchema as any).components || {}),
+			...(appSchema.components || {}),
 			schemas: {
-				...((appSchema as any).components?.schemas || {}),
-				...((authSchema as any).components?.schemas || {}),
+				...(appSchema.components?.schemas || {}),
+				...(authSchema.components?.schemas || {}),
 			},
 		},
 	};

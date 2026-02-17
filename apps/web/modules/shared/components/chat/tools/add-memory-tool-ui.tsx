@@ -31,14 +31,14 @@ function AddMemoryLoading({ content }: { content?: string }) {
 
 function AddMemorySuccess({ memory }: { memory: string }) {
 	return (
-		<div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50/50 dark:border-emerald-800/50 dark:bg-emerald-950/20 px-3 py-2">
+		<div className="mb-4 rounded-lg border border-primary/20 bg-accent/50 dark:border-primary/50 dark:bg-accent/20 px-3 py-2">
 			<div className="flex items-center gap-2 text-sm">
-				<Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-				<span className="font-medium text-emerald-800 dark:text-emerald-300">
+				<Check className="h-4 w-4 text-primary dark:text-primary" />
+				<span className="font-medium text-primary dark:text-primary">
 					Memory stored
 				</span>
 			</div>
-			<p className="mt-1.5 text-xs text-emerald-700/80 dark:text-emerald-400/80 line-clamp-2 pl-6">
+			<p className="mt-1.5 text-xs text-primary/80 dark:text-primary/80 line-clamp-2 pl-6">
 				{memory}
 			</p>
 		</div>

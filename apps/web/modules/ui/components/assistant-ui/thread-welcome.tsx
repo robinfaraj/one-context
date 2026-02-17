@@ -31,8 +31,8 @@ export const ThreadWelcome: FC = () => {
 		<div className="aui-thread-welcome-root mx-auto my-auto flex w-full max-w-(--thread-max-width) grow flex-col">
 			<div className="aui-thread-welcome-center flex w-full grow flex-col items-center justify-center">
 				<div className="aui-thread-welcome-message flex size-full flex-col justify-center px-4">
-					<div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-emerald-700/10">
-						<BrainIcon className="size-5 text-emerald-700 dark:text-emerald-400" />
+					<div className="mb-2 flex size-10 items-center justify-center rounded-xl bg-primary/10">
+						<BrainIcon className="size-5 text-primary dark:text-primary" />
 					</div>
 					<h1 className="aui-thread-welcome-message-inner fade-in slide-in-from-bottom-1 animate-in font-semibold text-2xl duration-200">
 						What would you like to know?
@@ -52,10 +52,10 @@ export const ThreadWelcome: FC = () => {
 						<ThreadPrimitive.Suggestion prompt={suggestion.prompt} send asChild>
 							<Button
 								variant="ghost"
-								className="aui-thread-welcome-suggestion h-auto w-full flex-col items-start justify-start gap-1 rounded-2xl border px-4 py-3 text-left text-sm transition-colors hover:border-emerald-700/30 hover:bg-emerald-700/5"
+								className="aui-thread-welcome-suggestion h-auto w-full flex-col items-start justify-start gap-1 rounded-2xl border px-4 py-3 text-left text-sm transition-colors hover:border-primary/30 hover:bg-primary/5"
 								aria-label={suggestion.prompt}
 							>
-								<suggestion.icon className="mb-1 size-4 text-emerald-700 dark:text-emerald-400" />
+								<suggestion.icon className="mb-1 size-4 text-primary dark:text-primary" />
 								<span className="aui-thread-welcome-suggestion-text-1 font-medium">
 									{suggestion.title}
 								</span>

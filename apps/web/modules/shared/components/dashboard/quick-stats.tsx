@@ -69,8 +69,8 @@ export function QuickStats({ stats, isLoading }: QuickStatsProps) {
 				return (
 					<Card key={s.key}>
 						<CardContent className="flex items-center gap-4 p-5">
-							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-700/10">
-								<Icon className="h-5 w-5 text-emerald-700" />
+							<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+								<Icon className="h-5 w-5 text-primary" />
 							</div>
 							<div>
 								<p

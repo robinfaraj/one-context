@@ -110,7 +110,7 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 		<Card
 			className={cn(
 				"transition-colors",
-				pinned && "border-emerald-200 dark:border-emerald-800/50",
+				pinned && "border-primary/20 dark:border-primary/50",
 			)}
 		>
 			<CardContent className="p-4">
@@ -172,7 +172,7 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 						{memory.categories?.map((cat) => (
 							<span
 								key={cat}
-								className="rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+								className="rounded-full bg-accent px-2 py-0.5 text-[10px] font-medium text-primary dark:bg-accent/40 dark:text-primary"
 							>
 								{cat}
 							</span>

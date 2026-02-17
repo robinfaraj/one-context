@@ -1,5 +1,6 @@
 import { chatAgentSystemPrompt, chatModel } from "@onecontext/ai";
 import { db } from "@onecontext/database/server";
+import { logger } from "@onecontext/logs";
 import { convertToModelMessages, stepCountIs, streamText } from "ai";
 import {
 	getAddMemoryTool,
@@ -40,7 +41,7 @@ export async function handleChatRequest({
 			data: {
 				chatId: currentChatId,
 				role: "user",
-				parts: lastMessage.parts as any,
+				parts: JSON.parse(JSON.stringify(lastMessage.parts)),
 			},
 		});
 	}
@@ -73,7 +74,12 @@ export async function handleChatRequest({
 				select: { role: true, parts: true },
 			});
 
-			generateChatTitle(currentChatId, allMessages).catch(() => {});
+			generateChatTitle(currentChatId, allMessages).catch((err) => {
+				logger.warn("Failed to generate chat title", {
+					chatId: currentChatId,
+					error: err,
+				});
+			});
 		},
 	});
 

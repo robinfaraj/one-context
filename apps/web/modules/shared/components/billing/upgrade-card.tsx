@@ -13,11 +13,11 @@ export function UpgradeCard() {
 	);
 
 	return (
-		<Card className="border-emerald-700/30 bg-emerald-700/5">
+		<Card className="border-primary/30 bg-primary/5">
 			<CardContent className="p-4">
 				<div className="flex items-start gap-3">
-					<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-emerald-700/10">
-						<Sparkles className="h-4 w-4 text-emerald-700" />
+					<div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+						<Sparkles className="h-4 w-4 text-primary" />
 					</div>
 					<div className="flex-1">
 						<p className="text-sm font-medium">Upgrade to Pro</p>
@@ -26,7 +26,7 @@ export function UpgradeCard() {
 						</p>
 						<Button
 							size="sm"
-							className="mt-2 bg-emerald-700 text-white hover:bg-emerald-800"
+							className="mt-2 bg-primary text-primary-foreground hover:bg-primary/90"
 							onClick={() =>
 								monthlyPrice?.priceId && checkout.mutate(monthlyPrice.priceId)
 							}

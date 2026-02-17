@@ -1,3 +1,4 @@
+import { sValidator } from "@hono/standard-validator";
 import {
 	createChat,
 	deleteChat,
@@ -5,10 +6,20 @@ import {
 	handleChatRequest,
 	listChats,
 } from "@onecontext/ai-chat";
-import { db } from "@onecontext/database/server";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
+import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
+import { updateChatTitle } from "../services/chat";
+
+const chatMessageSchema = z.object({
+	messages: z.array(z.any()),
+	chatId: z.string().optional(),
+});
+
+const chatUpdateSchema = z.object({
+	title: z.string().optional(),
+});
 
 export const aiRouter = new Hono()
 	.basePath("/ai")
@@ -21,10 +32,10 @@ export const aiRouter = new Hono()
 			description: "Send messages and receive a streaming AI response",
 			responses: { 200: { description: "Streaming AI response" } },
 		}),
+		sValidator("json", chatMessageSchema),
 		async (c) => {
 			const user = c.get("user");
-			const body = await c.req.json();
-			const { messages, chatId } = body;
+			const { messages, chatId } = c.req.valid("json");
 
 			const { result, chatId: resolvedChatId } = await handleChatRequest({
 				chatId,
@@ -80,23 +91,17 @@ export const aiRouter = new Hono()
 				404: { description: "Chat not found" },
 			},
 		}),
+		sValidator("json", chatUpdateSchema),
 		async (c) => {
 			const user = c.get("user");
 			const chatId = c.req.param("id");
-			const body = await c.req.json<{ title?: string }>();
+			const body = c.req.valid("json");
 
-			const chat = await db.chat.findFirst({
-				where: { id: chatId, userId: user.id },
-			});
+			const updated = await updateChatTitle(chatId, user.id, body.title);
 
-			if (!chat) {
+			if (!updated) {
 				return c.json({ error: "Chat not found" }, 404);
 			}
-
-			const updated = await db.chat.update({
-				where: { id: chatId },
-				data: { title: body.title ?? chat.title },
-			});
 
 			return c.json(updated);
 		},
@@ -144,6 +149,6 @@ export const aiRouter = new Hono()
 				return c.json({ error: "Chat not found" }, 404);
 			}
 
-			return c.json({ success: true });
+			return c.body(null, 204);
 		},
 	);

@@ -21,19 +21,17 @@ function UserAvatar({ user }: { user: DashboardUser }) {
 			<img
 				src={user.image}
 				alt={user.name ?? "User"}
-				className="h-14 w-14 rounded-full object-cover ring-2 ring-emerald-700/10"
+				className="h-14 w-14 rounded-full object-cover ring-2 ring-primary/10"
 			/>
 		);
 	}
 
 	return (
-		<div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-700/10 ring-2 ring-emerald-700/10">
+		<div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 ring-2 ring-primary/10">
 			{initials ? (
-				<span className="text-lg font-semibold text-emerald-700">
-					{initials}
-				</span>
+				<span className="text-lg font-semibold text-primary">{initials}</span>
 			) : (
-				<User className="h-6 w-6 text-emerald-700" />
+				<User className="h-6 w-6 text-primary" />
 			)}
 		</div>
 	);

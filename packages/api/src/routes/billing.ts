@@ -1,8 +1,4 @@
-import { config } from "@onecontext/config";
-import { db } from "@onecontext/database/server";
-import { list } from "@onecontext/integrations";
-import { getAll } from "@onecontext/memory";
-import { stripe } from "@onecontext/stripe";
+import { sValidator } from "@hono/standard-validator";
 import { createCheckoutSession } from "@onecontext/stripe/src/checkout";
 import { createPortalSession } from "@onecontext/stripe/src/portal";
 import {
@@ -16,8 +12,17 @@ import {
 import { getBaseUrl } from "@onecontext/utils";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
+import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
-import { getPlanLimits } from "../middleware/plan-limits";
+import {
+	cancelSubscription,
+	getSubscriptionInfo,
+	getUserStripeCustomerId,
+} from "../services/billing";
+
+const checkoutSchema = z.object({
+	priceId: z.string().min(1, "priceId is required"),
+});
 
 // Auth-protected billing routes
 const protectedRoutes = new Hono()
@@ -33,27 +38,21 @@ const protectedRoutes = new Hono()
 				400: { description: "Invalid request" },
 			},
 		}),
+		sValidator("json", checkoutSchema),
 		async (c) => {
 			const sessionUser = c.get("user");
-			const body = await c.req.json<{ priceId: string }>();
+			const { priceId } = c.req.valid("json");
 
-			if (!body.priceId) {
-				return c.json({ error: "priceId is required" }, 400);
-			}
-
-			const dbUser = await db.user.findUnique({
-				where: { id: sessionUser.id },
-				select: { stripeCustomerId: true },
-			});
+			const customerId = await getUserStripeCustomerId(sessionUser.id);
 
 			const baseUrl = getBaseUrl();
 			const { url } = await createCheckoutSession({
 				userId: sessionUser.id,
 				email: sessionUser.email,
-				priceId: body.priceId,
+				priceId,
 				successUrl: `${baseUrl}/settings/billing?success=true`,
 				cancelUrl: `${baseUrl}/settings/billing`,
-				customerId: dbUser?.stripeCustomerId ?? undefined,
+				customerId,
 			});
 
 			return c.json({ url });
@@ -74,12 +73,9 @@ const protectedRoutes = new Hono()
 		async (c) => {
 			const sessionUser = c.get("user");
 
-			const dbUser = await db.user.findUnique({
-				where: { id: sessionUser.id },
-				select: { stripeCustomerId: true },
-			});
+			const customerId = await getUserStripeCustomerId(sessionUser.id);
 
-			if (!dbUser?.stripeCustomerId) {
+			if (!customerId) {
 				return c.json(
 					{ error: "No Stripe customer ID found. Please subscribe first." },
 					400,
@@ -88,7 +84,7 @@ const protectedRoutes = new Hono()
 
 			const baseUrl = getBaseUrl();
 			const { url } = await createPortalSession({
-				customerId: dbUser.stripeCustomerId,
+				customerId,
 				returnUrl: `${baseUrl}/settings/billing`,
 			});
 
@@ -108,61 +104,8 @@ const protectedRoutes = new Hono()
 		}),
 		async (c) => {
 			const sessionUser = c.get("user");
-
-			const dbUser = await db.user.findUnique({
-				where: { id: sessionUser.id },
-				select: { plan: true },
-			});
-			const plan = dbUser?.plan ?? "free";
-			const limits = getPlanLimits(plan);
-			const planConfig = config.payments.plans[plan];
-
-			// Get subscription details if pro
-			const subscription =
-				plan !== "free"
-					? await db.subscription.findFirst({
-							where: { userId: sessionUser.id, status: "active" },
-							orderBy: { createdAt: "desc" },
-						})
-					: null;
-
-			// Get usage stats
-			const today = new Date();
-			today.setHours(0, 0, 0, 0);
-
-			const [sourceCount, apiUsage, memories] = await Promise.all([
-				db.source.count({
-					where: {
-						userId: sessionUser.id,
-						status: "connected",
-						provider: { in: list().map((a) => a.provider) },
-					},
-				}),
-				db.apiUsage.findUnique({
-					where: { userId_date: { userId: sessionUser.id, date: today } },
-				}),
-				getAll(sessionUser.id).catch(() => []),
-			]);
-
-			return c.json({
-				plan: planConfig?.name ?? "Free",
-				planId: plan,
-				isPro: plan === "pro",
-				subscription: subscription
-					? {
-							id: subscription.id,
-							status: subscription.status,
-							currentPeriodEnd: subscription.currentPeriodEnd,
-							cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-						}
-					: null,
-				usage: {
-					sources: sourceCount,
-					memories: Array.isArray(memories) ? memories.length : 0,
-					apiCallsToday: apiUsage?.callCount ?? 0,
-				},
-				limits,
-			});
+			const info = await getSubscriptionInfo(sessionUser.id);
+			return c.json(info);
 		},
 	)
 	.post(
@@ -179,25 +122,13 @@ const protectedRoutes = new Hono()
 		}),
 		async (c) => {
 			const sessionUser = c.get("user");
+			const result = await cancelSubscription(sessionUser.id);
 
-			const subscription = await db.subscription.findFirst({
-				where: { userId: sessionUser.id, status: "active" },
-			});
-
-			if (!subscription) {
-				return c.json({ error: "No active subscription found" }, 400);
+			if ("error" in result) {
+				return c.json({ error: result.error }, 400);
 			}
 
-			await stripe.subscriptions.update(subscription.stripeSubscriptionId, {
-				cancel_at_period_end: true,
-			});
-
-			await db.subscription.update({
-				where: { id: subscription.id },
-				data: { cancelAtPeriodEnd: true },
-			});
-
-			return c.json({ cancelled: true });
+			return c.json(result);
 		},
 	);
 

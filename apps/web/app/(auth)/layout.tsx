@@ -17,7 +17,7 @@ export default function AuthLayout({ children }: PropsWithChildren) {
 	if (isPending) {
 		return (
 			<div className="flex min-h-svh items-center justify-center">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-700" />
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
 			</div>
 		);
 	}

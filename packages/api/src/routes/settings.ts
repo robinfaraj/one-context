@@ -1,8 +1,23 @@
-import { db } from "@onecontext/database/server";
-import * as mem0 from "@onecontext/memory";
+import { sValidator } from "@hono/standard-validator";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
+import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
+import {
+	deleteAccount,
+	exportUserData,
+	updateProfile,
+	updateSyncSettings,
+} from "../services/settings";
+
+const profileUpdateSchema = z.object({
+	name: z.string().optional(),
+	profileSummary: z.string().optional(),
+});
+
+const syncSettingsSchema = z.object({
+	syncEnabled: z.boolean(),
+});
 
 export const settingsRouter = new Hono()
 	.basePath("/settings")
@@ -18,32 +33,18 @@ export const settingsRouter = new Hono()
 				400: { description: "Invalid input" },
 			},
 		}),
+		sValidator("json", profileUpdateSchema),
 		async (c) => {
 			const user = c.get("user");
-			const body = await c.req.json<{
-				name?: string;
-				profileSummary?: string;
-			}>();
+			const body = c.req.valid("json");
 
-			const data: Record<string, string> = {};
-			if (body.name !== undefined) data.name = body.name;
-			if (body.profileSummary !== undefined)
-				data.profileSummary = body.profileSummary;
+			const result = await updateProfile(user.id, body);
 
-			if (Object.keys(data).length === 0) {
-				return c.json({ error: "No fields to update" }, 400);
+			if ("error" in result) {
+				return c.json({ error: result.error }, 400);
 			}
 
-			const updated = await db.user.update({
-				where: { id: user.id },
-				data,
-			});
-
-			return c.json({
-				name: updated.name,
-				email: updated.email,
-				profileSummary: updated.profileSummary,
-			});
+			return c.json(result);
 		},
 	)
 	.put(
@@ -54,16 +55,13 @@ export const settingsRouter = new Hono()
 			description: "Enable or disable automatic sync",
 			responses: { 200: { description: "Updated sync settings" } },
 		}),
+		sValidator("json", syncSettingsSchema),
 		async (c) => {
 			const user = c.get("user");
-			const body = await c.req.json<{ syncEnabled: boolean }>();
+			const body = c.req.valid("json");
 
-			const updated = await db.user.update({
-				where: { id: user.id },
-				data: { syncEnabled: body.syncEnabled },
-			});
-
-			return c.json({ syncEnabled: updated.syncEnabled });
+			const result = await updateSyncSettings(user.id, body.syncEnabled);
+			return c.json(result);
 		},
 	)
 	.get(
@@ -77,42 +75,8 @@ export const settingsRouter = new Hono()
 		}),
 		async (c) => {
 			const user = c.get("user");
-
-			const [profile, chats, sources, contentItems, memories] =
-				await Promise.all([
-					db.user.findUnique({
-						where: { id: user.id },
-						select: {
-							id: true,
-							name: true,
-							email: true,
-							username: true,
-							profileSummary: true,
-							syncEnabled: true,
-							createdAt: true,
-						},
-					}),
-					db.chat.findMany({
-						where: { userId: user.id },
-						include: { messages: true },
-					}),
-					db.source.findMany({
-						where: { userId: user.id },
-					}),
-					db.contentItem.findMany({
-						where: { source: { userId: user.id } },
-					}),
-					mem0.getAll(user.id),
-				]);
-
-			return c.json({
-				exportedAt: new Date().toISOString(),
-				profile,
-				chats,
-				sources,
-				contentItems,
-				memories,
-			});
+			const data = await exportUserData(user.id);
+			return c.json(data);
 		},
 	)
 	.delete(
@@ -125,17 +89,7 @@ export const settingsRouter = new Hono()
 		}),
 		async (c) => {
 			const user = c.get("user");
-
-			// Delete Mem0 data first
-			try {
-				await mem0.deleteAll(user.id);
-			} catch {
-				// Continue even if Mem0 deletion fails
-			}
-
-			// Delete user from DB (cascades handle relations)
-			await db.user.delete({ where: { id: user.id } });
-
-			return c.json({ success: true });
+			await deleteAccount(user.id);
+			return c.body(null, 204);
 		},
 	);

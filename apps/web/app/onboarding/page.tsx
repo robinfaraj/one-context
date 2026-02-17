@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
 import { OnboardingWizard } from "@shared/components/onboarding/onboarding-wizard";
+import { authClient } from "@shared/lib/api";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -21,7 +21,7 @@ export default function OnboardingPage() {
 	if (isPending) {
 		return (
 			<div className="flex min-h-svh items-center justify-center">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-700" />
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
 			</div>
 		);
 	}

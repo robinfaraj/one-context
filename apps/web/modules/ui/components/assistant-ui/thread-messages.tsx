@@ -135,7 +135,7 @@ export const EditComposer: FC = () => {
 						</Button>
 					</ComposerPrimitive.Cancel>
 					<ComposerPrimitive.Send asChild>
-						<Button size="sm" className="bg-emerald-700 hover:bg-emerald-800">
+						<Button size="sm" className="bg-primary hover:bg-primary/90">
 							Update
 						</Button>
 					</ComposerPrimitive.Send>

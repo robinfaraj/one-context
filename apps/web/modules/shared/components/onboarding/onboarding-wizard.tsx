@@ -19,8 +19,8 @@ function OnboardingStepReady() {
 	return (
 		<div className="space-y-6">
 			<div className="flex flex-col items-center gap-2">
-				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-700/10">
-					<Sparkles className="h-6 w-6 text-emerald-700" />
+				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+					<Sparkles className="h-6 w-6 text-primary" />
 				</div>
 				<h2 className="text-xl font-semibold">You're all set!</h2>
 				<p className="text-sm text-muted-foreground">
@@ -89,9 +89,7 @@ export function OnboardingWizard({ user }: OnboardingWizardProps) {
 							<div
 								className={cn(
 									"h-2 w-2 rounded-full transition-colors",
-									i <= currentStep
-										? "bg-emerald-700"
-										: "bg-muted-foreground/25",
+									i <= currentStep ? "bg-primary" : "bg-muted-foreground/25",
 								)}
 							/>
 						</div>
@@ -131,7 +129,7 @@ export function OnboardingWizard({ user }: OnboardingWizardProps) {
 						<Button
 							onClick={handleFinish}
 							disabled={isSubmitting}
-							className="bg-emerald-700 hover:bg-emerald-800"
+							className="bg-primary hover:bg-primary/90"
 						>
 							{isSubmitting ? (
 								<div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
@@ -143,7 +141,7 @@ export function OnboardingWizard({ user }: OnboardingWizardProps) {
 					) : (
 						<Button
 							onClick={() => setCurrentStep((s) => s + 1)}
-							className="bg-emerald-700 hover:bg-emerald-800"
+							className="bg-primary hover:bg-primary/90"
 						>
 							Next
 							<ArrowRight className="ml-2 h-4 w-4" />

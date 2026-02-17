@@ -79,9 +79,23 @@ async function refreshTwitterToken(
 async function refreshAccessToken(
 	refreshToken: string,
 ): Promise<RefreshTokenResponse> {
+	const clientId = process.env.TWITTER_CLIENT_ID;
+	const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+
+	if (!clientId) {
+		throw new Error(
+			"TWITTER_CLIENT_ID is not set. Cannot refresh Twitter token.",
+		);
+	}
+	if (!clientSecret) {
+		throw new Error(
+			"TWITTER_CLIENT_SECRET is not set. Cannot refresh Twitter token.",
+		);
+	}
+
 	const oauth2 = new OAuth2({
-		clientId: process.env.TWITTER_CLIENT_ID as string,
-		clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
+		clientId,
+		clientSecret,
 		redirectUri: "",
 	});
 

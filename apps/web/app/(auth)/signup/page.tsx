@@ -137,7 +137,7 @@ export default function SignupPage() {
 						</div>
 						<Button
 							type="submit"
-							className="w-full bg-emerald-700 hover:bg-emerald-800 text-white"
+							className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
 							disabled={isLoading}
 						>
 							{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
@@ -184,7 +184,7 @@ export default function SignupPage() {
 				<CardFooter className="justify-center">
 					<p className="text-sm text-muted-foreground">
 						Already have an account?{" "}
-						<Link href="/login" className="text-emerald-700 hover:underline">
+						<Link href="/login" className="text-primary hover:underline">
 							Sign in
 						</Link>
 					</p>

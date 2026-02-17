@@ -79,7 +79,7 @@ export function AvailableSourceCard({
 								"shrink-0",
 								!integration.comingSoon &&
 									!isLimited &&
-									"bg-emerald-700 hover:bg-emerald-800 text-white",
+									"bg-primary hover:bg-primary/90 text-primary-foreground",
 							)}
 						>
 							{isPending && (

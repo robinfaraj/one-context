@@ -32,15 +32,23 @@ interface SourcesResponse {
 	disconnectedProviders: string[];
 }
 
+class ApiError extends Error {
+	status: number;
+	upgrade?: boolean;
+
+	constructor(message: string, status: number, upgrade?: boolean) {
+		super(message);
+		this.status = status;
+		this.upgrade = upgrade;
+	}
+}
+
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 	const res = await fetch(url, { credentials: "include", ...init });
 	if (!res.ok) {
 		const body = await res.json().catch(() => null);
 		const message = body?.error ?? `Request failed: ${res.status}`;
-		const err = new Error(message);
-		(err as any).status = res.status;
-		(err as any).upgrade = body?.upgrade;
-		throw err;
+		throw new ApiError(message, res.status, body?.upgrade);
 	}
 	return res.json();
 }

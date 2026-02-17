@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
+import { authClient } from "@shared/lib/api";
 import { Avatar, AvatarFallback, AvatarImage } from "@ui/components/avatar";
 import {
 	DropdownMenu,
@@ -46,7 +46,7 @@ export function UserMenu({ user }: UserMenuProps) {
 									src={user.image ?? undefined}
 									alt={user.name ?? "User"}
 								/>
-								<AvatarFallback className="rounded-lg bg-emerald-700 text-white">
+								<AvatarFallback className="rounded-lg bg-primary text-primary-foreground">
 									{user.name?.charAt(0)?.toUpperCase() || "U"}
 								</AvatarFallback>
 							</Avatar>

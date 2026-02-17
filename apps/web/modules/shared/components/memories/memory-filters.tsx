@@ -47,7 +47,7 @@ export function MemoryFilters({
 								className={cn(
 									"rounded-full px-2.5 py-0.5 text-xs font-medium transition-colors",
 									selectedCategories.includes(cat)
-										? "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300"
+										? "bg-accent text-primary dark:bg-accent/40 dark:text-primary"
 										: "bg-muted text-muted-foreground hover:bg-muted/80",
 								)}
 							>

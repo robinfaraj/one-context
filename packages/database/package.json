@@ -17,7 +17,8 @@
 	"main": "./index.ts",
 	"exports": {
 		".": "./index.ts",
-		"./server": "./src/client.ts"
+		"./server": "./src/client.ts",
+		"./queries": "./src/queries/index.ts"
 	},
 	"name": "@onecontext/database",
 	"scripts": {

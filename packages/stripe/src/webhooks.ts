@@ -23,30 +23,30 @@ export async function handleCheckoutCompleted(
 	// Get full subscription details
 	const subscription = await stripe.subscriptions.retrieve(subscriptionId);
 
-	// Update user plan and Stripe customer ID
-	await db.user.update({
-		where: { id: userId },
-		data: { plan: "pro", stripeCustomerId: customerId },
-	});
-
-	// Create subscription record
-	await db.subscription.upsert({
-		where: { stripeSubscriptionId: subscriptionId },
-		create: {
-			userId,
-			stripeSubscriptionId: subscriptionId,
-			stripePriceId: subscription.items.data[0]?.price.id ?? "",
-			status: "active",
-			currentPeriodStart: new Date(subscription.current_period_start * 1000),
-			currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-		},
-		update: {
-			status: "active",
-			stripePriceId: subscription.items.data[0]?.price.id ?? "",
-			currentPeriodStart: new Date(subscription.current_period_start * 1000),
-			currentPeriodEnd: new Date(subscription.current_period_end * 1000),
-		},
-	});
+	// Update user plan and subscription atomically
+	await db.$transaction([
+		db.user.update({
+			where: { id: userId },
+			data: { plan: "pro", stripeCustomerId: customerId },
+		}),
+		db.subscription.upsert({
+			where: { stripeSubscriptionId: subscriptionId },
+			create: {
+				userId,
+				stripeSubscriptionId: subscriptionId,
+				stripePriceId: subscription.items.data[0]?.price.id ?? "",
+				status: "active",
+				currentPeriodStart: new Date(subscription.current_period_start * 1000),
+				currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+			},
+			update: {
+				status: "active",
+				stripePriceId: subscription.items.data[0]?.price.id ?? "",
+				currentPeriodStart: new Date(subscription.current_period_start * 1000),
+				currentPeriodEnd: new Date(subscription.current_period_end * 1000),
+			},
+		}),
+	]);
 }
 
 export async function handleInvoicePaid(invoice: Stripe.Invoice) {

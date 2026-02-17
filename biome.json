@@ -8,8 +8,9 @@
 		"rules": {
 			"recommended": true,
 			"suspicious": {
-				"noExplicitAny": "off",
-				"noArrayIndexKey": "off"
+				"noExplicitAny": "warn",
+				"noArrayIndexKey": "off",
+				"noEmptyBlockStatements": "warn"
 			},
 			"complexity": {
 				"noForEach": "off"

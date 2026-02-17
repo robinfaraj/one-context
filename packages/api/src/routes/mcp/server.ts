@@ -2,9 +2,13 @@ import {
 	McpServer,
 	ResourceTemplate,
 } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { db } from "@onecontext/database/server";
 import * as mem0 from "@onecontext/memory";
 import { z } from "zod";
+import {
+	getUserProfile,
+	getUserProfileSummary,
+	getUserSources,
+} from "../../services/mcp";
 
 export interface McpContext {
 	userId: string;
@@ -25,26 +29,15 @@ export function createOneContextMcpServer(context: McpContext) {
 		"Get the user's profile information",
 		{},
 		async () => {
-			const user = await db.user.findUnique({ where: { id: userId } });
-			if (!user) {
+			const profile = await getUserProfile(userId);
+			if (!profile) {
 				return { content: [{ type: "text", text: "User not found" }] };
 			}
 			return {
 				content: [
 					{
 						type: "text",
-						text: JSON.stringify(
-							{
-								id: user.id,
-								name: user.name,
-								email: user.email,
-								username: (user as any).username ?? null,
-								image: user.image,
-								bio: (user as any).bio ?? null,
-							},
-							null,
-							2,
-						),
+						text: JSON.stringify(profile, null, 2),
 					},
 				],
 			};
@@ -93,10 +86,7 @@ export function createOneContextMcpServer(context: McpContext) {
 		"List the user's connected data sources",
 		{},
 		async () => {
-			const sources = await db.source.findMany({
-				where: { userId },
-				orderBy: { createdAt: "desc" },
-			});
+			const sources = await getUserSources(userId);
 			return {
 				content: [{ type: "text", text: JSON.stringify(sources, null, 2) }],
 			};
@@ -109,14 +99,7 @@ export function createOneContextMcpServer(context: McpContext) {
 		"profile_summary",
 		new ResourceTemplate("profile://summary", { list: undefined }),
 		async () => {
-			const user = await db.user.findUnique({ where: { id: userId } });
-			const sources = await db.source.findMany({ where: { userId } });
-			const summary = {
-				name: user?.name,
-				email: user?.email,
-				username: (user as any)?.username ?? null,
-				connectedSources: sources.map((s) => s.provider),
-			};
+			const summary = await getUserProfileSummary(userId);
 			return {
 				contents: [
 					{

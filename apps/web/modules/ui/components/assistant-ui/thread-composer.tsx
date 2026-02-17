@@ -11,7 +11,7 @@ export const Composer: FC = () => {
 		<ComposerPrimitive.Root className="aui-composer-root relative flex w-full flex-col">
 			<ComposerPrimitive.Input
 				placeholder="Send a message..."
-				className="aui-composer-input min-h-14 w-full resize-none rounded-2xl border border-input bg-background px-4 pt-4 pb-12 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus-visible:border-emerald-700/50 focus-visible:ring-2 focus-visible:ring-emerald-700/20"
+				className="aui-composer-input min-h-14 w-full resize-none rounded-2xl border border-input bg-background px-4 pt-4 pb-12 text-sm outline-none transition-shadow placeholder:text-muted-foreground focus-visible:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary/20"
 				rows={1}
 				autoFocus
 				aria-label="Message input"
@@ -32,7 +32,7 @@ const ComposerAction: FC = () => {
 						type="submit"
 						variant="default"
 						size="icon"
-						className="aui-composer-send size-8 rounded-full bg-emerald-700 text-white hover:bg-emerald-800"
+						className="aui-composer-send size-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
 						aria-label="Send message"
 					>
 						<ArrowUpIcon className="aui-composer-send-icon size-4" />
@@ -46,7 +46,7 @@ const ComposerAction: FC = () => {
 						type="button"
 						variant="default"
 						size="icon"
-						className="aui-composer-cancel size-8 rounded-full bg-emerald-700 text-white hover:bg-emerald-800"
+						className="aui-composer-cancel size-8 rounded-full bg-primary text-primary-foreground hover:bg-primary/90"
 						aria-label="Stop generating"
 					>
 						<SquareIcon className="aui-composer-cancel-icon size-3 fill-current" />

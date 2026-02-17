@@ -17,7 +17,7 @@ export default function GlobalError({
 				<div className="flex min-h-svh items-center justify-center p-4">
 					<Card className="w-full max-w-md">
 						<CardContent className="flex flex-col items-center gap-4 pt-8 pb-8 text-center">
-							<AlertTriangle className="h-10 w-10 text-emerald-700" />
+							<AlertTriangle className="h-10 w-10 text-primary" />
 							<div className="space-y-1">
 								<h2 className="text-lg font-semibold">Something went wrong</h2>
 								{error.message && (
@@ -28,7 +28,7 @@ export default function GlobalError({
 							</div>
 							<Button
 								onClick={reset}
-								className="bg-emerald-700 hover:bg-emerald-800"
+								className="bg-primary hover:bg-primary/90"
 							>
 								Try again
 							</Button>

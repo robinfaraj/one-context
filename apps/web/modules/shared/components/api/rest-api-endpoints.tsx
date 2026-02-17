@@ -35,7 +35,7 @@ const ENDPOINTS = [
 
 const METHOD_COLORS: Record<string, string> = {
 	GET: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
-	POST: "bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300",
+	POST: "bg-accent text-primary dark:bg-accent dark:text-primary",
 };
 
 export function RestApiEndpoints() {
@@ -72,7 +72,7 @@ export function RestApiEndpoints() {
 					href="/api/docs"
 					target="_blank"
 					rel="noopener noreferrer"
-					className="inline-flex items-center gap-1.5 text-sm text-emerald-700 hover:underline dark:text-emerald-400"
+					className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline dark:text-primary"
 				>
 					<BookOpen className="h-3.5 w-3.5" />
 					Full API documentation

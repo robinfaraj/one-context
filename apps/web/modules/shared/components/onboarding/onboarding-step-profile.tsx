@@ -24,8 +24,8 @@ export function OnboardingStepProfile({ user }: OnboardingStepProfileProps) {
 	return (
 		<div className="space-y-6">
 			<div className="flex flex-col items-center gap-2">
-				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-700/10">
-					<User className="h-6 w-6 text-emerald-700" />
+				<div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+					<User className="h-6 w-6 text-primary" />
 				</div>
 				<h2 className="text-xl font-semibold">Tell us about yourself</h2>
 				<p className="text-sm text-muted-foreground">

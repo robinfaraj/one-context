@@ -1,9 +1,9 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
 import { DangerZone } from "@shared/components/settings/danger-zone";
 import { ProfileForm } from "@shared/components/settings/profile-form";
 import { SyncSettings } from "@shared/components/settings/sync-settings";
+import { authClient } from "@shared/lib/api";
 import { Skeleton } from "@ui/components/skeleton";
 
 export default function SettingsPage() {
@@ -23,7 +23,10 @@ export default function SettingsPage() {
 
 	if (!session?.user) return null;
 
-	const user = session.user;
+	const user = session.user as typeof session.user & {
+		profileSummary?: string | null;
+		syncEnabled?: boolean;
+	};
 
 	return (
 		<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -34,11 +37,11 @@ export default function SettingsPage() {
 				user={{
 					name: user.name,
 					email: user.email,
-					profileSummary: (user as any).profileSummary ?? null,
+					profileSummary: user.profileSummary ?? null,
 				}}
 			/>
 
-			<SyncSettings syncEnabled={(user as any).syncEnabled ?? true} />
+			<SyncSettings syncEnabled={user.syncEnabled ?? true} />
 
 			<DangerZone />
 		</div>

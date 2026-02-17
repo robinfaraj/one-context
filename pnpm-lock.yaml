@@ -250,6 +250,9 @@ importers:
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
+      '@onecontext/logs':
+        specifier: workspace:*
+        version: link:../logs
       '@onecontext/memory':
         specifier: workspace:*
         version: link:../memory
@@ -2335,8 +2338,8 @@ packages:
   '@radix-ui/react-collection@1.1.7':
     resolution: {integrity: sha512-Fh9rGN0MoI4ZFUNyfFVNU4y9LUz93u9/0K+yLgA2bwRojxM8JU1DyvvMBabnZPBgMWREAJvU2jjVzq+LrFUglw==}
     peerDependencies:
-      '@types/react': 19.0.0
-      '@types/react-dom': 19.0.0
+      '@types/react': '*'
+      '@types/react-dom': '*'
       react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
       react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
     peerDependenciesMeta:

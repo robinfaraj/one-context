@@ -12,7 +12,7 @@ interface ConnectedSourcesStripProps {
 }
 
 const statusColors: Record<string, string> = {
-	connected: "bg-emerald-500",
+	connected: "bg-primary",
 	syncing: "bg-yellow-400",
 	error: "bg-red-500",
 };
@@ -51,7 +51,7 @@ export function ConnectedSourcesStrip({
 					</div>
 					<Link
 						href="/sources"
-						className="shrink-0 rounded-md bg-emerald-700 px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-emerald-800"
+						className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90"
 					>
 						Connect
 					</Link>
@@ -85,7 +85,7 @@ export function ConnectedSourcesStrip({
 				</div>
 				<Link
 					href="/sources"
-					className="ml-auto text-xs font-medium text-emerald-700 transition-colors hover:text-emerald-800"
+					className="ml-auto text-xs font-medium text-primary transition-colors hover:text-primary/90"
 				>
 					Manage
 				</Link>

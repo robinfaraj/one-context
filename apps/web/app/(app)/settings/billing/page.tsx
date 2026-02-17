@@ -10,13 +10,13 @@ import {
 import { Button } from "@ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/card";
 import { Skeleton } from "@ui/components/skeleton";
-import { Check, CreditCard } from "lucide-react";
+import { AlertTriangle, Check, CreditCard } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import { toast } from "sonner";
 
 export default function BillingPage() {
-	const { data: sub, isLoading } = useSubscription();
+	const { data: sub, isLoading, isError, refetch } = useSubscription();
 	const checkout = useCheckout();
 	const portal = useCreatePortalSession();
 	const cancel = useCancelSubscription();
@@ -42,7 +42,19 @@ export default function BillingPage() {
 		);
 	}
 
-	if (!sub) return null;
+	if (isError || !sub) {
+		return (
+			<div className="flex flex-col items-center justify-center py-16 gap-3">
+				<AlertTriangle className="h-8 w-8 text-muted-foreground" />
+				<p className="text-sm text-muted-foreground">
+					Failed to load billing information
+				</p>
+				<Button variant="outline" size="sm" onClick={() => refetch()}>
+					Try again
+				</Button>
+			</div>
+		);
+	}
 
 	const proPlan = config.payments.plans.pro;
 	const monthlyPrice = proPlan?.prices?.find((p) => p.interval === "month");
@@ -69,7 +81,7 @@ export default function BillingPage() {
 									{sub.isPro ? "Pro" : "Free"}
 								</span>
 								<span
-									className={`rounded-full px-2 py-0.5 text-xs font-medium ${sub.isPro ? "bg-emerald-700/10 text-emerald-700" : "bg-muted text-muted-foreground"}`}
+									className={`rounded-full px-2 py-0.5 text-xs font-medium ${sub.isPro ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}
 								>
 									{sub.isPro ? "Active" : "Current"}
 								</span>
@@ -149,23 +161,21 @@ export default function BillingPage() {
 							</div>
 							<ul className="space-y-2 text-sm">
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> Unlimited
-									sources
+									<Check className="h-4 w-4 text-primary" /> Unlimited sources
 								</li>
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> Unlimited
-									memories
+									<Check className="h-4 w-4 text-primary" /> Unlimited memories
 								</li>
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> Auto daily sync
+									<Check className="h-4 w-4 text-primary" /> Auto daily sync
 								</li>
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> 10,000 API
+									<Check className="h-4 w-4 text-primary" /> 10,000 API
 									calls/day
 								</li>
 							</ul>
 							<Button
-								className="mt-auto w-full bg-emerald-700 text-white hover:bg-emerald-800"
+								className="mt-auto w-full bg-primary text-primary-foreground hover:bg-primary/90"
 								onClick={() =>
 									monthlyPrice?.priceId && checkout.mutate(monthlyPrice.priceId)
 								}
@@ -177,8 +187,8 @@ export default function BillingPage() {
 					</Card>
 
 					{/* Annual */}
-					<Card className="relative flex h-full flex-col border-2 border-emerald-700">
-						<div className="absolute -top-3 left-4 rounded-full bg-emerald-700 px-3 py-0.5 text-xs font-medium text-white">
+					<Card className="relative flex h-full flex-col border-2 border-primary">
+						<div className="absolute -top-3 left-4 rounded-full bg-primary px-3 py-0.5 text-xs font-medium text-primary-foreground">
 							Best value
 						</div>
 						<CardHeader>
@@ -193,18 +203,18 @@ export default function BillingPage() {
 							</div>
 							<ul className="space-y-2 text-sm">
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> Everything in
+									<Check className="h-4 w-4 text-primary" /> Everything in
 									Monthly
 								</li>
 								<li className="flex items-center gap-2">
-									<Check className="h-4 w-4 text-emerald-700" /> Save $
+									<Check className="h-4 w-4 text-primary" /> Save $
 									{(monthlyPrice?.amount ?? 9) * 12 -
 										(annualPrice?.amount ?? 99)}
 									/year
 								</li>
 							</ul>
 							<Button
-								className="mt-auto w-full bg-emerald-700 text-white hover:bg-emerald-800"
+								className="mt-auto w-full bg-primary text-primary-foreground hover:bg-primary/90"
 								onClick={() =>
 									annualPrice?.priceId && checkout.mutate(annualPrice.priceId)
 								}

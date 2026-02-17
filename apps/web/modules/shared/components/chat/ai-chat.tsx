@@ -195,7 +195,7 @@ export function AiChat({ id }: AiChatProps) {
 					</ChatRuntimeProvider>
 				) : (
 					<div className="flex flex-1 items-center justify-center">
-						<div className="size-6 animate-spin rounded-full border-2 border-emerald-700 border-t-transparent" />
+						<div className="size-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
 					</div>
 				)}
 			</main>

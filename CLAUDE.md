@@ -91,8 +91,25 @@ Plugins: username, admin, openAPI, apiKey (prefix: `octx_`, rate limit: 60/min),
 Biome handles both linting and formatting (not ESLint/Prettier). Key rules:
 - `.tsx` files must use **kebab-case** filenames
 - Unused imports are errors
-- `noExplicitAny`: off, `noForEach`: off, `useExhaustiveDependencies`: off
+- `noExplicitAny`: warn, `noForEach`: off, `useExhaustiveDependencies`: off, `noEmptyBlockStatements`: warn
 - Generated code (`packages/database/src/generated`) is excluded from linting
+
+## Coding Rules (Enforced)
+
+### API Routes — Always validate with Zod
+Every Hono route that accepts a request body MUST use `sValidator("json", schema)` from `@hono/standard-validator` and `c.req.valid("json")`. Never use raw `c.req.json()`. Define schemas at the top of the route file or in a co-located `types.ts`.
+
+### API Routes — Use the service/query layer
+Route handlers in `packages/api/src/routes/` must NOT import `db` from `@onecontext/database` directly. Database access goes through service functions (business logic) and query functions (Prisma calls). Architecture: **Router → Service → Query → Database**.
+
+### Styling — Use theme tokens, never hardcoded colors
+Never use raw Tailwind color classes like `bg-emerald-700`, `text-blue-500`, etc. Always use the theme CSS variable tokens defined in `tooling/tailwind/theme.css`: `bg-primary`, `text-primary`, `bg-accent`, `text-primary-foreground`, etc. This ensures the brand is centrally configurable.
+
+### Error handling — No silent swallowing
+Never use `.catch(() => {})` or empty catch blocks. Always log errors using `@onecontext/logs` logger or at minimum `console.warn` with context.
+
+### Imports — Use canonical paths
+Import `authClient` from `@shared/lib/api` (not directly from `@onecontext/auth/client`). Use the re-export to keep a single source of truth.
 
 ## Environment
 

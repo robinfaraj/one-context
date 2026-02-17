@@ -80,7 +80,7 @@ export function ApiKeyManager() {
 					<Button
 						onClick={handleCreate}
 						disabled={createKey.isPending}
-						className="shrink-0 bg-emerald-700 hover:bg-emerald-800"
+						className="shrink-0 bg-primary hover:bg-primary/90"
 					>
 						{createKey.isPending ? (
 							<Loader2 className="mr-1.5 h-4 w-4 animate-spin" />
@@ -93,8 +93,8 @@ export function ApiKeyManager() {
 
 				{/* Newly created key banner */}
 				{newKey && (
-					<div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 dark:border-emerald-900 dark:bg-emerald-950/30">
-						<p className="mb-1.5 text-sm font-medium text-emerald-800 dark:text-emerald-300">
+					<div className="rounded-lg border border-primary/20 bg-accent p-3 dark:border-primary/50 dark:bg-accent/30">
+						<p className="mb-1.5 text-sm font-medium text-primary dark:text-primary">
 							Copy your API key now — it won't be shown again.
 						</p>
 						<div className="flex items-center gap-2">

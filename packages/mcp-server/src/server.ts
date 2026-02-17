@@ -12,7 +12,7 @@ async function resolveUser(apiKey: string) {
 	if (!result?.valid || !result.key) {
 		throw new Error("Invalid API key");
 	}
-	const userId = (result.key as any).userId as string;
+	const userId = (result.key as { userId: string }).userId;
 	const user = await db.user.findUnique({ where: { id: userId } });
 	if (!user) {
 		throw new Error("User not found for this API key");
@@ -48,9 +48,8 @@ export async function createServer(apiKey: string) {
 								id: freshUser.id,
 								name: freshUser.name,
 								email: freshUser.email,
-								username: (freshUser as any).username ?? null,
+								username: freshUser.username ?? null,
 								image: freshUser.image,
-								bio: (freshUser as any).bio ?? null,
 							},
 							null,
 							2,
@@ -124,7 +123,7 @@ export async function createServer(apiKey: string) {
 			const summary = {
 				name: freshUser?.name,
 				email: freshUser?.email,
-				username: (freshUser as any)?.username ?? null,
+				username: freshUser?.username ?? null,
 				connectedSources: sources.map((s) => s.provider),
 			};
 			return {

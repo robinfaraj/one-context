@@ -103,7 +103,7 @@ export function OAuthConsentForm() {
 	if (loading) {
 		return (
 			<div className="flex flex-col items-center gap-4 py-8">
-				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-700" />
+				<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
 			</div>
 		);
 	}
@@ -121,8 +121,8 @@ export function OAuthConsentForm() {
 							className="size-12 rounded-lg"
 						/>
 					) : (
-						<div className="flex size-12 items-center justify-center rounded-lg bg-emerald-700/10">
-							<ShieldCheck className="size-6 text-emerald-700" />
+						<div className="flex size-12 items-center justify-center rounded-lg bg-primary/10">
+							<ShieldCheck className="size-6 text-primary" />
 						</div>
 					)}
 				</div>
@@ -142,7 +142,7 @@ export function OAuthConsentForm() {
 							if (!info) return null;
 							return (
 								<li key={s} className="flex items-start gap-2 text-sm">
-									<ShieldCheck className="mt-0.5 size-4 shrink-0 text-emerald-700" />
+									<ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
 									<span className="text-muted-foreground">
 										{info.description}
 									</span>
@@ -166,7 +166,7 @@ export function OAuthConsentForm() {
 						Deny
 					</Button>
 					<Button
-						className="flex-1 bg-emerald-700 hover:bg-emerald-800 text-white"
+						className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground"
 						onClick={() => handleConsent(true)}
 						disabled={submitting}
 					>

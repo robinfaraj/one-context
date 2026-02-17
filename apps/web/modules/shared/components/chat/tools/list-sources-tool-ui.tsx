@@ -36,7 +36,7 @@ function SourceRow({ source }: { source: SourceItem }) {
 			<span className="flex-shrink-0 text-xs text-muted-foreground">
 				· {source.itemCount} item{source.itemCount !== 1 ? "s" : ""}
 			</span>
-			<span className="ml-auto inline-flex h-1.5 w-1.5 flex-shrink-0 rounded-full bg-emerald-500" />
+			<span className="ml-auto inline-flex h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
 		</div>
 	);
 }

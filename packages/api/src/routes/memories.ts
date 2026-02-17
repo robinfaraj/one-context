@@ -1,8 +1,20 @@
-import { db } from "@onecontext/database/server";
-import * as mem0 from "@onecontext/memory";
+import { sValidator } from "@hono/standard-validator";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
+import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
+import {
+	deleteMemory,
+	listMemories,
+	pinMemory,
+	searchMemories,
+	unpinMemory,
+	updateMemory,
+} from "../services/memories";
+
+const memoryUpdateSchema = z.object({
+	content: z.string().min(1, "Content is required"),
+});
 
 export const memoriesRouter = new Hono()
 	.basePath("/memories")
@@ -17,21 +29,7 @@ export const memoriesRouter = new Hono()
 		}),
 		async (c) => {
 			const user = c.get("user");
-			const [memories, pinnedRows] = await Promise.all([
-				mem0.getAll(user.id),
-				db.pinnedMemory.findMany({
-					where: { userId: user.id },
-					select: { memoryId: true },
-				}),
-			]);
-			const pinnedIds = new Set(pinnedRows.map((r) => r.memoryId));
-			const enriched = memories.map((m) => ({
-				...m,
-				metadata: {
-					...m.metadata,
-					pinned: pinnedIds.has(m.id),
-				},
-			}));
+			const enriched = await listMemories(user.id);
 			return c.json(enriched);
 		},
 	)
@@ -50,8 +48,15 @@ export const memoriesRouter = new Hono()
 				return c.json({ error: "Query parameter 'q' is required" }, 400);
 			}
 			const filtersParam = c.req.query("filters");
-			const filters = filtersParam ? JSON.parse(filtersParam) : undefined;
-			const results = await mem0.search(query, user.id, filters);
+			let filters: Record<string, unknown> | undefined;
+			if (filtersParam) {
+				try {
+					filters = JSON.parse(filtersParam);
+				} catch {
+					return c.json({ error: "Invalid JSON in 'filters' parameter" }, 400);
+				}
+			}
+			const results = await searchMemories(query, user.id, filters);
 			return c.json(results);
 		},
 	)
@@ -66,13 +71,11 @@ export const memoriesRouter = new Hono()
 				400: { description: "Missing content" },
 			},
 		}),
+		sValidator("json", memoryUpdateSchema),
 		async (c) => {
 			const memoryId = c.req.param("id");
-			const body = await c.req.json<{ content: string }>();
-			if (!body.content) {
-				return c.json({ error: "Content is required" }, 400);
-			}
-			const result = await mem0.update(memoryId, body.content);
+			const { content } = c.req.valid("json");
+			const result = await updateMemory(memoryId, content);
 			return c.json(result);
 		},
 	)
@@ -86,8 +89,8 @@ export const memoriesRouter = new Hono()
 		}),
 		async (c) => {
 			const memoryId = c.req.param("id");
-			await mem0.deleteMemory(memoryId);
-			return c.json({ success: true });
+			await deleteMemory(memoryId);
+			return c.body(null, 204);
 		},
 	)
 	.post(
@@ -104,13 +107,7 @@ export const memoriesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 			const memoryId = c.req.param("id");
-			const pinned = await db.pinnedMemory.upsert({
-				where: {
-					userId_memoryId: { userId: user.id, memoryId },
-				},
-				update: {},
-				create: { userId: user.id, memoryId },
-			});
+			const pinned = await pinMemory(user.id, memoryId);
 			return c.json(pinned);
 		},
 	)
@@ -128,9 +125,7 @@ export const memoriesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 			const memoryId = c.req.param("id");
-			await db.pinnedMemory.deleteMany({
-				where: { userId: user.id, memoryId },
-			});
-			return c.json({ success: true });
+			await unpinMemory(user.id, memoryId);
+			return c.body(null, 204);
 		},
 	);

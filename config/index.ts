@@ -2,6 +2,19 @@ import type { Config } from "./types";
 
 export type { Config, PlanLimits, Price, PlanConfig } from "./types";
 
+if (process.env.NODE_ENV !== "test") {
+	if (!process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID) {
+		console.warn(
+			"[Config] NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID is not set — Stripe checkout will not work",
+		);
+	}
+	if (!process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID) {
+		console.warn(
+			"[Config] NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID is not set — Stripe checkout will not work",
+		);
+	}
+}
+
 export const config: Config = {
 	links: {
 		github: "https://github.com/robinfaraj/one-context",

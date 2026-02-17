@@ -80,16 +80,24 @@ export const auth = betterAuth({
 		autoSignIn: true,
 	},
 	socialProviders: {
-		github: {
-			clientId: process.env.GITHUB_CLIENT_ID as string,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-			scope: ["user:email", "read:user"],
-		},
-		twitter: {
-			clientId: process.env.TWITTER_CLIENT_ID as string,
-			clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
-			scope: ["users.read", "tweet.read", "offline.access"],
-		},
+		...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+			? {
+					github: {
+						clientId: process.env.GITHUB_CLIENT_ID,
+						clientSecret: process.env.GITHUB_CLIENT_SECRET,
+						scope: ["user:email", "read:user"],
+					},
+				}
+			: {}),
+		...(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET
+			? {
+					twitter: {
+						clientId: process.env.TWITTER_CLIENT_ID,
+						clientSecret: process.env.TWITTER_CLIENT_SECRET,
+						scope: ["users.read", "tweet.read", "offline.access"],
+					},
+				}
+			: {}),
 	},
 	plugins: [
 		username(),

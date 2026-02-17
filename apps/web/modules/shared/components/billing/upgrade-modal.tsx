@@ -48,8 +48,8 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 				onEscapeKeyDown={(e) => e.preventDefault()}
 			>
 				<DialogHeader className="items-center text-center">
-					<div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-700/10">
-						<Lock className="h-6 w-6 text-emerald-700" />
+					<div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+						<Lock className="h-6 w-6 text-primary" />
 					</div>
 					<DialogTitle className="text-xl">Upgrade to Pro</DialogTitle>
 					<DialogDescription>
@@ -61,8 +61,8 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 					<div className="space-y-3">
 						{features.map((f) => (
 							<div key={f.label} className="flex items-center gap-3">
-								<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-700/10">
-									<f.icon className="h-4 w-4 text-emerald-700" />
+								<div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+									<f.icon className="h-4 w-4 text-primary" />
 								</div>
 								<span className="text-sm">{f.label}</span>
 							</div>
@@ -75,7 +75,7 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 							onClick={() => setInterval("month")}
 							className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
 								interval === "month"
-									? "bg-emerald-700 text-white"
+									? "bg-primary text-primary-foreground"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
@@ -86,7 +86,7 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 							onClick={() => setInterval("year")}
 							className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
 								interval === "year"
-									? "bg-emerald-700 text-white"
+									? "bg-primary text-primary-foreground"
 									: "text-muted-foreground hover:text-foreground"
 							}`}
 						>
@@ -95,7 +95,7 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 					</div>
 
 					{interval === "year" && (
-						<p className="text-center text-xs font-medium text-emerald-700">
+						<p className="text-center text-xs font-medium text-primary">
 							Save $
 							{(monthlyPrice?.amount ?? 9) * 12 - (annualPrice?.amount ?? 99)}
 							/year
@@ -107,7 +107,7 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 					<Button
 						onClick={handleUpgrade}
 						disabled={checkout.isPending || !price?.priceId}
-						className="bg-emerald-700 text-white hover:bg-emerald-800"
+						className="bg-primary text-primary-foreground hover:bg-primary/90"
 					>
 						{checkout.isPending ? "Redirecting..." : "Upgrade to Pro"}
 					</Button>

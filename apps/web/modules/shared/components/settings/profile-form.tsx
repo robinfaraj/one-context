@@ -78,7 +78,7 @@ export function ProfileForm({ user }: ProfileFormProps) {
 					<Button
 						type="submit"
 						disabled={!hasChanges || updateProfile.isPending}
-						className="bg-emerald-700 hover:bg-emerald-800"
+						className="bg-primary hover:bg-primary/90"
 					>
 						{updateProfile.isPending && <Loader2 className="animate-spin" />}
 						Save changes
