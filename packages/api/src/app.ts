@@ -7,6 +7,7 @@ import { corsMiddleware } from "./middleware/cors";
 import { loggerMiddleware } from "./middleware/logger";
 import { aiRouter } from "./routes/ai";
 import { authRouter } from "./routes/auth";
+import { billingRouter } from "./routes/billing";
 import { dashboardRouter } from "./routes/dashboard";
 import { healthRouter } from "./routes/health";
 import { memoriesRouter } from "./routes/memories";
@@ -25,7 +26,8 @@ const appRouter = app
 	.route("/", aiRouter)
 	.route("/", sourcesRouter)
 	.route("/", dashboardRouter)
-	.route("/", settingsRouter);
+	.route("/", settingsRouter)
+	.route("/", billingRouter);
 
 app.get("/app-openapi", async (c) => {
 	try {

@@ -2,6 +2,7 @@
 
 import { ManualEntrySection } from "@shared/components/sources/manual-entry-section";
 import { SourceGrid } from "@shared/components/sources/source-grid";
+import { useSubscription } from "@shared/lib/billing-api";
 import { useConnectSource, useSources } from "@shared/lib/sources-api";
 import { Button } from "@ui/components/button";
 import { AlertTriangle } from "lucide-react";
@@ -9,6 +10,7 @@ import { useEffect, useRef } from "react";
 
 export default function SourcesPage() {
 	const { data, isLoading, isError, refetch } = useSources();
+	const { data: sub } = useSubscription();
 	const connectSource = useConnectSource();
 	const connectingRef = useRef<Set<string>>(new Set());
 
@@ -24,6 +26,10 @@ export default function SourcesPage() {
 	}, [data?.pendingConnections]);
 
 	const connectedCount = data?.connectedSources.length ?? 0;
+	const atSourceLimit =
+		sub && sub.limits.sources !== "unlimited"
+			? connectedCount >= (sub.limits.sources as number)
+			: false;
 
 	if (isError) {
 		return (
@@ -54,6 +60,7 @@ export default function SourcesPage() {
 				connectedSources={data?.connectedSources ?? []}
 				disconnectedProviders={data?.disconnectedProviders ?? []}
 				isLoading={isLoading}
+				atSourceLimit={atSourceLimit}
 			/>
 
 			<ManualEntrySection />
