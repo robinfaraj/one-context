@@ -1,6 +1,12 @@
 "use client";
 
-import { chatKeys, useChat, useChats, useDeleteChat } from "@shared/lib/chat-api";
+import {
+	chatKeys,
+	useChat,
+	useChats,
+	useDeleteChat,
+} from "@shared/lib/chat-api";
+import { useQueryClient } from "@tanstack/react-query";
 import { Thread } from "@ui/components/assistant-ui/thread";
 import { Button } from "@ui/components/button";
 import {
@@ -9,7 +15,6 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@ui/components/sheet";
-import { useQueryClient } from "@tanstack/react-query";
 import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 import { ChatRuntimeProvider } from "./chat-runtime-provider";

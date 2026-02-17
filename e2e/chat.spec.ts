@@ -130,9 +130,7 @@ test.describe("Chat", () => {
 		}).toPass({ timeout: 10_000 });
 	});
 
-	test("delete removes chat from sidebar without reload", async ({
-		page,
-	}) => {
+	test("delete removes chat from sidebar without reload", async ({ page }) => {
 		test.setTimeout(90_000);
 
 		// Create a chat first
@@ -176,11 +174,13 @@ test.describe("Chat", () => {
 			const text = (await sidebar.textContent()) ?? "";
 			// The sidebar should contain something other than just "New Chat" entries
 			// for the chat we just created. The title model generates a short summary.
-			const chatButtons = await page
-				.locator("aside button")
-				.allTextContents();
+			const chatButtons = await page.locator("aside button").allTextContents();
 			const nonGenericTitles = chatButtons.filter(
-				(t) => t.trim() && t !== "New Chat" && t !== "Delete chat" && t !== "Confirm delete",
+				(t) =>
+					t.trim() &&
+					t !== "New Chat" &&
+					t !== "Delete chat" &&
+					t !== "Confirm delete",
 			);
 			expect(nonGenericTitles.length).toBeGreaterThan(0);
 		}).toPass({ timeout: 15_000 });
