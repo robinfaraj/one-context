@@ -99,3 +99,18 @@ export type Subscription = Prisma.SubscriptionModel
  * 
  */
 export type ApiUsage = Prisma.ApiUsageModel
+/**
+ * Model OauthApplication
+ * 
+ */
+export type OauthApplication = Prisma.OauthApplicationModel
+/**
+ * Model OauthAccessToken
+ * 
+ */
+export type OauthAccessToken = Prisma.OauthAccessTokenModel
+/**
+ * Model OauthConsent
+ * 
+ */
+export type OauthConsent = Prisma.OauthConsentModel

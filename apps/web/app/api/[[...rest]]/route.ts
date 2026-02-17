@@ -1,6 +1,8 @@
 import { app } from "@onecontext/api";
 import { handle } from "hono/vercel";
 
+export const dynamic = "force-dynamic";
+
 const handler = handle(app);
 
 export const GET = handler;

@@ -1,6 +1,8 @@
 {
 	"dependencies": {
+		"@hono/mcp": "^0.2.3",
 		"@hono/standard-validator": "^0.2.2",
+		"@modelcontextprotocol/sdk": "^1.26.0",
 		"@onecontext/ai-chat": "workspace:*",
 		"@onecontext/auth": "workspace:*",
 		"@onecontext/config": "workspace:*",

@@ -8,6 +8,7 @@ import {
 	admin,
 	apiKey,
 	magicLink,
+	oidcProvider,
 	openAPI,
 	username,
 } from "better-auth/plugins";
@@ -107,6 +108,15 @@ export const auth = betterAuth({
 			sendMagicLink: async ({ email, url }) => {
 				logger.info("Magic link requested", { email, url });
 			},
+		}),
+		oidcProvider({
+			loginPage: "/login",
+			consentPage: "/auth/oauth/consent",
+			allowDynamicClientRegistration: true,
+			requirePKCE: true,
+			scopes: ["openid", "profile", "email", "offline_access"],
+			accessTokenExpiresIn: 3600,
+			refreshTokenExpiresIn: 604800,
 		}),
 	],
 	onAPIError: {

@@ -22,7 +22,7 @@
 	"name": "@onecontext/database",
 	"scripts": {
 		"generate": "prisma generate",
-		"push": "dotenv -c -e ../../.env.local -- prisma db push --skip-generate",
+		"push": "dotenv -c -e ../../.env.local -- prisma db push",
 		"pull": "dotenv -c -e ../../.env.local -- prisma db pull",
 		"migrate": "dotenv -c -e ../../.env.local -- prisma migrate dev",
 		"migrate-reset": "dotenv -c -e ../../.env.local -- prisma migrate reset",

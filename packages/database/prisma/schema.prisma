@@ -9,24 +9,24 @@ datasource db {
 }
 
 model User {
-  id                 String          @id
+  id                 String         @id
   name               String
   email              String
-  emailVerified      Boolean         @default(false)
+  emailVerified      Boolean        @default(false)
   image              String?
-  createdAt          DateTime        @default(now())
-  updatedAt          DateTime        @updatedAt
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   username           String?
-  displayUsername     String?
+  displayUsername    String?
   role               String?
-  banned             Boolean?        @default(false)
+  banned             Boolean?       @default(false)
   banReason          String?
   banExpires         DateTime?
   onboardingComplete Boolean?
   profileSummary     String?
-  syncEnabled        Boolean         @default(true)
-  plan               String          @default("free")
-  stripeCustomerId   String?         @unique
+  syncEnabled        Boolean        @default(true)
+  plan               String         @default("free")
+  stripeCustomerId   String?        @unique
   sessions           Session[]
   accounts           Account[]
   apikeys            Apikey[]
@@ -36,6 +36,10 @@ model User {
   pinnedMemories     PinnedMemory[]
   subscriptions      Subscription[]
   apiUsage           ApiUsage[]
+
+  oauthapplications OauthApplication[]
+  oauthaccesstokens OauthAccessToken[]
+  oauthconsents     OauthConsent[]
 
   @@unique([email])
   @@unique([username])
@@ -201,7 +205,7 @@ model Subscription {
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   stripeSubscriptionId String   @unique
   stripePriceId        String
-  status               String   // "active" | "canceled" | "past_due" | "trialing"
+  status               String // "active" | "canceled" | "past_due" | "trialing"
   currentPeriodStart   DateTime
   currentPeriodEnd     DateTime
   cancelAtPeriodEnd    Boolean  @default(false)
@@ -223,4 +227,63 @@ model ApiUsage {
   @@unique([userId, date])
   @@index([userId])
   @@map("api_usage")
+}
+
+model OauthApplication {
+  id                String             @id
+  name              String?
+  icon              String?
+  metadata          String?
+  clientId          String?
+  clientSecret      String?
+  redirectUrls      String?
+  type              String?
+  disabled          Boolean?           @default(false)
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime?
+  updatedAt         DateTime?
+  oauthaccesstokens OauthAccessToken[]
+  oauthconsents     OauthConsent[]
+
+  @@unique([clientId])
+  @@index([userId])
+  @@map("oauthApplication")
+}
+
+model OauthAccessToken {
+  id                    String            @id
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  clientId              String?
+  oauthapplication      OauthApplication? @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId                String?
+  user                  User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes                String?
+  createdAt             DateTime?
+  updatedAt             DateTime?
+
+  @@unique([accessToken])
+  @@unique([refreshToken])
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthAccessToken")
+}
+
+model OauthConsent {
+  id               String            @id
+  clientId         String?
+  oauthapplication OauthApplication? @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId           String?
+  user             User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes           String?
+  createdAt        DateTime?
+  updatedAt        DateTime?
+  consentGiven     Boolean?
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthConsent")
 }

@@ -10,6 +10,7 @@ import { authRouter } from "./routes/auth";
 import { billingRouter } from "./routes/billing";
 import { dashboardRouter } from "./routes/dashboard";
 import { healthRouter } from "./routes/health";
+import { mcpRouter } from "./routes/mcp/router";
 import { memoriesRouter } from "./routes/memories";
 import { settingsRouter } from "./routes/settings";
 import { sourcesRouter } from "./routes/sources";
@@ -27,7 +28,8 @@ const appRouter = app
 	.route("/", sourcesRouter)
 	.route("/", dashboardRouter)
 	.route("/", settingsRouter)
-	.route("/", billingRouter);
+	.route("/", billingRouter)
+	.route("/", mcpRouter);
 
 app.get("/app-openapi", async (c) => {
 	try {
