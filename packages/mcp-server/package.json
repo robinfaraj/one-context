@@ -1,0 +1,23 @@
+{
+	"name": "@onecontext/mcp-server",
+	"version": "0.0.0",
+	"bin": {
+		"onecontext-mcp": "./src/index.ts"
+	},
+	"main": "./src/index.ts",
+	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.26.0",
+		"@onecontext/auth": "workspace:*",
+		"@onecontext/database": "workspace:*",
+		"@onecontext/memory": "workspace:*",
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	}
+}

@@ -42,3 +42,53 @@ export type Verification = Prisma.VerificationModel
  * 
  */
 export type Apikey = Prisma.ApikeyModel
+/**
+ * Model Chat
+ * 
+ */
+export type Chat = Prisma.ChatModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
+/**
+ * Model Source
+ * 
+ */
+export type Source = Prisma.SourceModel
+/**
+ * Model ContentItem
+ * 
+ */
+export type ContentItem = Prisma.ContentItemModel
+/**
+ * Model PinnedMemory
+ * 
+ */
+export type PinnedMemory = Prisma.PinnedMemoryModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model ApiUsage
+ * 
+ */
+export type ApiUsage = Prisma.ApiUsageModel
+/**
+ * Model OauthApplication
+ * 
+ */
+export type OauthApplication = Prisma.OauthApplicationModel
+/**
+ * Model OauthAccessToken
+ * 
+ */
+export type OauthAccessToken = Prisma.OauthAccessTokenModel
+/**
+ * Model OauthConsent
+ * 
+ */
+export type OauthConsent = Prisma.OauthConsentModel

@@ -51,7 +51,10 @@ dist/
 .mcp.json
 
 # Playwright
+e2e/.auth/
 playwright/.auth
+playwright-report/
+test-results/
 .playwright-mcp/
 .playwright/
 

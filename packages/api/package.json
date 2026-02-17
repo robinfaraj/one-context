@@ -1,10 +1,16 @@
 {
 	"dependencies": {
+		"@hono/mcp": "^0.2.3",
 		"@hono/standard-validator": "^0.2.2",
+		"@modelcontextprotocol/sdk": "^1.26.0",
+		"@onecontext/ai-chat": "workspace:*",
 		"@onecontext/auth": "workspace:*",
 		"@onecontext/config": "workspace:*",
 		"@onecontext/database": "workspace:*",
+		"@onecontext/integrations": "workspace:*",
 		"@onecontext/logs": "workspace:*",
+		"@onecontext/memory": "workspace:*",
+		"@onecontext/stripe": "workspace:*",
 		"@onecontext/utils": "workspace:*",
 		"@scalar/hono-api-reference": "^0.9.11",
 		"@standard-community/standard-json": "^0.3.5",
@@ -19,12 +25,14 @@
 		"@onecontext/tsconfig": "workspace:*",
 		"dotenv": "^16.4.7",
 		"dotenv-cli": "^8.0.0",
-		"typescript": "5.7.2"
+		"typescript": "5.7.2",
+		"vitest": "^4.0.18"
 	},
 	"main": "./index.ts",
 	"name": "@onecontext/api",
 	"scripts": {
-		"type-check": "tsc --noEmit"
+		"type-check": "tsc --noEmit",
+		"test": "dotenv -c -e ../../.env.local -- vitest run"
 	},
 	"version": "0.0.0"
 }

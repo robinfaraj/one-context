@@ -1,4 +1,11 @@
 {
+	"dependencies": {
+		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*",
+		"@onecontext/memory": "workspace:*",
+		"@xdevplatform/xdk": "^0.4.0",
+		"zod": "^3.24.2"
+	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@onecontext/tsconfig": "workspace:*"

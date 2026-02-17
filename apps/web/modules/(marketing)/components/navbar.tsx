@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@onecontext/auth/client";
 import { config } from "@onecontext/config";
 import { Github } from "lucide-react";
 import { Logo } from "./logo";
@@ -12,6 +13,10 @@ const navLinks = [
 ];
 
 export function Navbar() {
+	const { data: session } = authClient.useSession();
+	const ctaHref = session ? "/dashboard" : "/signup";
+	const ctaLabel = session ? "Dashboard" : "Get Started Free";
+
 	return (
 		<nav className="fixed top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
 			<div className="container flex h-16 items-center justify-between">
@@ -42,10 +47,10 @@ export function Navbar() {
 						<Github className="h-5 w-5" />
 					</a>
 					<a
-						href="/login"
+						href={ctaHref}
 						className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
 					>
-						Get Early Access
+						{ctaLabel}
 					</a>
 				</div>
 			</div>

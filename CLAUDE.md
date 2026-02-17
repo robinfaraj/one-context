@@ -39,8 +39,8 @@ pnpm format             # Biome format --write
 
 ```bash
 pnpm generate           # Generate Prisma client
-pnpm push               # Push schema to DB (no migration)
 pnpm migrate            # Create a Prisma migration
+pnpm seed               # Seed DB (e2e test user via BetterAuth API)
 pnpm studio             # Open Prisma Studio
 pnpm deploy-prod        # Deploy migrations to production
 ```
@@ -91,8 +91,37 @@ Plugins: username, admin, openAPI, apiKey (prefix: `octx_`, rate limit: 60/min),
 Biome handles both linting and formatting (not ESLint/Prettier). Key rules:
 - `.tsx` files must use **kebab-case** filenames
 - Unused imports are errors
-- `noExplicitAny`: off, `noForEach`: off, `useExhaustiveDependencies`: off
+- `noExplicitAny`: warn, `noForEach`: off, `useExhaustiveDependencies`: off, `noEmptyBlockStatements`: warn
 - Generated code (`packages/database/src/generated`) is excluded from linting
+
+## Coding Rules (Enforced)
+
+### API Routes — Always validate with Zod
+Every Hono route that accepts a request body MUST use `sValidator("json", schema)` from `@hono/standard-validator` and `c.req.valid("json")`. Never use raw `c.req.json()`. Define schemas at the top of the route file or in a co-located `types.ts`.
+
+### API Routes — Use the service/query layer
+Route handlers in `packages/api/src/routes/` must NOT import `db` from `@onecontext/database` directly. Database access goes through service functions (business logic) and query functions (Prisma calls). Architecture: **Router → Service → Query → Database**. This applies to ALL packages — `packages/stripe`, `packages/ai-chat`, etc. must also use query functions from `@onecontext/database/queries` instead of importing `db` directly.
+
+### Styling — Use theme tokens, never hardcoded colors
+Never use raw Tailwind color classes like `bg-emerald-700`, `text-blue-500`, etc. Always use the theme CSS variable tokens defined in `tooling/tailwind/theme.css`: `bg-primary`, `text-primary`, `bg-accent`, `text-primary-foreground`, etc. This ensures the brand is centrally configurable.
+
+### Error handling — No silent swallowing
+Never use `.catch(() => {})` or empty catch blocks. Always log errors using `@onecontext/logs` logger or at minimum `console.warn` with context. Include relevant identifiers (userId, provider, etc.) in log messages for debuggability.
+
+### Imports — Use canonical paths
+Import `authClient` from `@shared/lib/api` (not directly from `@onecontext/auth/client`). Use the re-export to keep a single source of truth.
+
+### Database — Always use migrations, never `db push`
+Never use `prisma db push` or `pnpm push` to apply schema changes. Always create a proper migration with `pnpm migrate` in `packages/database`. This ensures the migration history stays in sync with the actual schema and is reproducible across environments.
+
+### Database — Use upsert for find-or-create patterns
+Never use `findFirst` + `create` as separate calls — this creates a race condition. Use `db.model.upsert()` for atomic find-or-create.
+
+### Security — Validate resource ownership
+When an API accepts a resource ID (e.g., memory ID), always verify the resource belongs to the authenticated user before performing updates or deletes. Fetch the resource first, compare the owner, and return 404 on mismatch.
+
+### Security — Never log secrets or tokens
+Never log sensitive data like magic link URLs, access tokens, API keys, or passwords. Only log non-sensitive identifiers (email, userId).
 
 ## Environment
 

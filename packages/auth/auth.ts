@@ -1,6 +1,7 @@
 import { config } from "@onecontext/config";
 import { db } from "@onecontext/database/server";
 import { logger } from "@onecontext/logs";
+import { sendMagicLinkEmail } from "@onecontext/mail";
 import { getBaseUrl } from "@onecontext/utils";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -8,6 +9,7 @@ import {
 	admin,
 	apiKey,
 	magicLink,
+	oidcProvider,
 	openAPI,
 	username,
 } from "better-auth/plugins";
@@ -79,16 +81,24 @@ export const auth = betterAuth({
 		autoSignIn: true,
 	},
 	socialProviders: {
-		github: {
-			clientId: process.env.GITHUB_CLIENT_ID as string,
-			clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
-			scope: ["user:email", "read:user"],
-		},
-		twitter: {
-			clientId: process.env.TWITTER_CLIENT_ID as string,
-			clientSecret: process.env.TWITTER_CLIENT_SECRET as string,
-			scope: ["users.read", "tweet.read", "offline.access"],
-		},
+		...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
+			? {
+					github: {
+						clientId: process.env.GITHUB_CLIENT_ID,
+						clientSecret: process.env.GITHUB_CLIENT_SECRET,
+						scope: ["user:email", "read:user"],
+					},
+				}
+			: {}),
+		...(process.env.TWITTER_CLIENT_ID && process.env.TWITTER_CLIENT_SECRET
+			? {
+					twitter: {
+						clientId: process.env.TWITTER_CLIENT_ID,
+						clientSecret: process.env.TWITTER_CLIENT_SECRET,
+						scope: ["users.read", "tweet.read", "offline.access"],
+					},
+				}
+			: {}),
 	},
 	plugins: [
 		username(),
@@ -105,8 +115,22 @@ export const auth = betterAuth({
 		}),
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
-				logger.info("Magic link requested", { email, url });
+				logger.info("Magic link requested", { email });
+				await sendMagicLinkEmail({
+					to: email,
+					url,
+					from: config.mail.from,
+				});
 			},
+		}),
+		oidcProvider({
+			loginPage: "/login",
+			consentPage: "/auth/oauth/consent",
+			allowDynamicClientRegistration: false,
+			requirePKCE: true,
+			scopes: ["openid", "profile", "email", "offline_access"],
+			accessTokenExpiresIn: 3600,
+			refreshTokenExpiresIn: 604800,
 		}),
 	],
 	onAPIError: {

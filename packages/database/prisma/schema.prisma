@@ -9,23 +9,37 @@ datasource db {
 }
 
 model User {
-  id                 String    @id
+  id                 String         @id
   name               String
   email              String
-  emailVerified      Boolean   @default(false)
+  emailVerified      Boolean        @default(false)
   image              String?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   username           String?
   displayUsername    String?
   role               String?
-  banned             Boolean?  @default(false)
+  banned             Boolean?       @default(false)
   banReason          String?
   banExpires         DateTime?
   onboardingComplete Boolean?
+  profileSummary     String?
+  syncEnabled        Boolean        @default(true)
+  plan               String         @default("free")
+  stripeCustomerId   String?        @unique
   sessions           Session[]
   accounts           Account[]
   apikeys            Apikey[]
+  chats              Chat[]
+  sources            Source[]
+  contentItems       ContentItem[]
+  pinnedMemories     PinnedMemory[]
+  subscriptions      Subscription[]
+  apiUsage           ApiUsage[]
+
+  oauthapplications OauthApplication[]
+  oauthaccesstokens OauthAccessToken[]
+  oauthconsents     OauthConsent[]
 
   @@unique([email])
   @@unique([username])
@@ -108,4 +122,168 @@ model Apikey {
   @@index([key])
   @@index([userId])
   @@map("apikey")
+}
+
+model Chat {
+  id        String        @id @default(cuid())
+  userId    String
+  user      User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String        @default("New Chat")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+  messages  ChatMessage[]
+
+  @@index([userId])
+  @@map("chat")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  chatId    String
+  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  parentId  String?
+  role      String
+  parts     Json
+  data      Json?
+  createdAt DateTime @default(now())
+
+  @@index([chatId])
+  @@map("chat_message")
+}
+
+model Source {
+  id           String        @id @default(cuid())
+  userId       String
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider     String
+  status       String        @default("connected")
+  lastSyncAt   DateTime?
+  memoryCount  Int           @default(0)
+  metadata     Json?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  contentItems ContentItem[]
+
+  @@unique([userId, provider])
+  @@index([userId])
+  @@map("source")
+}
+
+model ContentItem {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sourceId    String
+  source      Source   @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  externalId  String
+  type        String
+  rawData     Json
+  contentDate DateTime
+  importedAt  DateTime @default(now())
+
+  @@unique([sourceId, externalId])
+  @@index([userId])
+  @@index([sourceId])
+  @@map("content_item")
+}
+
+model PinnedMemory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  memoryId  String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, memoryId])
+  @@index([userId])
+  @@map("pinned_memory")
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String   @unique
+  stripePriceId        String
+  status               String // "active" | "canceled" | "past_due" | "trialing"
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscription")
+}
+
+model ApiUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  callCount Int      @default(0)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("api_usage")
+}
+
+model OauthApplication {
+  id                String             @id
+  name              String?
+  icon              String?
+  metadata          String?
+  clientId          String?
+  clientSecret      String?
+  redirectUrls      String?
+  type              String?
+  disabled          Boolean?           @default(false)
+  userId            String?
+  user              User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime?
+  updatedAt         DateTime?
+  oauthaccesstokens OauthAccessToken[]
+  oauthconsents     OauthConsent[]
+
+  @@unique([clientId])
+  @@index([userId])
+  @@map("oauthApplication")
+}
+
+model OauthAccessToken {
+  id                    String            @id
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  clientId              String?
+  oauthapplication      OauthApplication? @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId                String?
+  user                  User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes                String?
+  createdAt             DateTime?
+  updatedAt             DateTime?
+
+  @@unique([accessToken])
+  @@unique([refreshToken])
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthAccessToken")
+}
+
+model OauthConsent {
+  id               String            @id
+  clientId         String?
+  oauthapplication OauthApplication? @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  userId           String?
+  user             User?             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scopes           String?
+  createdAt        DateTime?
+  updatedAt        DateTime?
+  consentGiven     Boolean?
+
+  @@index([clientId])
+  @@index([userId])
+  @@map("oauthConsent")
 }

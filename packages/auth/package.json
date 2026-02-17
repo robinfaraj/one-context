@@ -3,6 +3,7 @@
 		"@onecontext/config": "workspace:*",
 		"@onecontext/database": "workspace:*",
 		"@onecontext/logs": "workspace:*",
+		"@onecontext/mail": "workspace:*",
 		"@onecontext/utils": "workspace:*",
 		"better-auth": "1.4.18",
 		"cookie": "^1.0.1"

@@ -55,7 +55,17 @@ export const ModelName = {
   Session: 'Session',
   Account: 'Account',
   Verification: 'Verification',
-  Apikey: 'Apikey'
+  Apikey: 'Apikey',
+  Chat: 'Chat',
+  ChatMessage: 'ChatMessage',
+  Source: 'Source',
+  ContentItem: 'ContentItem',
+  PinnedMemory: 'PinnedMemory',
+  Subscription: 'Subscription',
+  ApiUsage: 'ApiUsage',
+  OauthApplication: 'OauthApplication',
+  OauthAccessToken: 'OauthAccessToken',
+  OauthConsent: 'OauthConsent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,7 +98,11 @@ export const UserScalarFieldEnum = {
   banned: 'banned',
   banReason: 'banReason',
   banExpires: 'banExpires',
-  onboardingComplete: 'onboardingComplete'
+  onboardingComplete: 'onboardingComplete',
+  profileSummary: 'profileSummary',
+  syncEnabled: 'syncEnabled',
+  plan: 'plan',
+  stripeCustomerId: 'stripeCustomerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -167,12 +181,163 @@ export const ApikeyScalarFieldEnum = {
 export type ApikeyScalarFieldEnum = (typeof ApikeyScalarFieldEnum)[keyof typeof ApikeyScalarFieldEnum]
 
 
+export const ChatScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  title: 'title',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChatScalarFieldEnum = (typeof ChatScalarFieldEnum)[keyof typeof ChatScalarFieldEnum]
+
+
+export const ChatMessageScalarFieldEnum = {
+  id: 'id',
+  chatId: 'chatId',
+  parentId: 'parentId',
+  role: 'role',
+  parts: 'parts',
+  data: 'data',
+  createdAt: 'createdAt'
+} as const
+
+export type ChatMessageScalarFieldEnum = (typeof ChatMessageScalarFieldEnum)[keyof typeof ChatMessageScalarFieldEnum]
+
+
+export const SourceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  provider: 'provider',
+  status: 'status',
+  lastSyncAt: 'lastSyncAt',
+  memoryCount: 'memoryCount',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SourceScalarFieldEnum = (typeof SourceScalarFieldEnum)[keyof typeof SourceScalarFieldEnum]
+
+
+export const ContentItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  sourceId: 'sourceId',
+  externalId: 'externalId',
+  type: 'type',
+  rawData: 'rawData',
+  contentDate: 'contentDate',
+  importedAt: 'importedAt'
+} as const
+
+export type ContentItemScalarFieldEnum = (typeof ContentItemScalarFieldEnum)[keyof typeof ContentItemScalarFieldEnum]
+
+
+export const PinnedMemoryScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  memoryId: 'memoryId',
+  createdAt: 'createdAt'
+} as const
+
+export type PinnedMemoryScalarFieldEnum = (typeof PinnedMemoryScalarFieldEnum)[keyof typeof PinnedMemoryScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const ApiUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  callCount: 'callCount'
+} as const
+
+export type ApiUsageScalarFieldEnum = (typeof ApiUsageScalarFieldEnum)[keyof typeof ApiUsageScalarFieldEnum]
+
+
+export const OauthApplicationScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  icon: 'icon',
+  metadata: 'metadata',
+  clientId: 'clientId',
+  clientSecret: 'clientSecret',
+  redirectUrls: 'redirectUrls',
+  type: 'type',
+  disabled: 'disabled',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OauthApplicationScalarFieldEnum = (typeof OauthApplicationScalarFieldEnum)[keyof typeof OauthApplicationScalarFieldEnum]
+
+
+export const OauthAccessTokenScalarFieldEnum = {
+  id: 'id',
+  accessToken: 'accessToken',
+  refreshToken: 'refreshToken',
+  accessTokenExpiresAt: 'accessTokenExpiresAt',
+  refreshTokenExpiresAt: 'refreshTokenExpiresAt',
+  clientId: 'clientId',
+  userId: 'userId',
+  scopes: 'scopes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OauthAccessTokenScalarFieldEnum = (typeof OauthAccessTokenScalarFieldEnum)[keyof typeof OauthAccessTokenScalarFieldEnum]
+
+
+export const OauthConsentScalarFieldEnum = {
+  id: 'id',
+  clientId: 'clientId',
+  userId: 'userId',
+  scopes: 'scopes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  consentGiven: 'consentGiven'
+} as const
+
+export type OauthConsentScalarFieldEnum = (typeof OauthConsentScalarFieldEnum)[keyof typeof OauthConsentScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -189,4 +354,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

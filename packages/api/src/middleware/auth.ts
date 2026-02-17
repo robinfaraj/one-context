@@ -46,7 +46,6 @@ async function getDevApiKeySession(token: string): Promise<{
 		ipAddress: null,
 		userAgent: "hono-cli",
 		impersonatedBy: null,
-		activeOrganizationId: null,
 	};
 
 	return {

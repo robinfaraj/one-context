@@ -1,0 +1,21 @@
+{
+	"dependencies": {
+		"@onecontext/ai": "workspace:*",
+		"@onecontext/config": "workspace:*",
+		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*",
+		"@onecontext/memory": "workspace:*",
+		"@tavily/ai-sdk": "^0.4.1",
+		"ai": "^6.0.0",
+		"nanoid": "^5.1.5",
+		"zod": "^4.2.1"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/ai-chat",
+	"version": "0.0.0"
+}

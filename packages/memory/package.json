@@ -1,0 +1,16 @@
+{
+	"dependencies": {
+		"mem0ai": "^2.2.2"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
+	},
+	"main": "./index.ts",
+	"name": "@onecontext/memory",
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	},
+	"version": "0.0.0"
+}
