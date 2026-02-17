@@ -5,7 +5,7 @@
 		"@trigger.dev/sdk": "4.3.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.2",
 		"@onecontext/tsconfig": "workspace:*",
 		"@trigger.dev/build": "4.3.3"
 	},
