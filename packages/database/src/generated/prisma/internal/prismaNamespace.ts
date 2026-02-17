@@ -393,7 +393,9 @@ export const ModelName = {
   ChatMessage: 'ChatMessage',
   Source: 'Source',
   ContentItem: 'ContentItem',
-  PinnedMemory: 'PinnedMemory'
+  PinnedMemory: 'PinnedMemory',
+  Subscription: 'Subscription',
+  ApiUsage: 'ApiUsage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -409,7 +411,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "session" | "account" | "verification" | "apikey" | "chat" | "chatMessage" | "source" | "contentItem" | "pinnedMemory"
+    modelProps: "user" | "session" | "account" | "verification" | "apikey" | "chat" | "chatMessage" | "source" | "contentItem" | "pinnedMemory" | "subscription" | "apiUsage"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1153,6 +1155,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>
+      fields: Prisma.SubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>
+        }
+        groupBy: {
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ApiUsage: {
+      payload: Prisma.$ApiUsagePayload<ExtArgs>
+      fields: Prisma.ApiUsageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ApiUsageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ApiUsageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        findFirst: {
+          args: Prisma.ApiUsageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ApiUsageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        findMany: {
+          args: Prisma.ApiUsageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>[]
+        }
+        create: {
+          args: Prisma.ApiUsageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        createMany: {
+          args: Prisma.ApiUsageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ApiUsageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>[]
+        }
+        delete: {
+          args: Prisma.ApiUsageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        update: {
+          args: Prisma.ApiUsageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        deleteMany: {
+          args: Prisma.ApiUsageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ApiUsageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ApiUsageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>[]
+        }
+        upsert: {
+          args: Prisma.ApiUsageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiUsagePayload>
+        }
+        aggregate: {
+          args: Prisma.ApiUsageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateApiUsage>
+        }
+        groupBy: {
+          args: Prisma.ApiUsageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApiUsageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ApiUsageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ApiUsageCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -1208,7 +1358,9 @@ export const UserScalarFieldEnum = {
   banExpires: 'banExpires',
   onboardingComplete: 'onboardingComplete',
   profileSummary: 'profileSummary',
-  syncEnabled: 'syncEnabled'
+  syncEnabled: 'syncEnabled',
+  plan: 'plan',
+  stripeCustomerId: 'stripeCustomerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -1348,6 +1500,32 @@ export const PinnedMemoryScalarFieldEnum = {
 } as const
 
 export type PinnedMemoryScalarFieldEnum = (typeof PinnedMemoryScalarFieldEnum)[keyof typeof PinnedMemoryScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const ApiUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  callCount: 'callCount'
+} as const
+
+export type ApiUsageScalarFieldEnum = (typeof ApiUsageScalarFieldEnum)[keyof typeof ApiUsageScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1585,6 +1763,8 @@ export type GlobalOmitConfig = {
   source?: Prisma.SourceOmit
   contentItem?: Prisma.ContentItemOmit
   pinnedMemory?: Prisma.PinnedMemoryOmit
+  subscription?: Prisma.SubscriptionOmit
+  apiUsage?: Prisma.ApiUsageOmit
 }
 
 /* Types for Logging */

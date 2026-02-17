@@ -10,6 +10,7 @@ import { deleteMemory, getAll } from "@onecontext/memory";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";
+import { checkSourceLimit } from "../middleware/plan-limits";
 
 export const sourcesRouter = new Hono()
 	.basePath("/sources")
@@ -41,6 +42,20 @@ export const sourcesRouter = new Hono()
 						error: "No OAuth account found. Please connect via OAuth first.",
 					},
 					400,
+				);
+			}
+
+			// Check source limit before connecting
+			const sourceCheck = await checkSourceLimit(user.id);
+			if (!sourceCheck.allowed) {
+				return c.json(
+					{
+						error: "Source limit reached",
+						limit: sourceCheck.limit,
+						current: sourceCheck.current,
+						upgrade: true,
+					},
+					403,
 				);
 			}
 

@@ -89,3 +89,13 @@ export type ContentItem = Prisma.ContentItemModel
  * 
  */
 export type PinnedMemory = Prisma.PinnedMemoryModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
+/**
+ * Model ApiUsage
+ * 
+ */
+export type ApiUsage = Prisma.ApiUsageModel

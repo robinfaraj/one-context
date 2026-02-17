@@ -8,6 +8,7 @@
 		"@onecontext/integrations": "workspace:*",
 		"@onecontext/logs": "workspace:*",
 		"@onecontext/memory": "workspace:*",
+		"@onecontext/stripe": "workspace:*",
 		"@onecontext/utils": "workspace:*",
 		"@scalar/hono-api-reference": "^0.9.11",
 		"@standard-community/standard-json": "^0.3.5",

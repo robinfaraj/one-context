@@ -41,6 +41,8 @@ export type UserMinAggregateOutputType = {
   onboardingComplete: boolean | null
   profileSummary: string | null
   syncEnabled: boolean | null
+  plan: string | null
+  stripeCustomerId: string | null
 }
 
 export type UserMaxAggregateOutputType = {
@@ -60,6 +62,8 @@ export type UserMaxAggregateOutputType = {
   onboardingComplete: boolean | null
   profileSummary: string | null
   syncEnabled: boolean | null
+  plan: string | null
+  stripeCustomerId: string | null
 }
 
 export type UserCountAggregateOutputType = {
@@ -79,6 +83,8 @@ export type UserCountAggregateOutputType = {
   onboardingComplete: number
   profileSummary: number
   syncEnabled: number
+  plan: number
+  stripeCustomerId: number
   _all: number
 }
 
@@ -100,6 +106,8 @@ export type UserMinAggregateInputType = {
   onboardingComplete?: true
   profileSummary?: true
   syncEnabled?: true
+  plan?: true
+  stripeCustomerId?: true
 }
 
 export type UserMaxAggregateInputType = {
@@ -119,6 +127,8 @@ export type UserMaxAggregateInputType = {
   onboardingComplete?: true
   profileSummary?: true
   syncEnabled?: true
+  plan?: true
+  stripeCustomerId?: true
 }
 
 export type UserCountAggregateInputType = {
@@ -138,6 +148,8 @@ export type UserCountAggregateInputType = {
   onboardingComplete?: true
   profileSummary?: true
   syncEnabled?: true
+  plan?: true
+  stripeCustomerId?: true
   _all?: true
 }
 
@@ -230,6 +242,8 @@ export type UserGroupByOutputType = {
   onboardingComplete: boolean | null
   profileSummary: string | null
   syncEnabled: boolean
+  plan: string
+  stripeCustomerId: string | null
   _count: UserCountAggregateOutputType | null
   _min: UserMinAggregateOutputType | null
   _max: UserMaxAggregateOutputType | null
@@ -270,6 +284,8 @@ export type UserWhereInput = {
   onboardingComplete?: Prisma.BoolNullableFilter<"User"> | boolean | null
   profileSummary?: Prisma.StringNullableFilter<"User"> | string | null
   syncEnabled?: Prisma.BoolFilter<"User"> | boolean
+  plan?: Prisma.StringFilter<"User"> | string
+  stripeCustomerId?: Prisma.StringNullableFilter<"User"> | string | null
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   apikeys?: Prisma.ApikeyListRelationFilter
@@ -277,6 +293,8 @@ export type UserWhereInput = {
   sources?: Prisma.SourceListRelationFilter
   contentItems?: Prisma.ContentItemListRelationFilter
   pinnedMemories?: Prisma.PinnedMemoryListRelationFilter
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  apiUsage?: Prisma.ApiUsageListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -296,6 +314,8 @@ export type UserOrderByWithRelationInput = {
   onboardingComplete?: Prisma.SortOrderInput | Prisma.SortOrder
   profileSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   syncEnabled?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
   apikeys?: Prisma.ApikeyOrderByRelationAggregateInput
@@ -303,12 +323,15 @@ export type UserOrderByWithRelationInput = {
   sources?: Prisma.SourceOrderByRelationAggregateInput
   contentItems?: Prisma.ContentItemOrderByRelationAggregateInput
   pinnedMemories?: Prisma.PinnedMemoryOrderByRelationAggregateInput
+  subscriptions?: Prisma.SubscriptionOrderByRelationAggregateInput
+  apiUsage?: Prisma.ApiUsageOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   email?: string
   username?: string
+  stripeCustomerId?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -325,6 +348,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   onboardingComplete?: Prisma.BoolNullableFilter<"User"> | boolean | null
   profileSummary?: Prisma.StringNullableFilter<"User"> | string | null
   syncEnabled?: Prisma.BoolFilter<"User"> | boolean
+  plan?: Prisma.StringFilter<"User"> | string
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
   apikeys?: Prisma.ApikeyListRelationFilter
@@ -332,7 +356,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sources?: Prisma.SourceListRelationFilter
   contentItems?: Prisma.ContentItemListRelationFilter
   pinnedMemories?: Prisma.PinnedMemoryListRelationFilter
-}, "id" | "email" | "username">
+  subscriptions?: Prisma.SubscriptionListRelationFilter
+  apiUsage?: Prisma.ApiUsageListRelationFilter
+}, "id" | "stripeCustomerId" | "email" | "username">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -351,6 +377,8 @@ export type UserOrderByWithAggregationInput = {
   onboardingComplete?: Prisma.SortOrderInput | Prisma.SortOrder
   profileSummary?: Prisma.SortOrderInput | Prisma.SortOrder
   syncEnabled?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _max?: Prisma.UserMaxOrderByAggregateInput
   _min?: Prisma.UserMinOrderByAggregateInput
@@ -376,6 +404,8 @@ export type UserScalarWhereWithAggregatesInput = {
   onboardingComplete?: Prisma.BoolNullableWithAggregatesFilter<"User"> | boolean | null
   profileSummary?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   syncEnabled?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
+  plan?: Prisma.StringWithAggregatesFilter<"User"> | string
+  stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
 }
 
 export type UserCreateInput = {
@@ -395,6 +425,8 @@ export type UserCreateInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
@@ -402,6 +434,8 @@ export type UserCreateInput = {
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -421,6 +455,8 @@ export type UserUncheckedCreateInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
@@ -428,6 +464,8 @@ export type UserUncheckedCreateInput = {
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -447,6 +485,8 @@ export type UserUpdateInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
@@ -454,6 +494,8 @@ export type UserUpdateInput = {
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -473,6 +515,8 @@ export type UserUncheckedUpdateInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
@@ -480,6 +524,8 @@ export type UserUncheckedUpdateInput = {
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -499,6 +545,8 @@ export type UserCreateManyInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
 }
 
 export type UserUpdateManyMutationInput = {
@@ -518,6 +566,8 @@ export type UserUpdateManyMutationInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserUncheckedUpdateManyInput = {
@@ -537,6 +587,8 @@ export type UserUncheckedUpdateManyInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -556,6 +608,8 @@ export type UserCountOrderByAggregateInput = {
   onboardingComplete?: Prisma.SortOrder
   profileSummary?: Prisma.SortOrder
   syncEnabled?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -575,6 +629,8 @@ export type UserMaxOrderByAggregateInput = {
   onboardingComplete?: Prisma.SortOrder
   profileSummary?: Prisma.SortOrder
   syncEnabled?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
 }
 
 export type UserMinOrderByAggregateInput = {
@@ -594,6 +650,8 @@ export type UserMinOrderByAggregateInput = {
   onboardingComplete?: Prisma.SortOrder
   profileSummary?: Prisma.SortOrder
   syncEnabled?: Prisma.SortOrder
+  plan?: Prisma.SortOrder
+  stripeCustomerId?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -723,6 +781,34 @@ export type UserUpdateOneRequiredWithoutPinnedMemoriesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPinnedMemoriesInput, Prisma.UserUpdateWithoutPinnedMemoriesInput>, Prisma.UserUncheckedUpdateWithoutPinnedMemoriesInput>
 }
 
+export type UserCreateNestedOneWithoutSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSubscriptionsInput
+  upsert?: Prisma.UserUpsertWithoutSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSubscriptionsInput, Prisma.UserUpdateWithoutSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type UserCreateNestedOneWithoutApiUsageInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApiUsageInput, Prisma.UserUncheckedCreateWithoutApiUsageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApiUsageInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutApiUsageNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApiUsageInput, Prisma.UserUncheckedCreateWithoutApiUsageInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApiUsageInput
+  upsert?: Prisma.UserUpsertWithoutApiUsageInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApiUsageInput, Prisma.UserUpdateWithoutApiUsageInput>, Prisma.UserUncheckedUpdateWithoutApiUsageInput>
+}
+
 export type UserCreateWithoutSessionsInput = {
   id: string
   name: string
@@ -740,12 +826,16 @@ export type UserCreateWithoutSessionsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -765,12 +855,16 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -806,12 +900,16 @@ export type UserUpdateWithoutSessionsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -831,12 +929,16 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -856,12 +958,16 @@ export type UserCreateWithoutAccountsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -881,12 +987,16 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -922,12 +1032,16 @@ export type UserUpdateWithoutAccountsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -947,12 +1061,16 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutApikeysInput = {
@@ -972,12 +1090,16 @@ export type UserCreateWithoutApikeysInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutApikeysInput = {
@@ -997,12 +1119,16 @@ export type UserUncheckedCreateWithoutApikeysInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutApikeysInput = {
@@ -1038,12 +1164,16 @@ export type UserUpdateWithoutApikeysInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutApikeysInput = {
@@ -1063,12 +1193,16 @@ export type UserUncheckedUpdateWithoutApikeysInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutChatsInput = {
@@ -1088,12 +1222,16 @@ export type UserCreateWithoutChatsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutChatsInput = {
@@ -1113,12 +1251,16 @@ export type UserUncheckedCreateWithoutChatsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutChatsInput = {
@@ -1154,12 +1296,16 @@ export type UserUpdateWithoutChatsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutChatsInput = {
@@ -1179,12 +1325,16 @@ export type UserUncheckedUpdateWithoutChatsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSourcesInput = {
@@ -1204,12 +1354,16 @@ export type UserCreateWithoutSourcesInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSourcesInput = {
@@ -1229,12 +1383,16 @@ export type UserUncheckedCreateWithoutSourcesInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSourcesInput = {
@@ -1270,12 +1428,16 @@ export type UserUpdateWithoutSourcesInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSourcesInput = {
@@ -1295,12 +1457,16 @@ export type UserUncheckedUpdateWithoutSourcesInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutContentItemsInput = {
@@ -1320,12 +1486,16 @@ export type UserCreateWithoutContentItemsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutContentItemsInput = {
@@ -1345,12 +1515,16 @@ export type UserUncheckedCreateWithoutContentItemsInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutContentItemsInput = {
@@ -1386,12 +1560,16 @@ export type UserUpdateWithoutContentItemsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutContentItemsInput = {
@@ -1411,12 +1589,16 @@ export type UserUncheckedUpdateWithoutContentItemsInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPinnedMemoriesInput = {
@@ -1436,12 +1618,16 @@ export type UserCreateWithoutPinnedMemoriesInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPinnedMemoriesInput = {
@@ -1461,12 +1647,16 @@ export type UserUncheckedCreateWithoutPinnedMemoriesInput = {
   onboardingComplete?: boolean | null
   profileSummary?: string | null
   syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
   chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
   sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
   contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPinnedMemoriesInput = {
@@ -1502,12 +1692,16 @@ export type UserUpdateWithoutPinnedMemoriesInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPinnedMemoriesInput = {
@@ -1527,12 +1721,280 @@ export type UserUncheckedUpdateWithoutPinnedMemoriesInput = {
   onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
   chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
   sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
   contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutSubscriptionsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSubscriptionsInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  apiUsage?: Prisma.ApiUsageUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSubscriptionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+}
+
+export type UserUpsertWithoutSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSubscriptionsInput, Prisma.UserUncheckedCreateWithoutSubscriptionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSubscriptionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutSubscriptionsInput>
+}
+
+export type UserUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  apiUsage?: Prisma.ApiUsageUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutApiUsageInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApiUsageInput = {
+  id: string
+  name: string
+  email: string
+  emailVerified?: boolean
+  image?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  username?: string | null
+  displayUsername?: string | null
+  role?: string | null
+  banned?: boolean | null
+  banReason?: string | null
+  banExpires?: Date | string | null
+  onboardingComplete?: boolean | null
+  profileSummary?: string | null
+  syncEnabled?: boolean
+  plan?: string
+  stripeCustomerId?: string | null
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  apikeys?: Prisma.ApikeyUncheckedCreateNestedManyWithoutUserInput
+  chats?: Prisma.ChatUncheckedCreateNestedManyWithoutUserInput
+  sources?: Prisma.SourceUncheckedCreateNestedManyWithoutUserInput
+  contentItems?: Prisma.ContentItemUncheckedCreateNestedManyWithoutUserInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedCreateNestedManyWithoutUserInput
+  subscriptions?: Prisma.SubscriptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApiUsageInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApiUsageInput, Prisma.UserUncheckedCreateWithoutApiUsageInput>
+}
+
+export type UserUpsertWithoutApiUsageInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApiUsageInput, Prisma.UserUncheckedUpdateWithoutApiUsageInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApiUsageInput, Prisma.UserUncheckedCreateWithoutApiUsageInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApiUsageInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApiUsageInput, Prisma.UserUncheckedUpdateWithoutApiUsageInput>
+}
+
+export type UserUpdateWithoutApiUsageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApiUsageInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  username?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  displayUsername?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  role?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banned?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  onboardingComplete?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  profileSummary?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  plan?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  apikeys?: Prisma.ApikeyUncheckedUpdateManyWithoutUserNestedInput
+  chats?: Prisma.ChatUncheckedUpdateManyWithoutUserNestedInput
+  sources?: Prisma.SourceUncheckedUpdateManyWithoutUserNestedInput
+  contentItems?: Prisma.ContentItemUncheckedUpdateManyWithoutUserNestedInput
+  pinnedMemories?: Prisma.PinnedMemoryUncheckedUpdateManyWithoutUserNestedInput
+  subscriptions?: Prisma.SubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -1548,6 +2010,8 @@ export type UserCountOutputType = {
   sources: number
   contentItems: number
   pinnedMemories: number
+  subscriptions: number
+  apiUsage: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1558,6 +2022,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sources?: boolean | UserCountOutputTypeCountSourcesArgs
   contentItems?: boolean | UserCountOutputTypeCountContentItemsArgs
   pinnedMemories?: boolean | UserCountOutputTypeCountPinnedMemoriesArgs
+  subscriptions?: boolean | UserCountOutputTypeCountSubscriptionsArgs
+  apiUsage?: boolean | UserCountOutputTypeCountApiUsageArgs
 }
 
 /**
@@ -1619,6 +2085,20 @@ export type UserCountOutputTypeCountPinnedMemoriesArgs<ExtArgs extends runtime.T
   where?: Prisma.PinnedMemoryWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SubscriptionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApiUsageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ApiUsageWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1637,6 +2117,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   onboardingComplete?: boolean
   profileSummary?: boolean
   syncEnabled?: boolean
+  plan?: boolean
+  stripeCustomerId?: boolean
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
   apikeys?: boolean | Prisma.User$apikeysArgs<ExtArgs>
@@ -1644,6 +2126,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sources?: boolean | Prisma.User$sourcesArgs<ExtArgs>
   contentItems?: boolean | Prisma.User$contentItemsArgs<ExtArgs>
   pinnedMemories?: boolean | Prisma.User$pinnedMemoriesArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  apiUsage?: boolean | Prisma.User$apiUsageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -1664,6 +2148,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   onboardingComplete?: boolean
   profileSummary?: boolean
   syncEnabled?: boolean
+  plan?: boolean
+  stripeCustomerId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1683,6 +2169,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   onboardingComplete?: boolean
   profileSummary?: boolean
   syncEnabled?: boolean
+  plan?: boolean
+  stripeCustomerId?: boolean
 }, ExtArgs["result"]["user"]>
 
 export type UserSelectScalar = {
@@ -1702,9 +2190,11 @@ export type UserSelectScalar = {
   onboardingComplete?: boolean
   profileSummary?: boolean
   syncEnabled?: boolean
+  plan?: boolean
+  stripeCustomerId?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "username" | "displayUsername" | "role" | "banned" | "banReason" | "banExpires" | "onboardingComplete" | "profileSummary" | "syncEnabled", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "createdAt" | "updatedAt" | "username" | "displayUsername" | "role" | "banned" | "banReason" | "banExpires" | "onboardingComplete" | "profileSummary" | "syncEnabled" | "plan" | "stripeCustomerId", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -1713,6 +2203,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sources?: boolean | Prisma.User$sourcesArgs<ExtArgs>
   contentItems?: boolean | Prisma.User$contentItemsArgs<ExtArgs>
   pinnedMemories?: boolean | Prisma.User$pinnedMemoriesArgs<ExtArgs>
+  subscriptions?: boolean | Prisma.User$subscriptionsArgs<ExtArgs>
+  apiUsage?: boolean | Prisma.User$apiUsageArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -1728,6 +2220,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sources: Prisma.$SourcePayload<ExtArgs>[]
     contentItems: Prisma.$ContentItemPayload<ExtArgs>[]
     pinnedMemories: Prisma.$PinnedMemoryPayload<ExtArgs>[]
+    subscriptions: Prisma.$SubscriptionPayload<ExtArgs>[]
+    apiUsage: Prisma.$ApiUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1746,6 +2240,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     onboardingComplete: boolean | null
     profileSummary: string | null
     syncEnabled: boolean
+    plan: string
+    stripeCustomerId: string | null
   }, ExtArgs["result"]["user"]>
   composites: {}
 }
@@ -2147,6 +2643,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sources<T extends Prisma.User$sourcesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sourcesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   contentItems<T extends Prisma.User$contentItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$contentItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContentItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pinnedMemories<T extends Prisma.User$pinnedMemoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pinnedMemoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PinnedMemoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  subscriptions<T extends Prisma.User$subscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$subscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  apiUsage<T extends Prisma.User$apiUsageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$apiUsageArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ApiUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2192,6 +2690,8 @@ export interface UserFieldRefs {
   readonly onboardingComplete: Prisma.FieldRef<"User", 'Boolean'>
   readonly profileSummary: Prisma.FieldRef<"User", 'String'>
   readonly syncEnabled: Prisma.FieldRef<"User", 'Boolean'>
+  readonly plan: Prisma.FieldRef<"User", 'String'>
+  readonly stripeCustomerId: Prisma.FieldRef<"User", 'String'>
 }
     
 
@@ -2745,6 +3245,54 @@ export type User$pinnedMemoriesArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.PinnedMemoryScalarFieldEnum | Prisma.PinnedMemoryScalarFieldEnum[]
+}
+
+/**
+ * User.subscriptions
+ */
+export type User$subscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Subscription
+   */
+  select?: Prisma.SubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Subscription
+   */
+  omit?: Prisma.SubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SubscriptionInclude<ExtArgs> | null
+  where?: Prisma.SubscriptionWhereInput
+  orderBy?: Prisma.SubscriptionOrderByWithRelationInput | Prisma.SubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.SubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SubscriptionScalarFieldEnum | Prisma.SubscriptionScalarFieldEnum[]
+}
+
+/**
+ * User.apiUsage
+ */
+export type User$apiUsageArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ApiUsage
+   */
+  select?: Prisma.ApiUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ApiUsage
+   */
+  omit?: Prisma.ApiUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ApiUsageInclude<ExtArgs> | null
+  where?: Prisma.ApiUsageWhereInput
+  orderBy?: Prisma.ApiUsageOrderByWithRelationInput | Prisma.ApiUsageOrderByWithRelationInput[]
+  cursor?: Prisma.ApiUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ApiUsageScalarFieldEnum | Prisma.ApiUsageScalarFieldEnum[]
 }
 
 /**

@@ -12,11 +12,13 @@ import { SourceIcon } from "./source-icon";
 interface AvailableSourceCardProps {
 	integration: Integration;
 	isDisconnected?: boolean;
+	atSourceLimit?: boolean;
 }
 
 export function AvailableSourceCard({
 	integration,
 	isDisconnected,
+	atSourceLimit,
 }: AvailableSourceCardProps) {
 	const reconnect = useConnectSource();
 
@@ -37,6 +39,7 @@ export function AvailableSourceCard({
 	};
 
 	const isPending = reconnect.isPending;
+	const isLimited = atSourceLimit && !integration.comingSoon && !isDisconnected;
 	const label = integration.comingSoon
 		? "Coming Soon"
 		: isDisconnected
@@ -58,23 +61,34 @@ export function AvailableSourceCard({
 							</p>
 						</div>
 					</div>
-					<Button
-						size="sm"
-						disabled={
-							integration.comingSoon || !integration.available || isPending
-						}
-						onClick={handleConnect}
-						className={cn(
-							"shrink-0",
-							!integration.comingSoon &&
-								"bg-emerald-700 hover:bg-emerald-800 text-white",
+					<div className="flex shrink-0 flex-col items-end gap-1">
+						<Button
+							size="sm"
+							disabled={
+								integration.comingSoon ||
+								!integration.available ||
+								isPending ||
+								isLimited
+							}
+							onClick={handleConnect}
+							className={cn(
+								"shrink-0",
+								!integration.comingSoon &&
+									!isLimited &&
+									"bg-emerald-700 hover:bg-emerald-800 text-white",
+							)}
+						>
+							{isPending && (
+								<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
+							)}
+							{label}
+						</Button>
+						{isLimited && (
+							<p className="text-xs text-amber-600">
+								Upgrade to Pro for more sources
+							</p>
 						)}
-					>
-						{isPending && (
-							<Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
-						)}
-						{label}
-					</Button>
+					</div>
 				</div>
 			</CardContent>
 		</Card>

@@ -1,6 +1,6 @@
 import type { Config } from "./types";
 
-export type { Config } from "./types";
+export type { Config, PlanLimits, Price, PlanConfig } from "./types";
 
 export const config: Config = {
 	links: {
@@ -23,5 +23,39 @@ export const config: Config = {
 	api: {
 		rateLimitPerMinute: 60,
 		apiKeyPrefix: "octx_",
+	},
+	payments: {
+		plans: {
+			free: {
+				name: "Free",
+				isFree: true,
+				limits: { sources: 1, memories: 25, apiCallsPerDay: 100 },
+			},
+			pro: {
+				name: "Pro",
+				recommended: true,
+				limits: {
+					sources: "unlimited",
+					memories: "unlimited",
+					apiCallsPerDay: 10000,
+				},
+				prices: [
+					{
+						type: "recurring",
+						priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? "",
+						interval: "month",
+						amount: 9,
+						currency: "USD",
+					},
+					{
+						type: "recurring",
+						priceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID ?? "",
+						interval: "year",
+						amount: 99,
+						currency: "USD",
+					},
+				],
+			},
+		},
 	},
 };

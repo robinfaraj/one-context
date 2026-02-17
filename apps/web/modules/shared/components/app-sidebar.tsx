@@ -1,6 +1,7 @@
 "use client";
 
 import { UserMenu } from "@shared/components/user-menu";
+import { useSubscription } from "@shared/lib/billing-api";
 import {
 	Sidebar,
 	SidebarContent,
@@ -17,6 +18,7 @@ import {
 import {
 	Brain,
 	Code,
+	CreditCard,
 	LayoutDashboard,
 	MessageSquare,
 	Plug,
@@ -34,6 +36,33 @@ const navItems = [
 	{ title: "API & MCP", href: "/api-keys", icon: Code },
 	{ title: "Settings", href: "/settings", icon: Settings },
 ];
+
+function PlanBadge() {
+	const { data: sub } = useSubscription();
+	if (!sub) return null;
+
+	return (
+		<SidebarMenu>
+			<SidebarMenuItem>
+				<SidebarMenuButton asChild>
+					<Link href="/settings/billing">
+						<CreditCard className="h-4 w-4" />
+						<span className="flex items-center gap-2">
+							<span
+								className={`rounded-full px-2 py-0.5 text-xs font-medium ${sub.isPro ? "bg-emerald-700/10 text-emerald-700" : "bg-muted text-muted-foreground"}`}
+							>
+								{sub.isPro ? "Pro" : "Free"}
+							</span>
+							{!sub.isPro && (
+								<span className="text-xs text-emerald-700">Upgrade</span>
+							)}
+						</span>
+					</Link>
+				</SidebarMenuButton>
+			</SidebarMenuItem>
+		</SidebarMenu>
+	);
+}
 
 interface AppSidebarProps {
 	user: {
@@ -84,6 +113,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 				</SidebarGroup>
 			</SidebarContent>
 			<SidebarFooter>
+				<PlanBadge />
 				<UserMenu user={user} />
 			</SidebarFooter>
 		</Sidebar>

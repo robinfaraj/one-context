@@ -10,6 +10,7 @@ interface SourceGridProps {
 	connectedSources: Source[];
 	disconnectedProviders: string[];
 	isLoading: boolean;
+	atSourceLimit?: boolean;
 }
 
 function SkeletonCards() {
@@ -27,6 +28,7 @@ export function SourceGrid({
 	connectedSources,
 	disconnectedProviders,
 	isLoading,
+	atSourceLimit,
 }: SourceGridProps) {
 	if (isLoading) {
 		return (
@@ -88,6 +90,7 @@ export function SourceGrid({
 								isDisconnected={disconnectedProviders.includes(
 									integration.provider,
 								)}
+								atSourceLimit={atSourceLimit}
 							/>
 						))}
 					</div>

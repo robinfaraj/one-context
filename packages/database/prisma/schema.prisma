@@ -25,6 +25,8 @@ model User {
   onboardingComplete Boolean?
   profileSummary     String?
   syncEnabled        Boolean         @default(true)
+  plan               String          @default("free")
+  stripeCustomerId   String?         @unique
   sessions           Session[]
   accounts           Account[]
   apikeys            Apikey[]
@@ -32,6 +34,8 @@ model User {
   sources            Source[]
   contentItems       ContentItem[]
   pinnedMemories     PinnedMemory[]
+  subscriptions      Subscription[]
+  apiUsage           ApiUsage[]
 
   @@unique([email])
   @@unique([username])
@@ -189,4 +193,34 @@ model PinnedMemory {
   @@unique([userId, memoryId])
   @@index([userId])
   @@map("pinned_memory")
+}
+
+model Subscription {
+  id                   String   @id @default(cuid())
+  userId               String
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stripeSubscriptionId String   @unique
+  stripePriceId        String
+  status               String   // "active" | "canceled" | "past_due" | "trialing"
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@map("subscription")
+}
+
+model ApiUsage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date      DateTime @db.Date
+  callCount Int      @default(0)
+
+  @@unique([userId, date])
+  @@index([userId])
+  @@map("api_usage")
 }

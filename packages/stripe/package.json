@@ -1,0 +1,19 @@
+{
+	"name": "@onecontext/stripe",
+	"version": "0.0.0",
+	"main": "./src/index.ts",
+	"dependencies": {
+		"stripe": "^17.7.0",
+		"@onecontext/config": "workspace:*",
+		"@onecontext/database": "workspace:*",
+		"@onecontext/logs": "workspace:*"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@onecontext/tsconfig": "workspace:*",
+		"typescript": "5.7.2"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	}
+}

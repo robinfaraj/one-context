@@ -60,7 +60,9 @@ export const ModelName = {
   ChatMessage: 'ChatMessage',
   Source: 'Source',
   ContentItem: 'ContentItem',
-  PinnedMemory: 'PinnedMemory'
+  PinnedMemory: 'PinnedMemory',
+  Subscription: 'Subscription',
+  ApiUsage: 'ApiUsage'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -95,7 +97,9 @@ export const UserScalarFieldEnum = {
   banExpires: 'banExpires',
   onboardingComplete: 'onboardingComplete',
   profileSummary: 'profileSummary',
-  syncEnabled: 'syncEnabled'
+  syncEnabled: 'syncEnabled',
+  plan: 'plan',
+  stripeCustomerId: 'stripeCustomerId'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -235,6 +239,32 @@ export const PinnedMemoryScalarFieldEnum = {
 } as const
 
 export type PinnedMemoryScalarFieldEnum = (typeof PinnedMemoryScalarFieldEnum)[keyof typeof PinnedMemoryScalarFieldEnum]
+
+
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  stripeSubscriptionId: 'stripeSubscriptionId',
+  stripePriceId: 'stripePriceId',
+  status: 'status',
+  currentPeriodStart: 'currentPeriodStart',
+  currentPeriodEnd: 'currentPeriodEnd',
+  cancelAtPeriodEnd: 'cancelAtPeriodEnd',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
+export const ApiUsageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  date: 'date',
+  callCount: 'callCount'
+} as const
+
+export type ApiUsageScalarFieldEnum = (typeof ApiUsageScalarFieldEnum)[keyof typeof ApiUsageScalarFieldEnum]
 
 
 export const SortOrder = {
