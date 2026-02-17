@@ -3,9 +3,9 @@
 import { OnboardingWizard } from "@shared/components/onboarding/onboarding-wizard";
 import { authClient } from "@shared/lib/api";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 
-export default function OnboardingPage() {
+function OnboardingContent() {
 	const router = useRouter();
 	const { data: session, isPending } = authClient.useSession();
 
@@ -33,5 +33,19 @@ export default function OnboardingPage() {
 			<title>Get Started | OneContext</title>
 			<OnboardingWizard user={session.user} />
 		</div>
+	);
+}
+
+export default function OnboardingPage() {
+	return (
+		<Suspense
+			fallback={
+				<div className="flex min-h-svh items-center justify-center">
+					<div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+				</div>
+			}
+		>
+			<OnboardingContent />
+		</Suspense>
 	);
 }

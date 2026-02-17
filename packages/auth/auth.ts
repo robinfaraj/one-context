@@ -114,7 +114,7 @@ export const auth = betterAuth({
 		}),
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
-				logger.info("Magic link requested", { email, url });
+				logger.info("Magic link requested", { email });
 			},
 		}),
 		oidcProvider({

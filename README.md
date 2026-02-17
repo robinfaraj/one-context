@@ -39,6 +39,32 @@ pnpm dev                     # http://localhost:3000
 
 See `CLAUDE.md` for the full list of commands and architecture details.
 
+## Docker
+
+Run the full stack (app + PostgreSQL) with Docker Compose:
+
+```bash
+cp .env.example .env.local   # configure your env vars
+docker compose up --build     # http://localhost:3000
+```
+
+Build a standalone production image:
+
+```bash
+docker build \
+  --build-arg NEXT_PUBLIC_SITE_URL=https://your-domain.com \
+  -t onecontext .
+```
+
+Run the production image (pass runtime secrets via env vars or `--env-file`):
+
+```bash
+docker run -p 3000:3000 \
+  --env-file .env.local \
+  -e DATABASE_URL=postgresql://user:pass@host:5432/onecontext \
+  onecontext
+```
+
 ## Roadmap
 
 - **Now:** Landing page, core auth, project scaffolding

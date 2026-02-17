@@ -28,12 +28,33 @@ export async function searchMemories(
 	return mem0.search(query, userId, filters);
 }
 
-export async function updateMemory(memoryId: string, content: string) {
+async function verifyMemoryOwnership(memoryId: string, userId: string) {
+	const memory = await mem0.get(memoryId);
+	if (!memory || memory.metadata?.user_id !== userId) {
+		return null;
+	}
+	return memory;
+}
+
+export async function updateMemory(
+	memoryId: string,
+	content: string,
+	userId: string,
+) {
+	const memory = await verifyMemoryOwnership(memoryId, userId);
+	if (!memory) {
+		return null;
+	}
 	return mem0.update(memoryId, content);
 }
 
-export async function deleteMemory(memoryId: string) {
+export async function deleteMemory(memoryId: string, userId: string) {
+	const memory = await verifyMemoryOwnership(memoryId, userId);
+	if (!memory) {
+		return null;
+	}
 	await mem0.deleteMemory(memoryId);
+	return true;
 }
 
 export async function pinMemory(userId: string, memoryId: string) {

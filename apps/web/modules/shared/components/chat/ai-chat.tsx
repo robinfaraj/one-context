@@ -81,6 +81,21 @@ export function AiChat({ id }: AiChatProps) {
 				if (res.ok) {
 					const data = (await res.json()) as ChatDetail;
 					setChatData(data);
+				} else {
+					console.warn("Failed to fetch chat", {
+						chatId: activeChatId,
+						status: res.status,
+					});
+					setChatData(null);
+				}
+			})
+			.catch((err) => {
+				if (!cancelled) {
+					console.warn("Network error fetching chat", {
+						chatId: activeChatId,
+						err,
+					});
+					setChatData(null);
 				}
 			})
 			.finally(() => {

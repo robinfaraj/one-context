@@ -8,6 +8,7 @@ import {
 	updateSubscription,
 } from "@onecontext/database/queries";
 import { list } from "@onecontext/integrations";
+import { logger } from "@onecontext/logs";
 import { getAll } from "@onecontext/memory";
 import { stripe } from "@onecontext/stripe";
 import { getPlanLimits } from "../middleware/plan-limits";
@@ -35,7 +36,13 @@ export async function getSubscriptionInfo(userId: string) {
 			list().map((a) => a.provider),
 		),
 		findApiUsageForDate(userId, today),
-		getAll(userId).catch(() => []),
+		getAll(userId).catch((err) => {
+			logger.warn("Failed to fetch memories for billing info", {
+				userId,
+				error: err,
+			});
+			return [];
+		}),
 	]);
 
 	return {

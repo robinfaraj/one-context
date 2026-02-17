@@ -73,9 +73,13 @@ export const memoriesRouter = new Hono()
 		}),
 		sValidator("json", memoryUpdateSchema),
 		async (c) => {
+			const user = c.get("user");
 			const memoryId = c.req.param("id");
 			const { content } = c.req.valid("json");
-			const result = await updateMemory(memoryId, content);
+			const result = await updateMemory(memoryId, content, user.id);
+			if (!result) {
+				return c.json({ error: "Memory not found" }, 404);
+			}
 			return c.json(result);
 		},
 	)
@@ -88,8 +92,12 @@ export const memoriesRouter = new Hono()
 			responses: { 200: { description: "Memory deleted" } },
 		}),
 		async (c) => {
+			const user = c.get("user");
 			const memoryId = c.req.param("id");
-			await deleteMemory(memoryId);
+			const result = await deleteMemory(memoryId, user.id);
+			if (!result) {
+				return c.json({ error: "Memory not found" }, 404);
+			}
 			return c.body(null, 204);
 		},
 	)

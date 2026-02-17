@@ -14,6 +14,7 @@ import {
 	getAvailable,
 	persistSyncResult,
 } from "@onecontext/integrations";
+import { logger } from "@onecontext/logs";
 import { deleteMemory, getAll } from "@onecontext/memory";
 import { checkMemoryLimit, checkSourceLimit } from "../middleware/plan-limits";
 
@@ -72,7 +73,12 @@ export async function connectSource(userId: string, provider: string) {
 				memoriesAdded: result.memoriesAdded,
 			},
 		};
-	} catch {
+	} catch (err) {
+		logger.warn("Initial sync failed during source connect", {
+			provider,
+			userId,
+			error: err,
+		});
 		return { source, syncResult: null };
 	}
 }

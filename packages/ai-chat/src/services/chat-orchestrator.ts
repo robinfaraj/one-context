@@ -18,22 +18,18 @@ export async function handleChatRequest({
 }: ChatStreamOptions) {
 	const currentChatId = chatId ?? crypto.randomUUID();
 
-	// Find-or-create: if the chat doesn't exist yet, create it implicitly.
+	// Upsert: atomically find-or-create the chat record.
 	// This supports the pattern where the client generates a UUID upfront
 	// and the DB record is created on the first message.
-	const existing = await db.chat.findFirst({
-		where: { id: currentChatId, userId },
+	await db.chat.upsert({
+		where: { id: currentChatId },
+		create: {
+			id: currentChatId,
+			userId,
+			title: "New Chat",
+		},
+		update: {},
 	});
-
-	if (!existing) {
-		await db.chat.create({
-			data: {
-				id: currentChatId,
-				userId,
-				title: "New Chat",
-			},
-		});
-	}
 
 	const lastMessage = messages[messages.length - 1];
 	if (lastMessage?.role === "user") {

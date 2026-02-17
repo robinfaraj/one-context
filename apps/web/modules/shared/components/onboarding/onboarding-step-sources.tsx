@@ -1,14 +1,37 @@
 "use client";
 
 import { authClient } from "@onecontext/auth/client";
+import { useConnectSource, useSources } from "@shared/lib/sources-api";
 import { Button } from "@ui/components/button";
 import { Card, CardContent } from "@ui/components/card";
-import { Github, Twitter } from "lucide-react";
+import { Check, Github, Loader2, Twitter } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 export function OnboardingStepSources() {
+	const { data } = useSources();
+	const connectSource = useConnectSource();
+	const connectingRef = useRef<Set<string>>(new Set());
+
+	// Auto-connect any providers that completed OAuth but don't have a Source record yet
+	useEffect(() => {
+		if (!data?.pendingConnections?.length) return;
+
+		for (const provider of data.pendingConnections) {
+			if (connectingRef.current.has(provider)) continue;
+			connectingRef.current.add(provider);
+			connectSource.mutate(provider);
+		}
+	}, [data?.pendingConnections]);
+
 	const handleConnect = (provider: "github" | "twitter") => {
-		authClient.signIn.social({ provider, callbackURL: "/onboarding" });
+		authClient.signIn.social({ provider, callbackURL: "/onboarding?step=1" });
 	};
+
+	const isConnected = (provider: string) =>
+		data?.connectedSources.some((s) => s.provider === provider) ?? false;
+
+	const isPending = (provider: string) =>
+		data?.pendingConnections?.includes(provider) ?? false;
 
 	return (
 		<div className="space-y-6">
@@ -33,13 +56,25 @@ export function OnboardingStepSources() {
 								</p>
 							</div>
 						</div>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => handleConnect("github")}
-						>
-							Connect
-						</Button>
+						{isConnected("github") ? (
+							<Button variant="outline" size="sm" disabled>
+								<Check className="mr-1 h-4 w-4 text-primary" />
+								Connected
+							</Button>
+						) : isPending("github") ? (
+							<Button variant="outline" size="sm" disabled>
+								<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+								Connecting…
+							</Button>
+						) : (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => handleConnect("github")}
+							>
+								Connect
+							</Button>
+						)}
 					</CardContent>
 				</Card>
 
@@ -56,13 +91,25 @@ export function OnboardingStepSources() {
 								</p>
 							</div>
 						</div>
-						<Button
-							variant="outline"
-							size="sm"
-							onClick={() => handleConnect("twitter")}
-						>
-							Connect
-						</Button>
+						{isConnected("twitter") ? (
+							<Button variant="outline" size="sm" disabled>
+								<Check className="mr-1 h-4 w-4 text-primary" />
+								Connected
+							</Button>
+						) : isPending("twitter") ? (
+							<Button variant="outline" size="sm" disabled>
+								<Loader2 className="mr-1 h-4 w-4 animate-spin" />
+								Connecting…
+							</Button>
+						) : (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => handleConnect("twitter")}
+							>
+								Connect
+							</Button>
+						)}
 					</CardContent>
 				</Card>
 			</div>

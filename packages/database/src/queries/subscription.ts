@@ -35,3 +35,72 @@ export async function countConnectedSources(
 		},
 	});
 }
+
+export async function upsertSubscriptionWithUser(
+	userId: string,
+	customerId: string,
+	stripeSubscriptionId: string,
+	stripePriceId: string,
+	currentPeriodStart: Date,
+	currentPeriodEnd: Date,
+) {
+	return db.$transaction([
+		db.user.update({
+			where: { id: userId },
+			data: { plan: "pro", stripeCustomerId: customerId },
+		}),
+		db.subscription.upsert({
+			where: { stripeSubscriptionId },
+			create: {
+				userId,
+				stripeSubscriptionId,
+				stripePriceId,
+				status: "active",
+				currentPeriodStart,
+				currentPeriodEnd,
+			},
+			update: {
+				status: "active",
+				stripePriceId,
+				currentPeriodStart,
+				currentPeriodEnd,
+			},
+		}),
+	]);
+}
+
+export async function updateSubscriptionByStripeId(
+	stripeSubscriptionId: string,
+	data: {
+		status?: string;
+		stripePriceId?: string;
+		cancelAtPeriodEnd?: boolean;
+		currentPeriodStart?: Date;
+		currentPeriodEnd?: Date;
+	},
+) {
+	return db.subscription.updateMany({
+		where: { stripeSubscriptionId },
+		data,
+	});
+}
+
+export async function findSubscriptionByStripeId(stripeSubscriptionId: string) {
+	return db.subscription.findUnique({
+		where: { stripeSubscriptionId },
+	});
+}
+
+export async function downgradeUserToFree(
+	userId: string,
+	subscriptionId: string,
+) {
+	await db.user.update({
+		where: { id: userId },
+		data: { plan: "free" },
+	});
+	await db.subscription.update({
+		where: { id: subscriptionId },
+		data: { status: "canceled" },
+	});
+}

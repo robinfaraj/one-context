@@ -46,7 +46,13 @@ class ApiError extends Error {
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 	const res = await fetch(url, { credentials: "include", ...init });
 	if (!res.ok) {
-		const body = await res.json().catch(() => null);
+		const body = await res.json().catch((err) => {
+			console.warn("Failed to parse error response body", {
+				status: res.status,
+				err,
+			});
+			return null;
+		});
 		const message = body?.error ?? `Request failed: ${res.status}`;
 		throw new ApiError(message, res.status, body?.upgrade);
 	}

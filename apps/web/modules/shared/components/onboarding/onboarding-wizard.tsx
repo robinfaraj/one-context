@@ -5,7 +5,7 @@ import { Button } from "@ui/components/button";
 import { Card, CardContent } from "@ui/components/card";
 import { cn } from "@ui/lib/utils";
 import { ArrowLeft, ArrowRight, Check, Sparkles } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { OnboardingStepProfile } from "./onboarding-step-profile";
@@ -63,7 +63,9 @@ const STEPS = ["Profile", "Sources", "Ready"] as const;
 
 export function OnboardingWizard({ user }: OnboardingWizardProps) {
 	const router = useRouter();
-	const [currentStep, setCurrentStep] = useState(0);
+	const searchParams = useSearchParams();
+	const initialStep = Number(searchParams.get("step")) || 0;
+	const [currentStep, setCurrentStep] = useState(initialStep);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const handleFinish = async () => {

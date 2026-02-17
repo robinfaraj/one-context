@@ -46,6 +46,19 @@ export async function deleteContentItemsBySourceId(sourceId: string) {
 	});
 }
 
+export async function findSourcesSummaryByUserId(userId: string) {
+	return db.source.findMany({
+		where: { userId },
+		select: {
+			id: true,
+			provider: true,
+			status: true,
+			lastSyncAt: true,
+			memoryCount: true,
+		},
+	});
+}
+
 export async function markSourceDisconnected(sourceId: string) {
 	return db.source.update({
 		where: { id: sourceId },
