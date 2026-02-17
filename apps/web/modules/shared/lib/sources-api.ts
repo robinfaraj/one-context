@@ -29,6 +29,7 @@ interface SourcesResponse {
 	integrations: Integration[];
 	connectedSources: Source[];
 	pendingConnections: string[];
+	disconnectedProviders: string[];
 }
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
@@ -75,11 +76,43 @@ export function useDisconnectSource() {
 	return useMutation({
 		mutationFn: (provider: string) =>
 			fetchJson(`/api/sources/${provider}`, { method: "DELETE" }),
+		onMutate: async (provider) => {
+			// Cancel outgoing refetches so they don't overwrite our optimistic update
+			await qc.cancelQueries({ queryKey: ["sources"] });
+			const previous = qc.getQueryData<SourcesResponse>(["sources"]);
+
+			// Optimistically move the source to disconnected
+			if (previous) {
+				qc.setQueryData<SourcesResponse>(["sources"], {
+					...previous,
+					connectedSources: previous.connectedSources.filter(
+						(s) => s.provider !== provider,
+					),
+					integrations: previous.integrations.map((i) =>
+						i.provider === provider
+							? { ...i, connected: false, source: undefined }
+							: i,
+					),
+					pendingConnections: previous.pendingConnections.filter(
+						(p) => p !== provider,
+					),
+					disconnectedProviders: [...previous.disconnectedProviders, provider],
+				});
+			}
+
+			return { previous };
+		},
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["sources"] });
 			toast.success("Source disconnected");
 		},
-		onError: () => toast.error("Failed to disconnect source"),
+		onError: (_err, _provider, context) => {
+			// Rollback on error
+			if (context?.previous) {
+				qc.setQueryData(["sources"], context.previous);
+			}
+			toast.error("Failed to disconnect source");
+		},
 	});
 }
 

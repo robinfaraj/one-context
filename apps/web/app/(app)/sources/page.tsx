@@ -37,6 +37,7 @@ export default function SourcesPage() {
 			<SourceGrid
 				integrations={data?.integrations ?? []}
 				connectedSources={data?.connectedSources ?? []}
+				disconnectedProviders={data?.disconnectedProviders ?? []}
 				isLoading={isLoading}
 			/>
 

@@ -10,6 +10,7 @@ import { authRouter } from "./routes/auth";
 import { dashboardRouter } from "./routes/dashboard";
 import { healthRouter } from "./routes/health";
 import { memoriesRouter } from "./routes/memories";
+import { settingsRouter } from "./routes/settings";
 import { sourcesRouter } from "./routes/sources";
 
 export const app = new Hono().basePath("/api");
@@ -23,7 +24,8 @@ const appRouter = app
 	.route("/", memoriesRouter)
 	.route("/", aiRouter)
 	.route("/", sourcesRouter)
-	.route("/", dashboardRouter);
+	.route("/", dashboardRouter)
+	.route("/", settingsRouter);
 
 app.get("/app-openapi", async (c) => {
 	try {

@@ -707,7 +707,7 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 | `packages/mem0` client | DONE | Full CRUD via `mem0ai` SDK (add, search, get, getAll, update, delete, history) |
 | Chat API routes | DONE | POST /chat (streaming), GET/POST/PATCH/DELETE /chats |
 | Memories API routes | DONE | GET /memories, GET /search, PUT/:id, DELETE/:id, POST/DELETE pin |
-| Sources API routes | PARTIAL | GET /sources, POST /sync, DELETE — token retrieval works, but no Source creation on OAuth |
+| Sources API routes | DONE | GET /sources (with pendingConnections), POST /connect + /sync, DELETE (with Mem0 cleanup) |
 | Chat UI + persistence | DONE | Custom ChatSidebar, `useChat` + `useAISDKRuntime` + `DefaultChatTransport` |
 | Memories UI | DONE | Cards, search, filters, pin/edit/delete |
 | Sources UI | DONE | Connected cards + available integrations grid |
@@ -719,16 +719,15 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 | Trigger.dev scheduled sync | DONE | Daily cron at 3 AM UTC, iterates connected sources, calls adapters |
 | DRY refactor | DONE | Shared `persistSyncResult()` + `getAccessToken()` in `packages/integrations/sync.ts` |
 | Component split | DONE | thread.tsx split into 4 files, ai-chat.tsx split into 2 files, dead code removed |
-| Tests | DONE | 40 passing (auth guards + authenticated CRUD lifecycle) |
+| Dashboard API + UI | DONE | GET /api/dashboard (stats, sources, activity), full page with 5 components |
+| Source connection flow | DONE | POST /api/sources/:provider/connect, auto-connect on Sources page via pendingConnections |
+| Source disconnect cleanup | DONE | DELETE deletes Mem0 memories matching source metadata before DB cleanup |
+| Mobile responsiveness | DONE | Scrollable layout, sidebar close on nav, mobile chat sheet, flex-wrap fixes |
+| Tests | DONE | 46 passing (auth guards + authenticated CRUD lifecycle + Wave 4 endpoints) |
 
 #### What's STUB or MISSING
 | Area | Status | What's needed |
 |------|--------|---------------|
-| OAuth → Source record | **MISSING** | When user connects Twitter/GitHub via OAuth, no Source record is created. Account is created by BetterAuth but nothing bridges Account → Source. Need a POST /api/sources endpoint or auth hook. |
-| Initial sync after connect | **MISSING** | No mechanism to trigger sync immediately after OAuth. User must manually click "Sync". Need to auto-trigger first sync when Source is created. |
-| Source disconnect cleanup | **PARTIAL** | DELETE cascades ContentItems but does NOT revoke OAuth tokens or delete Mem0 memories for that source. |
-| Dashboard API route | **MISSING** | `packages/api/src/routes/dashboard.ts` doesn't exist |
-| Dashboard UI | **MISSING** | Placeholder page only |
 | MCP server package | **MISSING** | `packages/mcp-server/` doesn't exist |
 | API key management UI | **MISSING** | No UI for BetterAuth apiKey plugin |
 | Settings page | **MISSING** | Placeholder page only |
@@ -744,17 +743,13 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 #### Wave 1 — Core packages + API routes + database schema
 #### Wave 2 — Chat UI, Memories UI, Sources UI
 #### Wave 3 — Chat tools, integration adapters, Trigger.dev sync, DRY refactor, component split
+#### Wave 4 — Dashboard, source connection flow, disconnect cleanup, mobile fixes
 
 ---
 
 ### Remaining Waves
 
 ```
-Wave 4 (parallel):
-├── Stream A: Source connection flow — OAuth → Source record + initial sync
-├── Stream B: Dashboard — API route + full UI
-└── Stream C: Source disconnect cleanup — Mem0 memory deletion
-
 Wave 5 (parallel):
 ├── Stream A: MCP server package + API key management UI + MCP setup guide
 └── Stream B: Settings page (profile editing, sync prefs, danger zone)
@@ -762,24 +757,6 @@ Wave 5 (parallel):
 Wave 6 (final):
 └── Polish pass (loading states, error boundaries, empty states, mobile, toasts)
 ```
-
-#### Wave 4 Details
-
-**Stream A — Source Connection Flow** (critical gap):
-- Add `POST /api/sources/:provider/connect` endpoint — creates Source record in DB after OAuth completes
-- UI: after OAuth callback redirects to `/sources`, call connect endpoint to create Source record
-- Auto-trigger initial sync immediately after Source creation (call existing sync logic)
-- Alternative: add BetterAuth `afterCallback` hook to auto-create Source on OAuth success
-- Files: `packages/api/src/routes/sources.ts`, `apps/web/modules/shared/components/sources/available-source-card.tsx`
-
-**Stream B — Dashboard**:
-- `packages/api/src/routes/dashboard.ts` — aggregate stats: memory count (Mem0), source count (DB), chat count (DB), recent activity (ContentItems)
-- Dashboard page UI: profile summary card, connected sources strip, quick stats, recent activity feed, quick actions
-
-**Stream C — Source Disconnect Cleanup**:
-- On DELETE /api/sources/:provider, also delete Mem0 memories with `metadata.source == provider`
-- Consider revoking OAuth tokens (call BetterAuth to unlink account)
-- Files: `packages/api/src/routes/sources.ts`
 
 #### Wave 5 Details
 
@@ -796,17 +773,19 @@ Wave 6 (final):
 
 ### Test Strategy
 
-40 tests currently passing. Pragmatic approach — protect core contracts, no coverage targets.
+46 tests currently passing. Pragmatic approach — protect core contracts, no coverage targets.
 
-#### Current Tests (40 passing)
+#### Current Tests (46 passing)
 - Health check (1)
-- Auth guards for all protected endpoints (12)
+- Integration registry (4)
+- Auth guards for all protected endpoints (14) — includes dashboard + source connect
 - Authenticated chat CRUD lifecycle (8)
-- Authenticated sources shape + error cases (8)
-- Authenticated memories shape + error cases (11)
+- Authenticated sources shape + error cases (11) — includes connect, pendingConnections, memoriesDeleted
+- Authenticated memories shape + error cases (4)
+- Authenticated dashboard response shape (1)
+- Unauthenticated edge cases (3)
 
 #### Tests to Add Per Wave
-- **Wave 4**: Source connect/disconnect lifecycle, dashboard route auth guard + response shape
 - **Wave 5**: MCP server tool tests, settings route tests
 - **Wave 6**: E2E smoke tests if needed
 

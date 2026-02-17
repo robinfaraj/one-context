@@ -5,6 +5,7 @@ export {
 	getAll,
 	update,
 	deleteMemory,
+	deleteAll,
 	history,
 	type AddMemoryOptions,
 } from "./client";

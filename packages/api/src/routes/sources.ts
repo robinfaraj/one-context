@@ -44,11 +44,11 @@ export const sourcesRouter = new Hono()
 				);
 			}
 
-			// Upsert the source record (idempotent)
+			// Upsert the source record (idempotent, also re-activates disconnected sources)
 			const source = await db.source.upsert({
 				where: { userId_provider: { userId: user.id, provider } },
 				create: { userId: user.id, provider, status: "connected" },
-				update: {},
+				update: { status: "connected" },
 			});
 
 			// Attempt initial sync
@@ -85,7 +85,7 @@ export const sourcesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 
-			const [connectedSources, accounts] = await Promise.all([
+			const [allSources, accounts] = await Promise.all([
 				db.source.findMany({
 					where: { userId: user.id },
 					orderBy: { createdAt: "desc" },
@@ -95,6 +95,11 @@ export const sourcesRouter = new Hono()
 					select: { providerId: true },
 				}),
 			]);
+
+			// Only treat non-disconnected sources as connected
+			const connectedSources = allSources.filter(
+				(s) => s.status !== "disconnected",
+			);
 
 			const available = getAvailable();
 
@@ -112,18 +117,22 @@ export const sourcesRouter = new Hono()
 				},
 			);
 
-			// Find providers with OAuth accounts but no Source record yet
-			const connectedProviders = new Set(
-				connectedSources.map((s) => s.provider),
-			);
+			// Providers with OAuth accounts but no Source record at all (first-time connections only)
+			const knownProviders = new Set(allSources.map((s) => s.provider));
 			const pendingConnections = accounts
 				.map((a) => a.providerId)
-				.filter((p) => !connectedProviders.has(p));
+				.filter((p) => !knownProviders.has(p));
+
+			// Providers that were disconnected (have Source record with status "disconnected")
+			const disconnectedProviders = allSources
+				.filter((s) => s.status === "disconnected")
+				.map((s) => s.provider);
 
 			return c.json({
 				integrations,
 				connectedSources,
 				pendingConnections,
+				disconnectedProviders,
 			});
 		},
 	)
@@ -215,13 +224,14 @@ export const sourcesRouter = new Hono()
 				console.warn("Failed to fetch Mem0 memories for cleanup:", e);
 			}
 
-			// Delete content items first, then the source
+			// Delete content items and mark source as disconnected (keep record to prevent auto-reconnect)
 			await db.contentItem.deleteMany({
 				where: { sourceId: source.id },
 			});
 
-			await db.source.delete({
+			await db.source.update({
 				where: { id: source.id },
+				data: { status: "disconnected", lastSyncAt: null },
 			});
 
 			return c.json({ provider, disconnected: true, memoriesDeleted });

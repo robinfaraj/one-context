@@ -8,6 +8,7 @@ import { SourceCard } from "./source-card";
 interface SourceGridProps {
 	integrations: Integration[];
 	connectedSources: Source[];
+	disconnectedProviders: string[];
 	isLoading: boolean;
 }
 
@@ -24,6 +25,7 @@ function SkeletonCards() {
 export function SourceGrid({
 	integrations,
 	connectedSources,
+	disconnectedProviders,
 	isLoading,
 }: SourceGridProps) {
 	if (isLoading) {
@@ -83,6 +85,9 @@ export function SourceGrid({
 							<AvailableSourceCard
 								key={integration.provider}
 								integration={integration}
+								isDisconnected={disconnectedProviders.includes(
+									integration.provider,
+								)}
 							/>
 						))}
 					</div>

@@ -154,6 +154,36 @@ describe("API Routes", () => {
 			const json = await res.json();
 			expect(json).toEqual({ error: "Unauthorized" });
 		});
+
+		it("should return 401 for PUT /api/settings/profile without auth", async () => {
+			const res = await app.request("/api/settings/profile", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ name: "Test" }),
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for PUT /api/settings/sync without auth", async () => {
+			const res = await app.request("/api/settings/sync", {
+				method: "PUT",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ syncEnabled: false }),
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for GET /api/settings/export without auth", async () => {
+			const res = await app.request("/api/settings/export");
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for DELETE /api/settings/account without auth", async () => {
+			const res = await app.request("/api/settings/account", {
+				method: "DELETE",
+			});
+			expect(res.status).toBe(401);
+		});
 	});
 
 	describe.runIf(!!DEV_API_KEY)("Authenticated — Chat CRUD Lifecycle", () => {
@@ -552,12 +582,16 @@ describe("API Routes", () => {
 			const source2 = await db.source.findUnique({
 				where: { id: source.id },
 			});
-			expect(source2).toBeNull();
+			expect(source2).not.toBeNull();
+			expect(source2?.status).toBe("disconnected");
 
 			const itemsAfter = await db.contentItem.findMany({
 				where: { sourceId: source.id },
 			});
 			expect(itemsAfter).toHaveLength(0);
+
+			// Clean up the disconnected source record
+			await db.source.delete({ where: { id: source.id } }).catch(() => {});
 		});
 
 		it("should return integrations with correct shape", async () => {
@@ -666,6 +700,22 @@ describe("API Routes", () => {
 			expect(Array.isArray(json.pendingConnections)).toBe(true);
 		});
 
+		it("should include disconnectedProviders in sources list", async () => {
+			const res = await app.request("/api/sources", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				integrations: unknown[];
+				connectedSources: unknown[];
+				disconnectedProviders: string[];
+			};
+
+			expect(json.disconnectedProviders).toBeDefined();
+			expect(Array.isArray(json.disconnectedProviders)).toBe(true);
+		});
+
 		it("should include memoriesDeleted in disconnect response", async () => {
 			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
 			const user = await db.user.findUnique({
@@ -694,6 +744,15 @@ describe("API Routes", () => {
 			expect(json.provider).toBe("test-cleanup");
 			expect(json.disconnected).toBe(true);
 			expect(typeof json.memoriesDeleted).toBe("number");
+
+			// Clean up the disconnected source record
+			await db.source
+				.delete({
+					where: {
+						userId_provider: { userId: user.id, provider: "test-cleanup" },
+					},
+				})
+				.catch(() => {});
 		});
 	});
 
@@ -723,6 +782,101 @@ describe("API Routes", () => {
 			expect(typeof json.stats.chatCount).toBe("number");
 			expect(Array.isArray(json.connectedSources)).toBe(true);
 			expect(Array.isArray(json.recentActivity)).toBe(true);
+		});
+	});
+
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Settings", () => {
+		it("should update profile with name and profileSummary", async () => {
+			// Capture original name for restoration
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const originalUser = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!originalUser) throw new Error("Test user not found");
+
+			try {
+				const res = await app.request("/api/settings/profile", {
+					method: "PUT",
+					headers: { ...authHeaders, "Content-Type": "application/json" },
+					body: JSON.stringify({
+						name: "Test User Updated",
+						profileSummary: "A test bio",
+					}),
+				});
+				expect(res.status).toBe(200);
+
+				const json = (await res.json()) as {
+					name: string;
+					email: string;
+					profileSummary: string;
+				};
+				expect(json.name).toBe("Test User Updated");
+				expect(json.email).toBeDefined();
+				expect(json.profileSummary).toBe("A test bio");
+			} finally {
+				// Restore original name
+				await db.user.update({
+					where: { email: devUserEmail },
+					data: { name: originalUser.name },
+				});
+			}
+		});
+
+		it("should return 400 for profile update with empty body", async () => {
+			const res = await app.request("/api/settings/profile", {
+				method: "PUT",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({}),
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({ error: "No fields to update" });
+		});
+
+		it("should update sync settings to disabled", async () => {
+			const res = await app.request("/api/settings/sync", {
+				method: "PUT",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({ syncEnabled: false }),
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as { syncEnabled: boolean };
+			expect(json.syncEnabled).toBe(false);
+		});
+
+		it("should update sync settings to enabled", async () => {
+			const res = await app.request("/api/settings/sync", {
+				method: "PUT",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({ syncEnabled: true }),
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as { syncEnabled: boolean };
+			expect(json.syncEnabled).toBe(true);
+		});
+
+		it("should export user data with correct shape", async () => {
+			const res = await app.request("/api/settings/export", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				exportedAt: string;
+				profile: unknown;
+				chats: unknown;
+				sources: unknown;
+				contentItems: unknown;
+				memories: unknown;
+			};
+			expect(json.exportedAt).toBeDefined();
+			expect(json.profile).toBeDefined();
+			expect(json.chats).toBeDefined();
+			expect(json.sources).toBeDefined();
+			expect(json.contentItems).toBeDefined();
+			expect(json.memories).toBeDefined();
 		});
 	});
 

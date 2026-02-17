@@ -59,6 +59,10 @@ export async function deleteMemory(memoryId: string) {
 	return getClient().delete(memoryId);
 }
 
+export async function deleteAll(userId: string) {
+	return getClient().deleteAll({ user_id: userId });
+}
+
 export async function history(memoryId: string) {
 	return getClient().history(memoryId);
 }
