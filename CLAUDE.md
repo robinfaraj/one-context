@@ -39,7 +39,6 @@ pnpm format             # Biome format --write
 
 ```bash
 pnpm generate           # Generate Prisma client
-pnpm push               # Push schema to DB (no migration)
 pnpm migrate            # Create a Prisma migration
 pnpm studio             # Open Prisma Studio
 pnpm deploy-prod        # Deploy migrations to production
@@ -110,6 +109,9 @@ Never use `.catch(() => {})` or empty catch blocks. Always log errors using `@on
 
 ### Imports — Use canonical paths
 Import `authClient` from `@shared/lib/api` (not directly from `@onecontext/auth/client`). Use the re-export to keep a single source of truth.
+
+### Database — Always use migrations, never `db push`
+Never use `prisma db push` or `pnpm push` to apply schema changes. Always create a proper migration with `pnpm migrate` in `packages/database`. This ensures the migration history stays in sync with the actual schema and is reproducible across environments.
 
 ## Environment
 
