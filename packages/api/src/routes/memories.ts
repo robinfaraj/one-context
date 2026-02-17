@@ -17,8 +17,22 @@ export const memoriesRouter = new Hono()
 		}),
 		async (c) => {
 			const user = c.get("user");
-			const memories = await mem0.getAll(user.id);
-			return c.json(memories);
+			const [memories, pinnedRows] = await Promise.all([
+				mem0.getAll(user.id),
+				db.pinnedMemory.findMany({
+					where: { userId: user.id },
+					select: { memoryId: true },
+				}),
+			]);
+			const pinnedIds = new Set(pinnedRows.map((r) => r.memoryId));
+			const enriched = (memories as Record<string, unknown>[]).map((m) => ({
+				...m,
+				metadata: {
+					...(m.metadata as Record<string, unknown> | undefined),
+					pinned: pinnedIds.has(m.id as string),
+				},
+			}));
+			return c.json(enriched);
 		},
 	)
 	.get(
@@ -90,16 +104,12 @@ export const memoriesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 			const memoryId = c.req.param("id");
-			const existing = await db.pinnedMemory.findUnique({
+			const pinned = await db.pinnedMemory.upsert({
 				where: {
 					userId_memoryId: { userId: user.id, memoryId },
 				},
-			});
-			if (existing) {
-				return c.json({ error: "Memory already pinned" }, 409);
-			}
-			const pinned = await db.pinnedMemory.create({
-				data: { userId: user.id, memoryId },
+				update: {},
+				create: { userId: user.id, memoryId },
 			});
 			return c.json(pinned);
 		},
@@ -118,18 +128,8 @@ export const memoriesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 			const memoryId = c.req.param("id");
-			const existing = await db.pinnedMemory.findUnique({
-				where: {
-					userId_memoryId: { userId: user.id, memoryId },
-				},
-			});
-			if (!existing) {
-				return c.json({ error: "Pinned memory not found" }, 404);
-			}
-			await db.pinnedMemory.delete({
-				where: {
-					userId_memoryId: { userId: user.id, memoryId },
-				},
+			await db.pinnedMemory.deleteMany({
+				where: { userId: user.id, memoryId },
 			});
 			return c.json({ success: true });
 		},

@@ -13,7 +13,7 @@ import {
 	Twitter,
 	X,
 } from "lucide-react";
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import type { Memory } from "../../lib/memories-api";
 import {
@@ -75,13 +75,28 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 		);
 	};
 
-	const handleDelete = () => {
+	const [confirmingDelete, setConfirmingDelete] = useState(false);
+	const deleteTimeoutRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+	const handleDelete = useCallback(() => {
+		if (!confirmingDelete) {
+			setConfirmingDelete(true);
+			deleteTimeoutRef.current = setTimeout(
+				() => setConfirmingDelete(false),
+				3000,
+			);
+			return;
+		}
+		if (deleteTimeoutRef.current) clearTimeout(deleteTimeoutRef.current);
 		deleteMemory.mutate(memory.id, {
 			onSuccess: () => toast.success("Memory deleted"),
 		});
-	};
+	}, [confirmingDelete, deleteMemory, memory.id]);
+
+	const pinPending = pinMemory.isPending || unpinMemory.isPending;
 
 	const handleTogglePin = () => {
+		if (pinPending) return;
 		if (pinned) {
 			unpinMemory.mutate(memory.id);
 		} else {
@@ -169,10 +184,12 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 							size="icon"
 							className="h-7 w-7"
 							onClick={handleTogglePin}
+							disabled={pinPending}
 						>
 							<Star
 								className={cn(
 									"h-3.5 w-3.5",
+									pinPending && "animate-pulse",
 									pinned
 										? "fill-amber-400 text-amber-400"
 										: "text-muted-foreground",
@@ -190,10 +207,17 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 						<Button
 							variant="ghost"
 							size="icon"
-							className="h-7 w-7"
+							className={cn(
+								"h-7 w-7",
+								confirmingDelete && "text-red-500 hover:text-red-500",
+							)}
 							onClick={handleDelete}
 						>
-							<Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+							{confirmingDelete ? (
+								<Check className="h-3.5 w-3.5" />
+							) : (
+								<Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
+							)}
 						</Button>
 					</div>
 				</div>

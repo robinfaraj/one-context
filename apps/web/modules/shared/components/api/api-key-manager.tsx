@@ -15,7 +15,15 @@ import {
 } from "@ui/components/card";
 import { Input } from "@ui/components/input";
 import { Skeleton } from "@ui/components/skeleton";
-import { Check, Copy, Key, Loader2, Plus, Trash2 } from "lucide-react";
+import {
+	AlertTriangle,
+	Check,
+	Copy,
+	Key,
+	Loader2,
+	Plus,
+	Trash2,
+} from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -33,7 +41,7 @@ function formatDate(date: Date) {
 }
 
 export function ApiKeyManager() {
-	const { data: keys, isLoading } = useApiKeys();
+	const { data: keys, isLoading, isError, refetch } = useApiKeys();
 	const createKey = useCreateApiKey();
 	const deleteKey = useDeleteApiKey();
 	const [name, setName] = useState("");
@@ -109,7 +117,17 @@ export function ApiKeyManager() {
 				)}
 
 				{/* Key list */}
-				{isLoading ? (
+				{isError ? (
+					<div className="flex flex-col items-center justify-center py-8 gap-3">
+						<AlertTriangle className="h-8 w-8 text-muted-foreground" />
+						<p className="text-sm text-muted-foreground">
+							Failed to load API keys
+						</p>
+						<Button variant="outline" size="sm" onClick={() => refetch()}>
+							Try again
+						</Button>
+					</div>
+				) : isLoading ? (
 					<div className="space-y-2">
 						<Skeleton className="h-12 w-full" />
 						<Skeleton className="h-12 w-full" />

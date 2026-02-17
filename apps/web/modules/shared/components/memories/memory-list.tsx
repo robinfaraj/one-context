@@ -1,7 +1,8 @@
 "use client";
 
+import { Button } from "@ui/components/button";
 import { Skeleton } from "@ui/components/skeleton";
-import { Brain } from "lucide-react";
+import { AlertTriangle, Brain } from "lucide-react";
 import type { Memory } from "../../lib/memories-api";
 import { MemoryCard } from "./memory-card";
 
@@ -9,6 +10,7 @@ interface MemoryListProps {
 	memories: Memory[] | undefined;
 	isLoading: boolean;
 	isError: boolean;
+	onRetry?: () => void;
 }
 
 function SkeletonCards() {
@@ -29,13 +31,24 @@ function SkeletonCards() {
 	);
 }
 
-export function MemoryList({ memories, isLoading, isError }: MemoryListProps) {
+export function MemoryList({
+	memories,
+	isLoading,
+	isError,
+	onRetry,
+}: MemoryListProps) {
 	if (isLoading) return <SkeletonCards />;
 
 	if (isError) {
 		return (
-			<div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
-				<p className="text-sm">Failed to load memories.</p>
+			<div className="flex flex-col items-center justify-center py-16 gap-3">
+				<AlertTriangle className="h-8 w-8 text-muted-foreground" />
+				<p className="text-sm text-muted-foreground">
+					Failed to load memories.
+				</p>
+				<Button variant="outline" size="sm" onClick={onRetry}>
+					Try again
+				</Button>
 			</div>
 		);
 	}

@@ -184,6 +184,20 @@ describe("API Routes", () => {
 			});
 			expect(res.status).toBe(401);
 		});
+
+		it("should return 401 for POST /api/ai/chats without auth", async () => {
+			const res = await app.request("/api/ai/chats", { method: "POST" });
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for PATCH /api/ai/chats/:id without auth", async () => {
+			const res = await app.request("/api/ai/chats/fake-id", {
+				method: "PATCH",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ title: "test" }),
+			});
+			expect(res.status).toBe(401);
+		});
 	});
 
 	describe.runIf(!!DEV_API_KEY)("Authenticated — Chat CRUD Lifecycle", () => {
@@ -457,6 +471,54 @@ describe("API Routes", () => {
 			const res = await app.request("/api/ai/chats/nonexistent-id", {
 				method: "DELETE",
 				headers: authHeaders,
+			});
+			expect(res.status).toBe(404);
+			expect(await res.json()).toEqual({ error: "Chat not found" });
+		});
+
+		it("should create a new empty chat via POST /api/ai/chats", async () => {
+			const res = await app.request("/api/ai/chats", {
+				method: "POST",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				id: string;
+				title: string;
+				createdAt: string;
+				updatedAt: string;
+			};
+			expect(json.id).toBeDefined();
+			expect(json.title).toBeDefined();
+			expect(json.createdAt).toBeDefined();
+			expect(json.updatedAt).toBeDefined();
+
+			chatIdsToCleanup.push(json.id);
+		});
+
+		it("should update chat title via PATCH /api/ai/chats/:id", async () => {
+			const chat = await db.chat.create({
+				data: { userId: testUserId, title: "Original Title" },
+			});
+			chatIdsToCleanup.push(chat.id);
+
+			const res = await app.request(`/api/ai/chats/${chat.id}`, {
+				method: "PATCH",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({ title: "Updated Title" }),
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as { id: string; title: string };
+			expect(json.title).toBe("Updated Title");
+		});
+
+		it("should return 404 when updating nonexistent chat", async () => {
+			const res = await app.request("/api/ai/chats/nonexistent-id", {
+				method: "PATCH",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({ title: "test" }),
 			});
 			expect(res.status).toBe(404);
 			expect(await res.json()).toEqual({ error: "Chat not found" });
@@ -912,14 +974,386 @@ describe("API Routes", () => {
 			expect(json).toEqual({ error: "Content is required" });
 		});
 
-		it("should return 404 for unpin of non-pinned memory", async () => {
+		it("should return 200 for idempotent unpin of non-pinned memory", async () => {
 			const res = await app.request("/api/memories/nonexistent-memory/pin", {
 				method: "DELETE",
 				headers: authHeaders,
 			});
-			expect(res.status).toBe(404);
+			expect(res.status).toBe(200);
 			const json = await res.json();
-			expect(json).toEqual({ error: "Pinned memory not found" });
+			expect(json).toEqual({ success: true });
 		});
 	});
+
+	describe.runIf(!!DEV_API_KEY)(
+		"Functional — Source Lifecycle & Dashboard Consistency",
+		() => {
+			async function getTestUserId() {
+				const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+				const user = await db.user.findUnique({
+					where: { email: devUserEmail },
+				});
+				if (!user) throw new Error("Test user not found");
+				return user.id;
+			}
+
+			it("should remove content items from dashboard after source disconnect", async () => {
+				const testUserId = await getTestUserId();
+				const source = await db.source.create({
+					data: {
+						userId: testUserId,
+						provider: "test-dashboard-lifecycle",
+						status: "connected",
+					},
+				});
+
+				for (let i = 0; i < 3; i++) {
+					await db.contentItem.create({
+						data: {
+							userId: testUserId,
+							sourceId: source.id,
+							externalId: `dash-test-${i}`,
+							type: "test",
+							rawData: { content: `Test item ${i}` },
+							contentDate: new Date(),
+						},
+					});
+				}
+
+				// Dashboard should show these items
+				const before = await app.request("/api/dashboard", {
+					headers: authHeaders,
+				});
+				const beforeJson = (await before.json()) as {
+					recentActivity: Array<{
+						source?: { provider: string };
+					}>;
+				};
+				const beforeItems = beforeJson.recentActivity.filter(
+					(a) => a.source?.provider === "test-dashboard-lifecycle",
+				);
+				expect(beforeItems.length).toBeGreaterThanOrEqual(1);
+
+				// Disconnect
+				const disconnectRes = await app.request(
+					"/api/sources/test-dashboard-lifecycle",
+					{ method: "DELETE", headers: authHeaders },
+				);
+				expect(disconnectRes.status).toBe(200);
+
+				// Dashboard should no longer show those items
+				const after = await app.request("/api/dashboard", {
+					headers: authHeaders,
+				});
+				const afterJson = (await after.json()) as {
+					recentActivity: Array<{
+						source?: { provider: string };
+					}>;
+				};
+				const afterItems = afterJson.recentActivity.filter(
+					(a) => a.source?.provider === "test-dashboard-lifecycle",
+				);
+				expect(afterItems).toHaveLength(0);
+
+				// Cleanup
+				await db.source.delete({ where: { id: source.id } }).catch(() => {});
+			});
+
+			it("should have mutually exclusive pendingConnections and disconnectedProviders", async () => {
+				const testUserId = await getTestUserId();
+				const account = await db.account.create({
+					data: {
+						id: `test-account-${Date.now()}`,
+						userId: testUserId,
+						accountId: "test-consistency-123",
+						providerId: "test-consistency",
+						accessToken: "fake-token",
+					},
+				});
+
+				try {
+					// With account but no source → should be in pendingConnections
+					const res1 = await app.request("/api/sources", {
+						headers: authHeaders,
+					});
+					const json1 = (await res1.json()) as {
+						pendingConnections: string[];
+						connectedSources: Array<{ provider: string }>;
+						disconnectedProviders: string[];
+					};
+					expect(json1.pendingConnections).toContain("test-consistency");
+
+					// Create connected source → should move to connectedSources
+					const source = await db.source.create({
+						data: {
+							userId: testUserId,
+							provider: "test-consistency",
+							status: "connected",
+						},
+					});
+
+					const res2 = await app.request("/api/sources", {
+						headers: authHeaders,
+					});
+					const json2 = (await res2.json()) as {
+						pendingConnections: string[];
+						connectedSources: Array<{ provider: string }>;
+						disconnectedProviders: string[];
+					};
+					expect(json2.pendingConnections).not.toContain("test-consistency");
+					const connected = json2.connectedSources.find(
+						(s) => s.provider === "test-consistency",
+					);
+					expect(connected).toBeDefined();
+
+					// Disconnect → should move to disconnectedProviders
+					await db.source.update({
+						where: { id: source.id },
+						data: { status: "disconnected" },
+					});
+
+					const res3 = await app.request("/api/sources", {
+						headers: authHeaders,
+					});
+					const json3 = (await res3.json()) as {
+						pendingConnections: string[];
+						connectedSources: Array<{ provider: string }>;
+						disconnectedProviders: string[];
+					};
+					expect(json3.disconnectedProviders).toContain("test-consistency");
+					expect(json3.pendingConnections).not.toContain("test-consistency");
+					const stillConnected = json3.connectedSources.find(
+						(s) => s.provider === "test-consistency",
+					);
+					expect(stillConnected).toBeUndefined();
+
+					// Cleanup source
+					await db.source.delete({ where: { id: source.id } }).catch(() => {});
+				} finally {
+					await db.account
+						.delete({ where: { id: account.id } })
+						.catch(() => {});
+				}
+			});
+
+			it("should reuse source record ID when reconnecting a disconnected source", async () => {
+				const testUserId = await getTestUserId();
+				const source = await db.source.create({
+					data: {
+						userId: testUserId,
+						provider: "test-reconnect",
+						status: "disconnected",
+					},
+				});
+
+				// Upsert (same logic as the connect route)
+				const reconnected = await db.source.upsert({
+					where: {
+						userId_provider: { userId: testUserId, provider: "test-reconnect" },
+					},
+					create: {
+						userId: testUserId,
+						provider: "test-reconnect",
+						status: "connected",
+					},
+					update: { status: "connected" },
+				});
+
+				expect(reconnected.id).toBe(source.id); // Same record, not new
+				expect(reconnected.status).toBe("connected");
+
+				await db.source.delete({ where: { id: source.id } }).catch(() => {});
+			});
+		},
+	);
+
+	describe.runIf(!!DEV_API_KEY)(
+		"Functional — Pins, Export & Settings Persistence",
+		() => {
+			async function getTestUserId() {
+				const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+				const user = await db.user.findUnique({
+					where: { email: devUserEmail },
+				});
+				if (!user) throw new Error("Test user not found");
+				return user.id;
+			}
+
+			it("should pin and unpin a memory with correct DB state", async () => {
+				const testUserId = await getTestUserId();
+				const memoryId = `test-pin-roundtrip-${Date.now()}`;
+
+				// Pin
+				const pinRes = await app.request(`/api/memories/${memoryId}/pin`, {
+					method: "POST",
+					headers: authHeaders,
+				});
+				expect(pinRes.status).toBe(200);
+
+				// Verify in DB
+				const pinRow = await db.pinnedMemory.findFirst({
+					where: { userId: testUserId, memoryId },
+				});
+				expect(pinRow).not.toBeNull();
+
+				// Pin again (idempotent)
+				const pinRes2 = await app.request(`/api/memories/${memoryId}/pin`, {
+					method: "POST",
+					headers: authHeaders,
+				});
+				expect(pinRes2.status).toBe(200);
+
+				// Still only one row
+				const pinCount = await db.pinnedMemory.count({
+					where: { userId: testUserId, memoryId },
+				});
+				expect(pinCount).toBe(1);
+
+				// Unpin
+				const unpinRes = await app.request(`/api/memories/${memoryId}/pin`, {
+					method: "DELETE",
+					headers: authHeaders,
+				});
+				expect(unpinRes.status).toBe(200);
+
+				// Verify gone
+				const afterUnpin = await db.pinnedMemory.findFirst({
+					where: { userId: testUserId, memoryId },
+				});
+				expect(afterUnpin).toBeNull();
+
+				// Unpin again → 200 (deleteMany is idempotent, never throws 404)
+				const unpinRes2 = await app.request(`/api/memories/${memoryId}/pin`, {
+					method: "DELETE",
+					headers: authHeaders,
+				});
+				expect(unpinRes2.status).toBe(200);
+			});
+
+			it("should include recently created chat and source in export", async () => {
+				const testUserId = await getTestUserId();
+				// Create a chat with a message
+				const chat = await db.chat.create({
+					data: { userId: testUserId, title: "Export Test Chat" },
+				});
+				await db.chatMessage.create({
+					data: {
+						chatId: chat.id,
+						role: "user",
+						parts: [{ type: "text", text: "Export test message" }],
+					},
+				});
+
+				// Create a source
+				const source = await db.source.create({
+					data: {
+						userId: testUserId,
+						provider: "test-export",
+						status: "connected",
+					},
+				});
+
+				try {
+					const res = await app.request("/api/settings/export", {
+						headers: authHeaders,
+					});
+					expect(res.status).toBe(200);
+
+					const json = (await res.json()) as {
+						exportedAt: string;
+						profile: { id: string };
+						chats: Array<{
+							id: string;
+							title: string;
+							messages: Array<{ parts: unknown }>;
+						}>;
+						sources: Array<{ id: string; provider: string }>;
+						contentItems: unknown[];
+						memories: unknown;
+					};
+
+					// Verify chat is included with its message
+					const exportedChat = json.chats.find((c) => c.id === chat.id);
+					expect(exportedChat).toBeDefined();
+					expect(exportedChat?.title).toBe("Export Test Chat");
+					expect(exportedChat?.messages.length).toBeGreaterThanOrEqual(1);
+
+					// Verify source is included
+					const exportedSource = json.sources.find((s) => s.id === source.id);
+					expect(exportedSource).toBeDefined();
+					expect(exportedSource?.provider).toBe("test-export");
+				} finally {
+					await db.chat.delete({ where: { id: chat.id } }).catch(() => {});
+					await db.source.delete({ where: { id: source.id } }).catch(() => {});
+				}
+			});
+
+			it("should persist profile update and reflect in dashboard", async () => {
+				const testUserId = await getTestUserId();
+				const originalUser = await db.user.findUnique({
+					where: { id: testUserId },
+				});
+
+				try {
+					// Update profile
+					const updateRes = await app.request("/api/settings/profile", {
+						method: "PUT",
+						headers: { ...authHeaders, "Content-Type": "application/json" },
+						body: JSON.stringify({ name: "Functional Test Name" }),
+					});
+					expect(updateRes.status).toBe(200);
+
+					// Dashboard should reflect the new name
+					const dashRes = await app.request("/api/dashboard", {
+						headers: authHeaders,
+					});
+					const dashJson = (await dashRes.json()) as { user: { name: string } };
+					expect(dashJson.user.name).toBe("Functional Test Name");
+				} finally {
+					// Restore original name
+					await db.user.update({
+						where: { id: testUserId },
+						data: { name: originalUser?.name },
+					});
+				}
+			});
+
+			it("should toggle sync settings and persist in DB", async () => {
+				const testUserId = await getTestUserId();
+				// Enable
+				const enableRes = await app.request("/api/settings/sync", {
+					method: "PUT",
+					headers: { ...authHeaders, "Content-Type": "application/json" },
+					body: JSON.stringify({ syncEnabled: true }),
+				});
+				expect(enableRes.status).toBe(200);
+				expect(
+					((await enableRes.json()) as { syncEnabled: boolean }).syncEnabled,
+				).toBe(true);
+
+				// Verify in DB
+				const userEnabled = await db.user.findUnique({
+					where: { id: testUserId },
+				});
+				expect(userEnabled?.syncEnabled).toBe(true);
+
+				// Disable
+				const disableRes = await app.request("/api/settings/sync", {
+					method: "PUT",
+					headers: { ...authHeaders, "Content-Type": "application/json" },
+					body: JSON.stringify({ syncEnabled: false }),
+				});
+				expect(disableRes.status).toBe(200);
+				expect(
+					((await disableRes.json()) as { syncEnabled: boolean }).syncEnabled,
+				).toBe(false);
+
+				// Verify in DB
+				const userDisabled = await db.user.findUnique({
+					where: { id: testUserId },
+				});
+				expect(userDisabled?.syncEnabled).toBe(false);
+			});
+		},
+	);
 });

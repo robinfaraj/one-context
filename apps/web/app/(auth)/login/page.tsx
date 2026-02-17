@@ -81,94 +81,99 @@ export default function LoginPage() {
 	}
 
 	return (
-		<Card>
-			<CardHeader>
-				<CardTitle className="font-instrument-serif text-center">
-					Sign in
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-					<div className="space-y-2">
-						<Label htmlFor="email">Email</Label>
-						<Input
-							id="email"
-							type="email"
-							placeholder="you@example.com"
-							{...register("email")}
-						/>
-						{errors.email && (
-							<p className="text-sm text-destructive">{errors.email.message}</p>
-						)}
-					</div>
-					<div className="space-y-2">
-						<Label htmlFor="password">Password</Label>
-						<Input
-							id="password"
-							type="password"
-							placeholder="••••••••"
-							{...register("password")}
-						/>
-						{errors.password && (
-							<p className="text-sm text-destructive">
-								{errors.password.message}
-							</p>
-						)}
-					</div>
-					<Button
-						type="submit"
-						className="w-full bg-emerald-700 hover:bg-emerald-800 text-white"
-						disabled={isLoading}
-					>
-						{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+		<>
+			<title>Log In | OneContext</title>
+			<Card>
+				<CardHeader>
+					<CardTitle className="font-instrument-serif text-center">
 						Sign in
-					</Button>
-				</form>
+					</CardTitle>
+				</CardHeader>
+				<CardContent>
+					<form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor="email">Email</Label>
+							<Input
+								id="email"
+								type="email"
+								placeholder="you@example.com"
+								{...register("email")}
+							/>
+							{errors.email && (
+								<p className="text-sm text-destructive">
+									{errors.email.message}
+								</p>
+							)}
+						</div>
+						<div className="space-y-2">
+							<Label htmlFor="password">Password</Label>
+							<Input
+								id="password"
+								type="password"
+								placeholder="••••••••"
+								{...register("password")}
+							/>
+							{errors.password && (
+								<p className="text-sm text-destructive">
+									{errors.password.message}
+								</p>
+							)}
+						</div>
+						<Button
+							type="submit"
+							className="w-full bg-emerald-700 hover:bg-emerald-800 text-white"
+							disabled={isLoading}
+						>
+							{isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+							Sign in
+						</Button>
+					</form>
 
-				<div className="relative my-6">
-					<Separator />
-					<span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-						or
-					</span>
-				</div>
+					<div className="relative my-6">
+						<Separator />
+						<span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+							or
+						</span>
+					</div>
 
-				<div className="space-y-3">
-					<Button
-						variant="outline"
-						className="w-full"
-						onClick={() => handleSocialLogin("github")}
-						disabled={socialLoading !== null}
-					>
-						{socialLoading === "github" ? (
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-						) : (
-							<Github className="mr-2 h-4 w-4" />
-						)}
-						Continue with GitHub
-					</Button>
-					<Button
-						variant="outline"
-						className="w-full"
-						onClick={() => handleSocialLogin("twitter")}
-						disabled={socialLoading !== null}
-					>
-						{socialLoading === "twitter" ? (
-							<Loader2 className="mr-2 h-4 w-4 animate-spin" />
-						) : (
-							<Twitter className="mr-2 h-4 w-4" />
-						)}
-						Continue with X
-					</Button>
-				</div>
-			</CardContent>
-			<CardFooter className="justify-center">
-				<p className="text-sm text-muted-foreground">
-					Don&apos;t have an account?{" "}
-					<Link href="/signup" className="text-emerald-700 hover:underline">
-						Sign up
-					</Link>
-				</p>
-			</CardFooter>
-		</Card>
+					<div className="space-y-3">
+						<Button
+							variant="outline"
+							className="w-full"
+							onClick={() => handleSocialLogin("github")}
+							disabled={socialLoading !== null}
+						>
+							{socialLoading === "github" ? (
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							) : (
+								<Github className="mr-2 h-4 w-4" />
+							)}
+							Continue with GitHub
+						</Button>
+						<Button
+							variant="outline"
+							className="w-full"
+							onClick={() => handleSocialLogin("twitter")}
+							disabled={socialLoading !== null}
+						>
+							{socialLoading === "twitter" ? (
+								<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+							) : (
+								<Twitter className="mr-2 h-4 w-4" />
+							)}
+							Continue with X
+						</Button>
+					</div>
+				</CardContent>
+				<CardFooter className="justify-center">
+					<p className="text-sm text-muted-foreground">
+						Don&apos;t have an account?{" "}
+						<Link href="/signup" className="text-emerald-700 hover:underline">
+							Sign up
+						</Link>
+					</p>
+				</CardFooter>
+			</Card>
+		</>
 	);
 }

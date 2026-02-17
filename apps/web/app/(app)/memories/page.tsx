@@ -14,7 +14,7 @@ export default function MemoriesPage() {
 	const [selectedSource, setSelectedSource] = useState("All");
 	const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-	const { data: allMemories, isLoading, isError } = useMemories();
+	const { data: allMemories, isLoading, isError, refetch } = useMemories();
 	const { data: searchResults, isLoading: isSearching } =
 		useSearchMemories(searchQuery);
 
@@ -60,6 +60,7 @@ export default function MemoriesPage() {
 
 	return (
 		<div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
+			<title>Memories | OneContext</title>
 			<div className="flex items-center gap-3">
 				<h1 className="text-2xl font-semibold tracking-tight">Memories</h1>
 				{!isLoading && (
@@ -83,6 +84,7 @@ export default function MemoriesPage() {
 				memories={filtered}
 				isLoading={isLoading || isSearching}
 				isError={isError}
+				onRetry={() => refetch()}
 			/>
 		</div>
 	);
