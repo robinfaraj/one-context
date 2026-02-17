@@ -4,8 +4,8 @@
 		"@react-email/components": "^0.0.32",
 		"@react-email/render": "^1.0.4",
 		"nodemailer": "^6.9.16",
-		"react": "19.0.0",
-		"react-dom": "19.0.0",
+		"react": "19.2.4",
+		"react-dom": "19.2.4",
 		"react-email": "^3.0.5"
 	},
 	"devDependencies": {
@@ -13,7 +13,7 @@
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "22.10.5",
 		"@types/nodemailer": "^6.4.17",
-		"@types/react": "19.0.3"
+		"@types/react": "19.2.14"
 	},
 	"main": "./index.ts",
 	"name": "@onecontext/mail",
