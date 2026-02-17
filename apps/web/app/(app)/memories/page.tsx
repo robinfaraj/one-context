@@ -59,7 +59,7 @@ export default function MemoriesPage() {
 	const count = filtered?.length ?? 0;
 
 	return (
-		<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+		<div className="flex flex-1 flex-col gap-4 p-4 pt-0 overflow-hidden">
 			<div className="flex items-center gap-3">
 				<h1 className="text-2xl font-semibold tracking-tight">Memories</h1>
 				{!isLoading && (

@@ -24,13 +24,13 @@ export function AvailableSourceCard({ integration }: AvailableSourceCardProps) {
 		<Card className={cn(integration.comingSoon && "opacity-60")}>
 			<CardContent className="p-4">
 				<div className="flex items-center justify-between gap-3">
-					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+					<div className="flex min-w-0 items-center gap-3">
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
 							<SourceIcon icon={integration.icon} className="h-5 w-5" />
 						</div>
-						<div>
-							<p className="font-medium">{integration.displayName}</p>
-							<p className="text-xs text-muted-foreground">
+						<div className="min-w-0">
+							<p className="font-medium truncate">{integration.displayName}</p>
+							<p className="text-xs text-muted-foreground truncate">
 								{integration.description}
 							</p>
 						</div>
@@ -40,6 +40,7 @@ export function AvailableSourceCard({ integration }: AvailableSourceCardProps) {
 						disabled={integration.comingSoon || !integration.available}
 						onClick={handleConnect}
 						className={cn(
+							"shrink-0",
 							!integration.comingSoon &&
 								"bg-emerald-700 hover:bg-emerald-800 text-white",
 						)}

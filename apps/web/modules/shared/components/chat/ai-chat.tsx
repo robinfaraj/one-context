@@ -1,6 +1,14 @@
 "use client";
 
 import { Thread } from "@ui/components/assistant-ui/thread";
+import { Button } from "@ui/components/button";
+import {
+	Sheet,
+	SheetContent,
+	SheetHeader,
+	SheetTitle,
+} from "@ui/components/sheet";
+import { PanelLeftIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ChatRuntimeProvider } from "./chat-runtime-provider";
 import { ChatSidebar } from "./chat-sidebar";
@@ -113,8 +121,51 @@ export function AiChat() {
 	const isReadyToRender =
 		!activeChatId || (chatData?.id === activeChatId && !isLoadingChat);
 
+	const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+	const handleSelectChatMobile = useCallback((id: string) => {
+		setActiveChatId(id);
+		setMobileSidebarOpen(false);
+	}, []);
+
+	const handleNewChatMobile = useCallback(async () => {
+		await handleNewChat();
+		setMobileSidebarOpen(false);
+	}, [handleNewChat]);
+
 	return (
 		<div className="flex h-full w-full">
+			{/* Mobile sidebar toggle */}
+			<div className="absolute top-3 right-3 z-10 md:hidden">
+				<Button
+					variant="ghost"
+					size="icon"
+					className="size-8"
+					onClick={() => setMobileSidebarOpen(true)}
+					aria-label="Open chat history"
+				>
+					<PanelLeftIcon className="size-4" />
+				</Button>
+			</div>
+
+			{/* Mobile sidebar sheet */}
+			<Sheet open={mobileSidebarOpen} onOpenChange={setMobileSidebarOpen}>
+				<SheetContent side="left" className="w-72 p-3 pt-10">
+					<SheetHeader className="sr-only">
+						<SheetTitle>Chat History</SheetTitle>
+					</SheetHeader>
+					<ChatSidebar
+						chats={chats}
+						activeChatId={activeChatId}
+						isLoading={isLoadingList}
+						onNewChat={handleNewChatMobile}
+						onSelectChat={handleSelectChatMobile}
+						onDeleteChat={handleDeleteChat}
+					/>
+				</SheetContent>
+			</Sheet>
+
+			{/* Desktop sidebar */}
 			<aside className="hidden w-64 shrink-0 flex-col border-r p-3 md:flex">
 				<ChatSidebar
 					chats={chats}

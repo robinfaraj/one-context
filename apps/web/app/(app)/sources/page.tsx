@@ -2,10 +2,24 @@
 
 import { ManualEntrySection } from "@shared/components/sources/manual-entry-section";
 import { SourceGrid } from "@shared/components/sources/source-grid";
-import { useSources } from "@shared/lib/sources-api";
+import { useConnectSource, useSources } from "@shared/lib/sources-api";
+import { useEffect, useRef } from "react";
 
 export default function SourcesPage() {
 	const { data, isLoading } = useSources();
+	const connectSource = useConnectSource();
+	const connectingRef = useRef<Set<string>>(new Set());
+
+	// Auto-connect any providers that have OAuth accounts but no Source record
+	useEffect(() => {
+		if (!data?.pendingConnections?.length) return;
+
+		for (const provider of data.pendingConnections) {
+			if (connectingRef.current.has(provider)) continue;
+			connectingRef.current.add(provider);
+			connectSource.mutate(provider);
+		}
+	}, [data?.pendingConnections]);
 
 	const connectedCount = data?.connectedSources.length ?? 0;
 

@@ -707,30 +707,31 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 | `packages/mem0` client | DONE | Full CRUD via `mem0ai` SDK (add, search, get, getAll, update, delete, history) |
 | Chat API routes | DONE | POST /chat (streaming), GET/POST/PATCH/DELETE /chats |
 | Memories API routes | DONE | GET /memories, GET /search, PUT/:id, DELETE/:id, POST/DELETE pin |
-| Sources API routes | PARTIAL | GET /sources, POST /sync, DELETE — but OAuth token retrieval is TODO |
+| Sources API routes | PARTIAL | GET /sources, POST /sync, DELETE — token retrieval works, but no Source creation on OAuth |
 | Chat UI + persistence | DONE | Custom ChatSidebar, `useChat` + `useAISDKRuntime` + `DefaultChatTransport` |
 | Memories UI | DONE | Cards, search, filters, pin/edit/delete |
 | Sources UI | DONE | Connected cards + available integrations grid |
 | AssistantUI components | DONE | Thread, markdown-text, tool-fallback, tooltip-icon-button |
 | Web search tool (Tavily) | DONE | Wired into chat orchestrator |
-| Tests | DONE | 29 passing (auth guards + authenticated CRUD lifecycle) |
+| Chat tools | DONE | `addMemory`, `searchMemories`, `listSources` — all production-ready |
+| Integration adapters | DONE | Twitter API v2 (tweets) + GitHub API (profile + repos) — real API calls + Mem0 indexing |
+| OAuth token retrieval | DONE | `getAccessToken()` in `packages/integrations/sync.ts` queries Account table |
+| Trigger.dev scheduled sync | DONE | Daily cron at 3 AM UTC, iterates connected sources, calls adapters |
+| DRY refactor | DONE | Shared `persistSyncResult()` + `getAccessToken()` in `packages/integrations/sync.ts` |
+| Component split | DONE | thread.tsx split into 4 files, ai-chat.tsx split into 2 files, dead code removed |
+| Tests | DONE | 40 passing (auth guards + authenticated CRUD lifecycle) |
 
 #### What's STUB or MISSING
 | Area | Status | What's needed |
 |------|--------|---------------|
-| Chat tools: `addMemory` | MISSING | Tool definition + wire into orchestrator — calls `mem0.add()` |
-| Chat tools: `searchMemories` | MISSING | Tool definition + wire into orchestrator — calls `mem0.search()` |
-| Chat tools: `listSources` | MISSING | Tool definition + wire into orchestrator — queries Source table |
-| Tool UIs (add-memory, search-memories, list-sources) | SCAFFOLD | Components exist but tools don't, so never rendered |
-| Twitter adapter | STUB | `packages/integrations/twitter/adapter.ts` returns empty arrays — needs Twitter API v2 calls |
-| GitHub adapter | STUB | `packages/integrations/github/adapter.ts` returns empty arrays — needs GitHub API calls |
-| OAuth token retrieval | TODO | `packages/api/src/routes/sources.ts:78-79` passes empty `accessToken=""` — needs Account table lookup |
-| Trigger.dev sync jobs | STUB | `packages/tasks/` only has SDK config — no scheduled tasks defined |
-| Dashboard API route | MISSING | `packages/api/src/routes/dashboard.ts` doesn't exist |
-| Dashboard UI | MISSING | Placeholder page only |
-| MCP server package | MISSING | `packages/mcp-server/` doesn't exist |
-| API key management UI | MISSING | No UI for BetterAuth apiKey plugin |
-| Settings page | MISSING | Placeholder page only |
+| OAuth → Source record | **MISSING** | When user connects Twitter/GitHub via OAuth, no Source record is created. Account is created by BetterAuth but nothing bridges Account → Source. Need a POST /api/sources endpoint or auth hook. |
+| Initial sync after connect | **MISSING** | No mechanism to trigger sync immediately after OAuth. User must manually click "Sync". Need to auto-trigger first sync when Source is created. |
+| Source disconnect cleanup | **PARTIAL** | DELETE cascades ContentItems but does NOT revoke OAuth tokens or delete Mem0 memories for that source. |
+| Dashboard API route | **MISSING** | `packages/api/src/routes/dashboard.ts` doesn't exist |
+| Dashboard UI | **MISSING** | Placeholder page only |
+| MCP server package | **MISSING** | `packages/mcp-server/` doesn't exist |
+| API key management UI | **MISSING** | No UI for BetterAuth apiKey plugin |
+| Settings page | **MISSING** | Placeholder page only |
 
 ### Implementation Notes
 
@@ -738,69 +739,76 @@ TAVILY_API_KEY=              # For web search tool (Checkpoint 7)
 
 ---
 
-### Remaining Waves (Parallelized)
+### Completed Waves
+
+#### Wave 1 — Core packages + API routes + database schema
+#### Wave 2 — Chat UI, Memories UI, Sources UI
+#### Wave 3 — Chat tools, integration adapters, Trigger.dev sync, DRY refactor, component split
+
+---
+
+### Remaining Waves
 
 ```
-Wave 3 (parallel — zero deps between streams):
-├── Stream A: Chat tools — addMemory, searchMemories, listSources tool definitions + wire into orchestrator
-├── Stream B: Integration adapters — real Twitter API v2 + GitHub API calls + OAuth token retrieval from Account table
-└── Stream C: Trigger.dev sync jobs — scheduled daily sync for connected sources
+Wave 4 (parallel):
+├── Stream A: Source connection flow — OAuth → Source record + initial sync
+├── Stream B: Dashboard — API route + full UI
+└── Stream C: Source disconnect cleanup — Mem0 memory deletion
 
-Wave 4 (parallel — depends on Wave 3):
-├── Stream A: Dashboard — API route (GET /api/dashboard) + UI (profile summary, stats, activity feed, quick actions)
-└── Stream B: MCP server package + API key management UI + MCP setup guide
+Wave 5 (parallel):
+├── Stream A: MCP server package + API key management UI + MCP setup guide
+└── Stream B: Settings page (profile editing, sync prefs, danger zone)
 
-Wave 5 (final):
-└── Settings page + polish pass (profile editing, sync prefs, danger zone, loading states, error boundaries, mobile)
+Wave 6 (final):
+└── Polish pass (loading states, error boundaries, empty states, mobile, toasts)
 ```
-
-#### Wave 3 Details
-
-**Stream A — Chat Tools** (smallest, ~2-3 files):
-- Create `packages/ai-chat/src/tools/add-memory.ts` — zod schema + calls `mem0.add()`
-- Create `packages/ai-chat/src/tools/search-memories.ts` — zod schema + calls `mem0.search()`
-- Create `packages/ai-chat/src/tools/list-sources.ts` — zod schema + queries Source table
-- Update `packages/ai-chat/src/tools/index.ts` — export all tools
-- Update `packages/ai-chat/src/services/chat-orchestrator.ts` — register new tools (pass userId)
-- Update `packages/ai/prompts/chat-agent.ts` — document tool usage in system prompt
-
-**Stream B — Integration Adapters** (~4-5 files):
-- `packages/integrations/twitter/adapter.ts` — Twitter API v2: fetch user tweets (GET /2/users/:id/tweets), map to ContentItems, send to Mem0
-- `packages/integrations/github/adapter.ts` — GitHub API: fetch profile + repos + events, map to ContentItems, send to Mem0
-- `packages/api/src/routes/sources.ts` — fix OAuth token retrieval: lookup Account table by provider + userId to get `accessToken`
-- May need `packages/integrations/types.ts` updates for token handling
-
-**Stream C — Trigger.dev Sync Jobs** (~1-2 files):
-- `packages/tasks/src/sync-sources.ts` — scheduled task: query all Sources with `status=connected`, call adapter.sync() for each
-- Wire into `packages/tasks/index.ts`
-- Configure schedule (daily or configurable)
 
 #### Wave 4 Details
 
-**Stream A — Dashboard**:
+**Stream A — Source Connection Flow** (critical gap):
+- Add `POST /api/sources/:provider/connect` endpoint — creates Source record in DB after OAuth completes
+- UI: after OAuth callback redirects to `/sources`, call connect endpoint to create Source record
+- Auto-trigger initial sync immediately after Source creation (call existing sync logic)
+- Alternative: add BetterAuth `afterCallback` hook to auto-create Source on OAuth success
+- Files: `packages/api/src/routes/sources.ts`, `apps/web/modules/shared/components/sources/available-source-card.tsx`
+
+**Stream B — Dashboard**:
 - `packages/api/src/routes/dashboard.ts` — aggregate stats: memory count (Mem0), source count (DB), chat count (DB), recent activity (ContentItems)
 - Dashboard page UI: profile summary card, connected sources strip, quick stats, recent activity feed, quick actions
 
-**Stream B — MCP + API Keys**:
+**Stream C — Source Disconnect Cleanup**:
+- On DELETE /api/sources/:provider, also delete Mem0 memories with `metadata.source == provider`
+- Consider revoking OAuth tokens (call BetterAuth to unlink account)
+- Files: `packages/api/src/routes/sources.ts`
+
+#### Wave 5 Details
+
+**Stream A — MCP + API Keys**:
 - `packages/mcp-server/` — MCP server exposing user profile, memories, sources as tools/resources
 - API key management UI: generate, view (masked), copy, revoke (BetterAuth apiKey plugin already handles backend)
 - MCP setup guide with copy-paste config blocks
 
+**Stream B — Settings Page**:
+- Profile settings: edit name, bio, username (react-hook-form)
+- Sync settings: auto-sync frequency toggle
+- Privacy settings: profile visibility toggle
+- Danger zone: export all data (JSON download), delete account
+
 ### Test Strategy
 
-29 tests currently passing. Pragmatic approach — protect core contracts, no coverage targets.
+40 tests currently passing. Pragmatic approach — protect core contracts, no coverage targets.
 
-#### Current Tests (29 passing)
+#### Current Tests (40 passing)
 - Health check (1)
 - Auth guards for all protected endpoints (12)
 - Authenticated chat CRUD lifecycle (8)
-- Authenticated sources shape + error cases (4)
-- Authenticated memories shape + error cases (4)
+- Authenticated sources shape + error cases (8)
+- Authenticated memories shape + error cases (11)
 
 #### Tests to Add Per Wave
-- **Wave 3**: Tool schema validation tests, integration registry tests
-- **Wave 4**: Dashboard route auth guard + response shape, MCP server tool tests
-- **Wave 5**: Settings route tests
+- **Wave 4**: Source connect/disconnect lifecycle, dashboard route auth guard + response shape
+- **Wave 5**: MCP server tool tests, settings route tests
+- **Wave 6**: E2E smoke tests if needed
 
 ---
 

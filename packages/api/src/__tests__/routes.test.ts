@@ -140,6 +140,20 @@ describe("API Routes", () => {
 			});
 			expect(res.status).toBe(401);
 		});
+
+		it("should return 401 for POST /api/sources/:provider/connect without auth", async () => {
+			const res = await app.request("/api/sources/twitter/connect", {
+				method: "POST",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for GET /api/dashboard without auth", async () => {
+			const res = await app.request("/api/dashboard");
+			expect(res.status).toBe(401);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Unauthorized" });
+		});
 	});
 
 	describe.runIf(!!DEV_API_KEY)("Authenticated — Chat CRUD Lifecycle", () => {
@@ -619,6 +633,96 @@ describe("API Routes", () => {
 				headers: authHeaders,
 			});
 			expect(res.status).toBe(404);
+		});
+
+		it("should return 400 when connecting provider without OAuth account", async () => {
+			const res = await app.request(
+				"/api/sources/nonexistent-provider/connect",
+				{
+					method: "POST",
+					headers: authHeaders,
+				},
+			);
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({
+				error: "No OAuth account found. Please connect via OAuth first.",
+			});
+		});
+
+		it("should include pendingConnections in sources list", async () => {
+			const res = await app.request("/api/sources", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				integrations: unknown[];
+				connectedSources: unknown[];
+				pendingConnections: string[];
+			};
+
+			expect(json.pendingConnections).toBeDefined();
+			expect(Array.isArray(json.pendingConnections)).toBe(true);
+		});
+
+		it("should include memoriesDeleted in disconnect response", async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+
+			const source = await db.source.create({
+				data: {
+					userId: user.id,
+					provider: "test-cleanup",
+					status: "connected",
+				},
+			});
+
+			const res = await app.request("/api/sources/test-cleanup", {
+				method: "DELETE",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+			const json = (await res.json()) as {
+				provider: string;
+				disconnected: boolean;
+				memoriesDeleted: number;
+			};
+			expect(json.provider).toBe("test-cleanup");
+			expect(json.disconnected).toBe(true);
+			expect(typeof json.memoriesDeleted).toBe("number");
+		});
+	});
+
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Dashboard", () => {
+		it("should return dashboard data with correct shape", async () => {
+			const res = await app.request("/api/dashboard", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				user: { name: string; email: string; image: string | null };
+				stats: {
+					memoryCount: number;
+					sourceCount: number;
+					chatCount: number;
+				};
+				connectedSources: unknown[];
+				recentActivity: unknown[];
+			};
+
+			expect(json.user).toBeDefined();
+			expect(json.user.email).toBeDefined();
+			expect(json.stats).toBeDefined();
+			expect(typeof json.stats.memoryCount).toBe("number");
+			expect(typeof json.stats.sourceCount).toBe("number");
+			expect(typeof json.stats.chatCount).toBe("number");
+			expect(Array.isArray(json.connectedSources)).toBe(true);
+			expect(Array.isArray(json.recentActivity)).toBe(true);
 		});
 	});
 

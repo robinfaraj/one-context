@@ -28,6 +28,7 @@ interface Integration {
 interface SourcesResponse {
 	integrations: Integration[];
 	connectedSources: Source[];
+	pendingConnections: string[];
 }
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
@@ -53,6 +54,19 @@ export function useSyncSource() {
 			toast.success("Sync started");
 		},
 		onError: () => toast.error("Failed to start sync"),
+	});
+}
+
+export function useConnectSource() {
+	const qc = useQueryClient();
+	return useMutation({
+		mutationFn: (provider: string) =>
+			fetchJson(`/api/sources/${provider}/connect`, { method: "POST" }),
+		onSuccess: () => {
+			qc.invalidateQueries({ queryKey: ["sources"] });
+			toast.success("Source connected and synced");
+		},
+		onError: () => toast.error("Failed to connect source"),
 	});
 }
 

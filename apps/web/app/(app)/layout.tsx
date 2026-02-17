@@ -35,10 +35,10 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 	if (!session) return null;
 
 	return (
-		<SidebarProvider className="h-svh overflow-hidden">
+		<SidebarProvider className="h-svh">
 			<AppSidebar user={session.user} />
-			<SidebarInset>
-				<header className="flex h-16 shrink-0 items-center gap-2">
+			<SidebarInset className="overflow-y-auto">
+				<header className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-2 bg-background">
 					<div className="flex items-center gap-2 px-4">
 						<SidebarTrigger className="-ml-1" />
 						<Separator

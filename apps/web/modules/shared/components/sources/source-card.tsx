@@ -40,13 +40,13 @@ export function SourceCard({ source, icon }: SourceCardProps) {
 		<Card>
 			<CardContent className="p-4">
 				<div className="flex items-start justify-between gap-3">
-					<div className="flex items-center gap-3">
-						<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+					<div className="flex min-w-0 items-center gap-3">
+						<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
 							<SourceIcon icon={icon} className="h-5 w-5" />
 						</div>
-						<div>
+						<div className="min-w-0">
 							<div className="flex items-center gap-2">
-								<p className="font-medium">{source.displayName}</p>
+								<p className="font-medium truncate">{source.displayName}</p>
 								<span
 									className={cn(
 										"inline-flex h-2 w-2 rounded-full",
@@ -68,7 +68,7 @@ export function SourceCard({ source, icon }: SourceCardProps) {
 						</div>
 					</div>
 				</div>
-				<div className="mt-3 flex items-center gap-2">
+				<div className="mt-3 flex flex-wrap items-center gap-2">
 					<Button
 						variant="outline"
 						size="sm"

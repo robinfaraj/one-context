@@ -22,7 +22,7 @@ export function MemoryFilters({
 }: MemoryFiltersProps) {
 	return (
 		<div className="flex flex-wrap items-center gap-2">
-			<div className="flex items-center gap-1">
+			<div className="flex flex-wrap items-center gap-1">
 				{SOURCE_OPTIONS.map((source) => (
 					<Button
 						key={source}

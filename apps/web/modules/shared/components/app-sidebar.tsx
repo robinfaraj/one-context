@@ -12,6 +12,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	useSidebar,
 } from "@ui/components/sidebar";
 import {
 	Brain,
@@ -44,6 +45,7 @@ interface AppSidebarProps {
 
 export function AppSidebar({ user }: AppSidebarProps) {
 	const pathname = usePathname();
+	const { setOpenMobile } = useSidebar();
 
 	return (
 		<Sidebar variant="inset" collapsible="icon">
@@ -51,7 +53,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 				<SidebarMenu>
 					<SidebarMenuItem>
 						<SidebarMenuButton asChild>
-							<Link href="/dashboard">
+							<Link href="/dashboard" onClick={() => setOpenMobile(false)}>
 								<OneContextLogo className="!h-4 !w-auto !shrink-0 text-primary" />
 								<span className="truncate font-semibold">OneContext</span>
 							</Link>
@@ -70,7 +72,7 @@ export function AppSidebar({ user }: AppSidebarProps) {
 										asChild
 										isActive={pathname.startsWith(item.href)}
 									>
-										<Link href={item.href}>
+										<Link href={item.href} onClick={() => setOpenMobile(false)}>
 											<item.icon />
 											<span>{item.title}</span>
 										</Link>

@@ -6,19 +6,19 @@ import Link from "next/link";
 export function ManualEntrySection() {
 	return (
 		<Card>
-			<CardContent className="flex items-center justify-between p-4">
-				<div className="flex items-center gap-3">
-					<div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+			<CardContent className="flex items-center justify-between gap-3 p-4">
+				<div className="flex min-w-0 items-center gap-3">
+					<div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
 						<MessageSquarePlus className="h-5 w-5 text-muted-foreground" />
 					</div>
-					<div>
-						<p className="font-medium">Add Knowledge Manually</p>
-						<p className="text-xs text-muted-foreground">
+					<div className="min-w-0">
+						<p className="font-medium truncate">Add Knowledge Manually</p>
+						<p className="text-xs text-muted-foreground truncate">
 							Add notes, projects, or any knowledge directly
 						</p>
 					</div>
 				</div>
-				<Button asChild variant="outline" size="sm">
+				<Button asChild variant="outline" size="sm" className="shrink-0">
 					<Link href="/chat">Add via Chat</Link>
 				</Button>
 			</CardContent>

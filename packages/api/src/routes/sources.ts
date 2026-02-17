@@ -6,6 +6,7 @@ import {
 	getAvailable,
 	persistSyncResult,
 } from "@onecontext/integrations";
+import { deleteMemory, getAll } from "@onecontext/mem0";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";
@@ -13,6 +14,65 @@ import { authMiddleware } from "../middleware/auth";
 export const sourcesRouter = new Hono()
 	.basePath("/sources")
 	.use(authMiddleware)
+	.post(
+		"/:provider/connect",
+		describeRoute({
+			tags: ["Sources"],
+			summary: "Connect a source",
+			description:
+				"Creates a Source record for an OAuth-connected provider and triggers initial sync",
+			responses: {
+				200: { description: "Source connected and synced" },
+				400: { description: "No OAuth account found for provider" },
+			},
+		}),
+		async (c) => {
+			const user = c.get("user");
+			const provider = c.req.param("provider");
+
+			// Verify the user has an OAuth account for this provider
+			const account = await db.account.findFirst({
+				where: { userId: user.id, providerId: provider },
+			});
+
+			if (!account) {
+				return c.json(
+					{
+						error: "No OAuth account found. Please connect via OAuth first.",
+					},
+					400,
+				);
+			}
+
+			// Upsert the source record (idempotent)
+			const source = await db.source.upsert({
+				where: { userId_provider: { userId: user.id, provider } },
+				create: { userId: user.id, provider, status: "connected" },
+				update: {},
+			});
+
+			// Attempt initial sync
+			const adapter = get(provider);
+			if (!adapter || !account.accessToken) {
+				return c.json({ source, syncResult: null });
+			}
+
+			try {
+				const result = await adapter.sync(user.id, account.accessToken);
+				await persistSyncResult(source.id, user.id, result);
+				return c.json({
+					source,
+					syncResult: {
+						itemsSynced: result.contentItems.length,
+						memoriesAdded: result.memoriesAdded,
+					},
+				});
+			} catch {
+				// Source is connected even if initial sync fails
+				return c.json({ source, syncResult: null });
+			}
+		},
+	)
 	.get(
 		"/",
 		describeRoute({
@@ -25,10 +85,16 @@ export const sourcesRouter = new Hono()
 		async (c) => {
 			const user = c.get("user");
 
-			const connectedSources = await db.source.findMany({
-				where: { userId: user.id },
-				orderBy: { createdAt: "desc" },
-			});
+			const [connectedSources, accounts] = await Promise.all([
+				db.source.findMany({
+					where: { userId: user.id },
+					orderBy: { createdAt: "desc" },
+				}),
+				db.account.findMany({
+					where: { userId: user.id },
+					select: { providerId: true },
+				}),
+			]);
 
 			const available = getAvailable();
 
@@ -46,7 +112,19 @@ export const sourcesRouter = new Hono()
 				},
 			);
 
-			return c.json({ integrations, connectedSources });
+			// Find providers with OAuth accounts but no Source record yet
+			const connectedProviders = new Set(
+				connectedSources.map((s) => s.provider),
+			);
+			const pendingConnections = accounts
+				.map((a) => a.providerId)
+				.filter((p) => !connectedProviders.has(p));
+
+			return c.json({
+				integrations,
+				connectedSources,
+				pendingConnections,
+			});
 		},
 	)
 	.post(
@@ -118,6 +196,25 @@ export const sourcesRouter = new Hono()
 				return c.json({ error: "Source not connected" }, 404);
 			}
 
+			// Delete Mem0 memories associated with this source
+			let memoriesDeleted = 0;
+			try {
+				const allMemories = await getAll(user.id);
+				const sourceMemories = (allMemories as any[]).filter(
+					(m) => m.metadata?.source === provider,
+				);
+				for (const memory of sourceMemories) {
+					try {
+						await deleteMemory(memory.id);
+						memoriesDeleted++;
+					} catch (e) {
+						console.warn(`Failed to delete Mem0 memory ${memory.id}:`, e);
+					}
+				}
+			} catch (e) {
+				console.warn("Failed to fetch Mem0 memories for cleanup:", e);
+			}
+
 			// Delete content items first, then the source
 			await db.contentItem.deleteMany({
 				where: { sourceId: source.id },
@@ -127,6 +224,6 @@ export const sourcesRouter = new Hono()
 				where: { id: source.id },
 			});
 
-			return c.json({ provider, disconnected: true });
+			return c.json({ provider, disconnected: true, memoriesDeleted });
 		},
 	);
