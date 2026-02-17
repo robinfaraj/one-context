@@ -6,7 +6,7 @@ import {
 	getAvailable,
 	persistSyncResult,
 } from "@onecontext/integrations";
-import { deleteMemory, getAll } from "@onecontext/mem0";
+import { deleteMemory, getAll } from "@onecontext/memory";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";

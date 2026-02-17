@@ -1,4 +1,4 @@
-import * as mem0 from "@onecontext/mem0";
+import * as mem0 from "@onecontext/memory";
 import { tool } from "ai";
 import { z } from "zod";
 

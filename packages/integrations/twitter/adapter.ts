@@ -1,5 +1,5 @@
 import { logger } from "@onecontext/logs";
-import * as mem0 from "@onecontext/mem0";
+import * as mem0 from "@onecontext/memory";
 import type {
 	ContentItemInput,
 	IntegrationAdapter,

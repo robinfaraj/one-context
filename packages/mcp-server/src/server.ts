@@ -4,7 +4,7 @@ import {
 } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { auth } from "@onecontext/auth";
 import { db } from "@onecontext/database/server";
-import * as mem0 from "@onecontext/mem0";
+import * as mem0 from "@onecontext/memory";
 import { z } from "zod";
 
 async function resolveUser(apiKey: string) {

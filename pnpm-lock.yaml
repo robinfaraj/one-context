@@ -241,9 +241,9 @@ importers:
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
-      '@onecontext/mem0':
+      '@onecontext/memory':
         specifier: workspace:*
-        version: link:../mem0
+        version: link:../memory
       '@tavily/ai-sdk':
         specifier: ^0.4.1
         version: 0.4.1(ai@6.0.86(zod@4.3.6))(zod@4.3.6)
@@ -290,9 +290,9 @@ importers:
       '@onecontext/logs':
         specifier: workspace:*
         version: link:../logs
-      '@onecontext/mem0':
+      '@onecontext/memory':
         specifier: workspace:*
-        version: link:../mem0
+        version: link:../memory
       '@onecontext/utils':
         specifier: workspace:*
         version: link:../utils
@@ -413,9 +413,9 @@ importers:
       '@onecontext/logs':
         specifier: workspace:*
         version: link:../logs
-      '@onecontext/mem0':
+      '@onecontext/memory':
         specifier: workspace:*
-        version: link:../mem0
+        version: link:../memory
       zod:
         specifier: ^3.24.2
         version: 3.25.76
@@ -488,9 +488,9 @@ importers:
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
-      '@onecontext/mem0':
+      '@onecontext/memory':
         specifier: workspace:*
-        version: link:../mem0
+        version: link:../memory
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -505,7 +505,7 @@ importers:
         specifier: 5.7.2
         version: 5.7.2
 
-  packages/mem0:
+  packages/memory:
     dependencies:
       mem0ai:
         specifier: ^2.2.2

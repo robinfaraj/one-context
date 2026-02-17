@@ -1,5 +1,5 @@
 import { db } from "@onecontext/database/server";
-import * as mem0 from "@onecontext/mem0";
+import * as mem0 from "@onecontext/memory";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";
@@ -25,11 +25,11 @@ export const memoriesRouter = new Hono()
 				}),
 			]);
 			const pinnedIds = new Set(pinnedRows.map((r) => r.memoryId));
-			const enriched = (memories as Record<string, unknown>[]).map((m) => ({
+			const enriched = memories.map((m) => ({
 				...m,
 				metadata: {
-					...(m.metadata as Record<string, unknown> | undefined),
-					pinned: pinnedIds.has(m.id as string),
+					...m.metadata,
+					pinned: pinnedIds.has(m.id),
 				},
 			}));
 			return c.json(enriched);
