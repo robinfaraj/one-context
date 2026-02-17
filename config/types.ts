@@ -42,6 +42,9 @@ export type Config = {
 		rateLimitPerMinute: number;
 		apiKeyPrefix: string;
 	};
+	mail: {
+		from: string;
+	};
 	payments: {
 		plans: Record<string, PlanConfig>;
 	};

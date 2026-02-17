@@ -50,9 +50,14 @@ export function ApiKeyManager() {
 
 	async function handleCreate() {
 		const keyName = name.trim() || "Untitled key";
-		const result = await createKey.mutateAsync(keyName);
-		setNewKey(result.key);
-		setName("");
+		try {
+			const result = await createKey.mutateAsync(keyName);
+			setNewKey(result.key);
+			setName("");
+		} catch (err) {
+			console.warn("Failed to create API key", err);
+			toast.error("Failed to create API key");
+		}
 	}
 
 	return (

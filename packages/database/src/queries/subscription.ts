@@ -95,12 +95,14 @@ export async function downgradeUserToFree(
 	userId: string,
 	subscriptionId: string,
 ) {
-	await db.user.update({
-		where: { id: userId },
-		data: { plan: "free" },
-	});
-	await db.subscription.update({
-		where: { id: subscriptionId },
-		data: { status: "canceled" },
-	});
+	return db.$transaction([
+		db.user.update({
+			where: { id: userId },
+			data: { plan: "free" },
+		}),
+		db.subscription.update({
+			where: { id: subscriptionId },
+			data: { status: "canceled" },
+		}),
+	]);
 }

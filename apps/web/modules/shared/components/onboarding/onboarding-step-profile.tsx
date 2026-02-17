@@ -1,9 +1,8 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
+import { authClient } from "@shared/lib/api";
 import { Input } from "@ui/components/input";
 import { Label } from "@ui/components/label";
-import { cn } from "@ui/lib/utils";
 import { User } from "lucide-react";
 import { useRef } from "react";
 
@@ -42,23 +41,6 @@ export function OnboardingStepProfile({ user }: OnboardingStepProfileProps) {
 						defaultValue={user.name ?? ""}
 						placeholder="Your name"
 						onBlur={handleNameBlur}
-					/>
-				</div>
-
-				<div className="space-y-2">
-					<Label htmlFor="role">Role / Title</Label>
-					<Input id="role" placeholder="e.g. Full-Stack Developer" />
-				</div>
-
-				<div className="space-y-2">
-					<Label htmlFor="bio">Bio</Label>
-					<textarea
-						id="bio"
-						rows={3}
-						placeholder="What are you working on?"
-						className={cn(
-							"flex w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none",
-						)}
 					/>
 				</div>
 			</div>

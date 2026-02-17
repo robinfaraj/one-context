@@ -12,7 +12,16 @@ export async function generateChatTitle(
 	messages: { role: string; parts: unknown }[],
 ) {
 	const userMessages = messages.filter((m) => m.role === "user");
-	if (userMessages.length < 2) return;
+	if (userMessages.length === 0) return;
+
+	// Skip if chat already has a real title (not the default)
+	if (userMessages.length > 1) {
+		const existing = await db.chat.findUnique({
+			where: { id: chatId },
+			select: { title: true },
+		});
+		if (existing?.title && existing.title !== "New Chat") return;
+	}
 
 	const context = messages
 		.slice(0, 6)

@@ -13,8 +13,8 @@ interface ConnectedSourcesStripProps {
 
 const statusColors: Record<string, string> = {
 	connected: "bg-primary",
-	syncing: "bg-yellow-400",
-	error: "bg-red-500",
+	syncing: "bg-warning",
+	error: "bg-destructive",
 };
 
 export function ConnectedSourcesStrip({
@@ -77,7 +77,7 @@ export function ConnectedSourcesStrip({
 							<span
 								className={cn(
 									"absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full border-2 border-background",
-									statusColors[source.status] ?? "bg-gray-400",
+									statusColors[source.status] ?? "bg-muted-foreground",
 								)}
 							/>
 						</div>

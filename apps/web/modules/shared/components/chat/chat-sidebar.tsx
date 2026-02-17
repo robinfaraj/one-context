@@ -126,7 +126,7 @@ function ConfirmDeleteButton({ onDelete }: ConfirmDeleteButtonProps) {
 			className={cn(
 				"mr-2 flex size-7 items-center justify-center rounded p-0 transition-opacity",
 				confirming
-					? "text-red-500 opacity-100"
+					? "text-destructive opacity-100"
 					: "text-muted-foreground opacity-0 hover:text-destructive group-hover:opacity-100",
 			)}
 			onClick={handleClick}

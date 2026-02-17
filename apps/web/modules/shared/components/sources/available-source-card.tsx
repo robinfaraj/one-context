@@ -1,7 +1,7 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
 import { UpgradeModal } from "@shared/components/billing/upgrade-modal";
+import { authClient } from "@shared/lib/api";
 import type { Integration } from "@shared/lib/sources-api";
 import { useConnectSource } from "@shared/lib/sources-api";
 import { Button } from "@ui/components/button";

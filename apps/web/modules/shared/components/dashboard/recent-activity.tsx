@@ -38,10 +38,10 @@ function getContentPreview(item: DashboardActivity): string {
 }
 
 const contentTypeBadgeColors: Record<string, string> = {
-	tweet: "bg-sky-100 text-sky-700",
-	repo: "bg-violet-100 text-violet-700",
-	note: "bg-amber-100 text-amber-700",
-	page: "bg-blue-100 text-blue-700",
+	tweet: "bg-primary/10 text-primary",
+	repo: "bg-secondary text-secondary-foreground",
+	note: "bg-warning/10 text-warning",
+	page: "bg-accent text-accent-foreground",
 };
 
 export function RecentActivity({ activity, isLoading }: RecentActivityProps) {
@@ -93,7 +93,7 @@ export function RecentActivity({ activity, isLoading }: RecentActivityProps) {
 											<span
 												className={`inline-flex rounded px-1.5 py-0.5 text-[10px] font-medium leading-none ${
 													contentTypeBadgeColors[item.contentType] ??
-													"bg-gray-100 text-gray-600"
+													"bg-muted text-muted-foreground"
 												}`}
 											>
 												{item.contentType}

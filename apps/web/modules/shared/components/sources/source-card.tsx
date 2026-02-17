@@ -51,9 +51,9 @@ export function SourceCard({ source, icon }: SourceCardProps) {
 									className={cn(
 										"inline-flex h-2 w-2 rounded-full",
 										source.status === "error"
-											? "bg-red-500"
+											? "bg-destructive"
 											: isSyncing
-												? "bg-yellow-500"
+												? "bg-warning"
 												: "bg-primary",
 									)}
 								/>

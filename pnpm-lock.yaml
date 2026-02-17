@@ -369,6 +369,9 @@ importers:
       '@onecontext/logs':
         specifier: workspace:*
         version: link:../logs
+      '@onecontext/mail':
+        specifier: workspace:*
+        version: link:../mail
       '@onecontext/utils':
         specifier: workspace:*
         version: link:../utils
@@ -466,6 +469,9 @@ importers:
 
   packages/mail:
     dependencies:
+      '@onecontext/logs':
+        specifier: workspace:*
+        version: link:../logs
       '@react-email/components':
         specifier: ^0.0.32
         version: 0.0.32(react-dom@19.0.0(react@19.0.0))(react@19.0.0)

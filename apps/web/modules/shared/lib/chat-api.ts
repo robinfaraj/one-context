@@ -12,12 +12,12 @@ interface ChatWithMessages extends Chat {
 		id: string;
 		chatId: string;
 		role: string;
-		parts: unknown;
+		parts: Array<{ type: string; text: string }>;
 		createdAt: string;
 	}>;
 }
 
-const chatKeys = {
+export const chatKeys = {
 	all: ["chats"] as const,
 	detail: (id: string) => ["chats", id] as const,
 };
@@ -28,6 +28,7 @@ async function fetchApi<T>(url: string, init?: RequestInit): Promise<T> {
 		...init,
 	});
 	if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
+	if (res.status === 204) return undefined as T;
 	return res.json();
 }
 

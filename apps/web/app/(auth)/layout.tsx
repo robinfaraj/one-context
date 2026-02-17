@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
+import { authClient } from "@shared/lib/api";
 import { useRouter } from "next/navigation";
 import { type PropsWithChildren, useEffect } from "react";
 

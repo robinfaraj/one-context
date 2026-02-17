@@ -114,6 +114,78 @@ test.describe("Chat", () => {
 		).toBeVisible({ timeout: 5_000 });
 	});
 
+	test("sidebar updates with new chat after sending a message", async ({
+		page,
+	}) => {
+		test.setTimeout(90_000);
+
+		const initialCount = await chatEntryCount(page);
+
+		await sendAndWait(page, "sidebar update test");
+
+		// Sidebar should show the new chat without a page reload
+		await expect(async () => {
+			const count = await chatEntryCount(page);
+			expect(count).toBe(initialCount + 1);
+		}).toPass({ timeout: 10_000 });
+	});
+
+	test("delete removes chat from sidebar without reload", async ({
+		page,
+	}) => {
+		test.setTimeout(90_000);
+
+		// Create a chat first
+		await sendAndWait(page, "delete test message");
+
+		// Wait for sidebar to reflect the new chat
+		const countAfterCreate = await expect(async () => {
+			const count = await chatEntryCount(page);
+			expect(count).toBeGreaterThan(0);
+			return count;
+		}).toPass({ timeout: 10_000 });
+
+		const beforeDelete = await chatEntryCount(page);
+
+		// Double-click delete on the first chat (confirm pattern)
+		const deleteBtn = page.getByRole("button", { name: "Delete chat" }).first();
+		await deleteBtn.click();
+		await page.waitForTimeout(300);
+		const confirmBtn = page
+			.getByRole("button", { name: "Confirm delete" })
+			.first();
+		await confirmBtn.click();
+
+		// Sidebar should have one fewer chat without reload
+		await expect(async () => {
+			const count = await chatEntryCount(page);
+			expect(count).toBe(beforeDelete - 1);
+		}).toPass({ timeout: 10_000 });
+	});
+
+	test("chat title appears in sidebar after generation", async ({ page }) => {
+		test.setTimeout(120_000);
+
+		// Send a message to create a chat — title generates on first message
+		await sendAndWait(page, "tell me about quantum computing basics");
+
+		// The sidebar should eventually show a generated title (not "New Chat")
+		// Title generation is async, so poll for up to 15 seconds
+		const sidebar = page.locator("aside").first();
+		await expect(async () => {
+			const text = (await sidebar.textContent()) ?? "";
+			// The sidebar should contain something other than just "New Chat" entries
+			// for the chat we just created. The title model generates a short summary.
+			const chatButtons = await page
+				.locator("aside button")
+				.allTextContents();
+			const nonGenericTitles = chatButtons.filter(
+				(t) => t.trim() && t !== "New Chat" && t !== "Delete chat" && t !== "Confirm delete",
+			);
+			expect(nonGenericTitles.length).toBeGreaterThan(0);
+		}).toPass({ timeout: 15_000 });
+	});
+
 	test("no duplicate chats created from multiple messages", async ({
 		page,
 	}) => {

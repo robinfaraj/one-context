@@ -191,7 +191,7 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 									"h-3.5 w-3.5",
 									pinPending && "animate-pulse",
 									pinned
-										? "fill-amber-400 text-amber-400"
+										? "fill-warning text-warning"
 										: "text-muted-foreground",
 								)}
 							/>
@@ -209,7 +209,7 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 							size="icon"
 							className={cn(
 								"h-7 w-7",
-								confirmingDelete && "text-red-500 hover:text-red-500",
+								confirmingDelete && "text-destructive hover:text-destructive",
 							)}
 							onClick={handleDelete}
 						>

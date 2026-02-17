@@ -1,6 +1,6 @@
 "use client";
 
-import { authClient } from "@onecontext/auth/client";
+import { authClient } from "@shared/lib/api";
 import { useConnectSource, useSources } from "@shared/lib/sources-api";
 import { Button } from "@ui/components/button";
 import { Card, CardContent } from "@ui/components/card";

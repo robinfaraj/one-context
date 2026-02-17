@@ -1,4 +1,6 @@
 import { sValidator } from "@hono/standard-validator";
+import { config } from "@onecontext/config";
+import { logger } from "@onecontext/logs";
 import { createCheckoutSession } from "@onecontext/stripe/src/checkout";
 import { createPortalSession } from "@onecontext/stripe/src/portal";
 import {
@@ -20,8 +22,16 @@ import {
 	getUserStripeCustomerId,
 } from "../services/billing";
 
+const allowedPriceIds = Object.values(config.payments.plans)
+	.flatMap((plan) => ("prices" in plan && plan.prices ? plan.prices : []))
+	.map((p) => p.priceId)
+	.filter((id) => id.length > 0);
+
 const checkoutSchema = z.object({
-	priceId: z.string().min(1, "priceId is required"),
+	priceId: z
+		.string()
+		.min(1, "priceId is required")
+		.refine((id) => allowedPriceIds.includes(id), "Invalid priceId"),
 });
 
 // Auth-protected billing routes
@@ -163,19 +173,57 @@ export const billingRouter = new Hono()
 
 			switch (event.type) {
 				case "checkout.session.completed":
-					await handleCheckoutCompleted(event.data.object);
+					try {
+						await handleCheckoutCompleted(event.data.object);
+					} catch (err) {
+						logger.error(
+							"Webhook handler failed for checkout.session.completed",
+							{ error: err },
+						);
+					}
 					break;
 				case "invoice.paid":
-					await handleInvoicePaid(event.data.object);
+					try {
+						await handleInvoicePaid(event.data.object);
+					} catch (err) {
+						logger.error("Webhook handler failed for invoice.paid", {
+							error: err,
+						});
+					}
 					break;
 				case "invoice.payment_failed":
-					await handleInvoicePaymentFailed(event.data.object);
+					try {
+						await handleInvoicePaymentFailed(event.data.object);
+					} catch (err) {
+						logger.error("Webhook handler failed for invoice.payment_failed", {
+							error: err,
+						});
+					}
 					break;
 				case "customer.subscription.updated":
-					await handleSubscriptionUpdated(event.data.object);
+					try {
+						await handleSubscriptionUpdated(event.data.object);
+					} catch (err) {
+						logger.error(
+							"Webhook handler failed for customer.subscription.updated",
+							{ error: err },
+						);
+					}
 					break;
 				case "customer.subscription.deleted":
-					await handleSubscriptionDeleted(event.data.object);
+					try {
+						await handleSubscriptionDeleted(event.data.object);
+					} catch (err) {
+						logger.error(
+							"Webhook handler failed for customer.subscription.deleted",
+							{ error: err },
+						);
+					}
+					break;
+				default:
+					logger.warn("Unhandled Stripe webhook event type", {
+						type: event.type,
+					});
 					break;
 			}
 

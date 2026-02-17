@@ -6,6 +6,7 @@ import {
 	findUserForExport,
 	updateUser,
 } from "@onecontext/database/queries";
+import { logger } from "@onecontext/logs";
 import * as mem0 from "@onecontext/memory";
 
 export async function updateProfile(
@@ -56,8 +57,8 @@ export async function exportUserData(userId: string) {
 export async function deleteAccount(userId: string) {
 	try {
 		await mem0.deleteAll(userId);
-	} catch {
-		// Continue even if Mem0 deletion fails
+	} catch (err) {
+		logger.warn("Failed to delete Mem0 memories", { userId, error: err });
 	}
 
 	await deleteUser(userId);

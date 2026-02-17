@@ -58,6 +58,10 @@ export async function deleteMemory(memoryId: string, userId: string) {
 }
 
 export async function pinMemory(userId: string, memoryId: string) {
+	const memory = await verifyMemoryOwnership(memoryId, userId);
+	if (!memory) {
+		return null;
+	}
 	return upsertPinnedMemory(userId, memoryId);
 }
 

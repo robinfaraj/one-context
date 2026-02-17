@@ -32,7 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 		);
 	}
 
-	if (!session) return null;
+	if (!session || !session.user.onboardingComplete) return null;
 
 	return (
 		<SidebarProvider className="h-svh">

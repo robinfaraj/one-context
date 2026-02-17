@@ -42,11 +42,7 @@ export function UpgradeModal({ open, onClose, trigger }: UpgradeModalProps) {
 
 	return (
 		<Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-			<DialogContent
-				className="sm:max-w-md"
-				onPointerDownOutside={(e) => e.preventDefault()}
-				onEscapeKeyDown={(e) => e.preventDefault()}
-			>
+			<DialogContent className="sm:max-w-md">
 				<DialogHeader className="items-center text-center">
 					<div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
 						<Lock className="h-6 w-6 text-primary" />

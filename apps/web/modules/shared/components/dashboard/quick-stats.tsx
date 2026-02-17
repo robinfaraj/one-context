@@ -33,8 +33,8 @@ const statConfig = [
 function getUsageColor(count: number, limit: number | "unlimited"): string {
 	if (limit === "unlimited") return "";
 	const pct = (count / limit) * 100;
-	if (pct >= 100) return "text-red-600";
-	if (pct >= 80) return "text-amber-600";
+	if (pct >= 100) return "text-destructive";
+	if (pct >= 80) return "text-warning";
 	return "";
 }
 

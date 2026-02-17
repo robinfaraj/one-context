@@ -63,8 +63,8 @@ export function OAuthConsentForm() {
 					const data = await response.json();
 					setClientInfo(data);
 				}
-			} catch {
-				// Client info is optional for display
+			} catch (err) {
+				console.warn("Failed to fetch client info", err);
 			} finally {
 				setLoading(false);
 			}

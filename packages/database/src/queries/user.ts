@@ -1,4 +1,4 @@
-import { db } from "../client";
+import { type Prisma, db } from "../client";
 
 export async function findUserById(userId: string) {
 	return db.user.findUnique({ where: { id: userId } });
@@ -33,10 +33,7 @@ export async function findUserForExport(userId: string) {
 	});
 }
 
-export async function updateUser(
-	userId: string,
-	data: Record<string, string | boolean>,
-) {
+export async function updateUser(userId: string, data: Prisma.UserUpdateInput) {
 	return db.user.update({
 		where: { id: userId },
 		data,

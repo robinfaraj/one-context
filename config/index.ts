@@ -37,6 +37,9 @@ export const config: Config = {
 		rateLimitPerMinute: 60,
 		apiKeyPrefix: "octx_",
 	},
+	mail: {
+		from: process.env.MAIL_FROM ?? "OneContext <noreply@onecontext.dev>",
+	},
 	payments: {
 		plans: {
 			free: {

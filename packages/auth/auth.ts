@@ -1,6 +1,7 @@
 import { config } from "@onecontext/config";
 import { db } from "@onecontext/database/server";
 import { logger } from "@onecontext/logs";
+import { sendMagicLinkEmail } from "@onecontext/mail";
 import { getBaseUrl } from "@onecontext/utils";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
@@ -115,12 +116,17 @@ export const auth = betterAuth({
 		magicLink({
 			sendMagicLink: async ({ email, url }) => {
 				logger.info("Magic link requested", { email });
+				await sendMagicLinkEmail({
+					to: email,
+					url,
+					from: config.mail.from,
+				});
 			},
 		}),
 		oidcProvider({
 			loginPage: "/login",
 			consentPage: "/auth/oauth/consent",
-			allowDynamicClientRegistration: true,
+			allowDynamicClientRegistration: false,
 			requirePKCE: true,
 			scopes: ["openid", "profile", "email", "offline_access"],
 			accessTokenExpiresIn: 3600,

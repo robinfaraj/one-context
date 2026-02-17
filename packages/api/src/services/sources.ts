@@ -179,11 +179,11 @@ export async function disconnectSource(userId: string, provider: string) {
 				await deleteMemory(memory.id);
 				memoriesDeleted++;
 			} catch (e) {
-				console.warn(`Failed to delete Mem0 memory ${memory.id}:`, e);
+				logger.warn(`Failed to delete Mem0 memory ${memory.id}`, { error: e });
 			}
 		}
 	} catch (e) {
-		console.warn("Failed to fetch Mem0 memories for cleanup:", e);
+		logger.warn("Failed to fetch Mem0 memories for cleanup", { error: e });
 	}
 
 	await deleteContentItemsBySourceId(source.id);

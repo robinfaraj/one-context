@@ -34,7 +34,7 @@ const ENDPOINTS = [
 ];
 
 const METHOD_COLORS: Record<string, string> = {
-	GET: "bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300",
+	GET: "bg-secondary text-secondary-foreground",
 	POST: "bg-accent text-primary dark:bg-accent dark:text-primary",
 };
 

@@ -116,6 +116,9 @@ export const memoriesRouter = new Hono()
 			const user = c.get("user");
 			const memoryId = c.req.param("id");
 			const pinned = await pinMemory(user.id, memoryId);
+			if (!pinned) {
+				return c.json({ error: "Memory not found" }, 404);
+			}
 			return c.json(pinned);
 		},
 	)

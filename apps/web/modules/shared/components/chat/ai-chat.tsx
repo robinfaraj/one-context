@@ -1,5 +1,6 @@
 "use client";
 
+import { chatKeys, useChat, useChats, useDeleteChat } from "@shared/lib/chat-api";
 import { Thread } from "@ui/components/assistant-ui/thread";
 import { Button } from "@ui/components/button";
 import {
@@ -8,55 +9,28 @@ import {
 	SheetHeader,
 	SheetTitle,
 } from "@ui/components/sheet";
+import { useQueryClient } from "@tanstack/react-query";
 import { PanelLeftIcon } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { ChatRuntimeProvider } from "./chat-runtime-provider";
 import { ChatSidebar } from "./chat-sidebar";
 
-interface ChatListItem {
-	id: string;
-	title: string;
-	createdAt: string;
-	updatedAt: string;
-}
+export function AiChat() {
+	const [activeChatId, setActiveChatId] = useState<string>(() =>
+		crypto.randomUUID(),
+	);
 
-interface ChatDetail {
-	id: string;
-	title: string;
-	messages: Array<{
-		id: string;
-		role: string;
-		parts: Array<{ type: string; text: string }>;
-		createdAt: string;
-	}>;
-}
-
-interface AiChatProps {
-	id: string;
-}
-
-export function AiChat({ id }: AiChatProps) {
-	const [chats, setChats] = useState<ChatListItem[]>([]);
-	const [activeChatId, setActiveChatId] = useState<string>(id);
-	const [chatData, setChatData] = useState<ChatDetail | null>(null);
-	const [isLoadingList, setIsLoadingList] = useState(true);
-	const [isLoadingChat, setIsLoadingChat] = useState(false);
-
-	const fetchChats = useCallback(async () => {
-		try {
-			const res = await fetch("/api/ai/chats", { credentials: "include" });
-			if (res.ok) {
-				const data = (await res.json()) as ChatListItem[];
-				setChats(data);
-			}
-		} finally {
-			setIsLoadingList(false);
-		}
-	}, []);
-
-	useEffect(() => {
-		fetchChats();
-	}, [fetchChats]);
+	const queryClient = useQueryClient();
+	const { data: rawChats = [], isLoading: isLoadingList } = useChats();
+	const chats = useMemo(
+		() =>
+			rawChats.map((c) => ({
+				...c,
+				title: c.title ?? "Untitled",
+			})),
+		[rawChats],
+	);
+	const deleteChatMutation = useDeleteChat();
 
 	// Check if the active chat is a known (existing) chat that needs loading.
 	const isKnownChat = useMemo(
@@ -66,65 +40,39 @@ export function AiChat({ id }: AiChatProps) {
 
 	// Fetch messages only for known chats (ones that exist in the DB).
 	// New chats (with a pre-generated UUID) won't be in the list yet.
-	useEffect(() => {
-		if (!isKnownChat) {
-			setChatData(null);
-			return;
-		}
+	const { data: chatData, isLoading: isLoadingChat } = useChat(
+		isKnownChat ? activeChatId : undefined,
+	);
 
-		let cancelled = false;
-		setIsLoadingChat(true);
+	const handleChatFinish = useCallback(() => {
+		// Invalidate immediately to show the new chat in the sidebar.
+		queryClient.invalidateQueries({ queryKey: chatKeys.all });
 
-		fetch(`/api/ai/chats/${activeChatId}`, { credentials: "include" })
-			.then(async (res) => {
-				if (cancelled) return;
-				if (res.ok) {
-					const data = (await res.json()) as ChatDetail;
-					setChatData(data);
-				} else {
-					console.warn("Failed to fetch chat", {
-						chatId: activeChatId,
-						status: res.status,
-					});
-					setChatData(null);
-				}
-			})
-			.catch((err) => {
-				if (!cancelled) {
-					console.warn("Network error fetching chat", {
-						chatId: activeChatId,
-						err,
-					});
-					setChatData(null);
-				}
-			})
-			.finally(() => {
-				if (!cancelled) setIsLoadingChat(false);
-			});
-
-		return () => {
-			cancelled = true;
-		};
-	}, [activeChatId, isKnownChat]);
+		// Title generation runs async server-side after the stream ends.
+		// Poll a few times to pick it up once it's written to the DB.
+		let attempts = 0;
+		const poll = setInterval(() => {
+			attempts++;
+			queryClient.invalidateQueries({ queryKey: chatKeys.all });
+			if (attempts >= 3) clearInterval(poll);
+		}, 2000);
+	}, [queryClient]);
 
 	const handleNewChat = useCallback(() => {
 		setActiveChatId(crypto.randomUUID());
-		setChatData(null);
 	}, []);
 
 	const handleDeleteChat = useCallback(
-		async (chatId: string) => {
-			await fetch(`/api/ai/chats/${chatId}`, {
-				method: "DELETE",
-				credentials: "include",
+		(chatId: string) => {
+			deleteChatMutation.mutate(chatId, {
+				onSuccess: () => {
+					if (activeChatId === chatId) {
+						setActiveChatId(crypto.randomUUID());
+					}
+				},
 			});
-			if (activeChatId === chatId) {
-				setActiveChatId(crypto.randomUUID());
-				setChatData(null);
-			}
-			fetchChats();
 		},
-		[activeChatId, fetchChats],
+		[activeChatId, deleteChatMutation],
 	);
 
 	const handleSelectChat = useCallback((selectedId: string) => {
@@ -205,6 +153,7 @@ export function AiChat({ id }: AiChatProps) {
 						key={activeChatId}
 						chatId={activeChatId}
 						messages={messages}
+						onFinish={handleChatFinish}
 					>
 						<Thread />
 					</ChatRuntimeProvider>

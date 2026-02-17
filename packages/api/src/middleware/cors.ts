@@ -1,3 +1,4 @@
+import { logger } from "@onecontext/logs";
 import { getBaseUrl } from "@onecontext/utils";
 import { cors } from "hono/cors";
 
@@ -5,7 +6,7 @@ export const corsMiddleware = cors({
 	origin: (requestOrigin) => {
 		// Debug logging for CORS (only in non-production)
 		if (process.env.NODE_ENV !== "production") {
-			console.log("[CORS Debug]", {
+			logger.debug("[CORS Debug]", {
 				requestOrigin,
 				vercelEnv: process.env.VERCEL_ENV,
 				vercelUrl: process.env.VERCEL_URL,

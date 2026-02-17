@@ -18,7 +18,7 @@ export function SyncSettings({ syncEnabled: initial }: SyncSettingsProps) {
 		setEnabled(next);
 		updateSync.mutate(
 			{ syncEnabled: next },
-			{ onError: () => setEnabled(enabled) },
+			{ onError: () => setEnabled(!next) },
 		);
 	}
 

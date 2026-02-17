@@ -18,12 +18,14 @@ interface ChatRuntimeProviderProps {
 	chatId: string;
 	children: ReactNode;
 	messages?: ChatMessage[];
+	onFinish?: () => void;
 }
 
 export function ChatRuntimeProvider({
 	chatId,
 	children,
 	messages = [],
+	onFinish,
 }: ChatRuntimeProviderProps) {
 	const metadataRef = useRef({ chatId });
 	metadataRef.current = { chatId };
@@ -53,10 +55,16 @@ export function ChatRuntimeProvider({
 		}));
 	}, [messages]);
 
+	const onFinishRef = useRef(onFinish);
+	onFinishRef.current = onFinish;
+
 	const chat = useChat({
 		id: chatId,
 		transport,
 		messages: uiMessages,
+		onFinish: () => {
+			onFinishRef.current?.();
+		},
 	});
 
 	const runtime = useAISDKRuntime(chat);

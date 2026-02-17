@@ -9,10 +9,19 @@ import {
 } from "@shared/lib/billing-api";
 import { Button } from "@ui/components/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@ui/components/card";
+import {
+	Dialog,
+	DialogClose,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@ui/components/dialog";
 import { Skeleton } from "@ui/components/skeleton";
 import { AlertTriangle, Check, CreditCard } from "lucide-react";
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export default function BillingPage() {
@@ -21,6 +30,7 @@ export default function BillingPage() {
 	const portal = useCreatePortalSession();
 	const cancel = useCancelSubscription();
 	const searchParams = useSearchParams();
+	const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
 	useEffect(() => {
 		if (searchParams.get("success") === "true") {
@@ -127,15 +137,7 @@ export default function BillingPage() {
 					{!sub.subscription?.cancelAtPeriodEnd && (
 						<Button
 							variant="outline"
-							onClick={() => {
-								if (
-									confirm(
-										"Are you sure you want to cancel? Your plan will remain active until the end of the billing period.",
-									)
-								) {
-									cancel.mutate();
-								}
-							}}
+							onClick={() => setCancelDialogOpen(true)}
 							disabled={cancel.isPending}
 						>
 							{cancel.isPending ? "Canceling..." : "Cancel Plan"}
@@ -226,6 +228,33 @@ export default function BillingPage() {
 					</Card>
 				</div>
 			)}
+
+			<Dialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Cancel your plan?</DialogTitle>
+						<DialogDescription>
+							Are you sure you want to cancel? Your plan will remain active
+							until the end of the billing period.
+						</DialogDescription>
+					</DialogHeader>
+					<DialogFooter>
+						<DialogClose asChild>
+							<Button variant="outline">Keep Plan</Button>
+						</DialogClose>
+						<Button
+							variant="destructive"
+							onClick={() => {
+								cancel.mutate();
+								setCancelDialogOpen(false);
+							}}
+							disabled={cancel.isPending}
+						>
+							{cancel.isPending ? "Canceling..." : "Cancel Plan"}
+						</Button>
+					</DialogFooter>
+				</DialogContent>
+			</Dialog>
 		</div>
 	);
 }
