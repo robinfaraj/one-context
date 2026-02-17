@@ -42,14 +42,14 @@ export const config: Config = {
 				prices: [
 					{
 						type: "recurring",
-						priceId: process.env.STRIPE_PRO_MONTHLY_PRICE_ID ?? "",
+						priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID ?? "",
 						interval: "month",
 						amount: 9,
 						currency: "USD",
 					},
 					{
 						type: "recurring",
-						priceId: process.env.STRIPE_PRO_ANNUAL_PRICE_ID ?? "",
+						priceId: process.env.NEXT_PUBLIC_STRIPE_PRO_ANNUAL_PRICE_ID ?? "",
 						interval: "year",
 						amount: 99,
 						currency: "USD",

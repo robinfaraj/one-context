@@ -8,7 +8,6 @@ import {
 	getWebSearchTool,
 } from "../tools";
 import type { ChatStreamOptions } from "../types";
-import { createChat } from "./chat";
 import { generateChatTitle } from "./title";
 
 export async function handleChatRequest({
@@ -16,11 +15,23 @@ export async function handleChatRequest({
 	messages,
 	userId,
 }: ChatStreamOptions) {
-	let currentChatId: string = chatId ?? "";
+	const currentChatId = chatId ?? crypto.randomUUID();
 
-	if (!chatId || chatId === "new") {
-		const chat = await createChat(userId);
-		currentChatId = chat.id;
+	// Find-or-create: if the chat doesn't exist yet, create it implicitly.
+	// This supports the pattern where the client generates a UUID upfront
+	// and the DB record is created on the first message.
+	const existing = await db.chat.findFirst({
+		where: { id: currentChatId, userId },
+	});
+
+	if (!existing) {
+		await db.chat.create({
+			data: {
+				id: currentChatId,
+				userId,
+				title: "New Chat",
+			},
+		});
 	}
 
 	const lastMessage = messages[messages.length - 1];

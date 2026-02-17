@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@onecontext/auth/client";
 import { config } from "@onecontext/config";
 import { fadeUp, stagger } from "@ui/lib/animations";
 import { motion } from "framer-motion";
@@ -8,6 +9,10 @@ import { Button } from "./button";
 import { TerminalWindow } from "./terminal-window";
 
 export function Hero() {
+	const { data: session } = authClient.useSession();
+	const ctaHref = session ? "/dashboard" : "/signup";
+	const ctaLabel = session ? "Go to Dashboard" : "Get Started Free";
+
 	return (
 		<section className="relative overflow-hidden pt-32 pb-20 md:pt-44 md:pb-32">
 			{/* Grid background */}
@@ -73,8 +78,8 @@ export function Hero() {
 						custom={3}
 						className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
 					>
-						<Button href="/signup" icon={<ArrowRight className="h-4 w-4" />}>
-							Get Early Access
+						<Button href={ctaHref} icon={<ArrowRight className="h-4 w-4" />}>
+							{ctaLabel}
 						</Button>
 						<Button
 							href={config.links.github}

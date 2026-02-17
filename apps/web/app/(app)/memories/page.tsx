@@ -38,7 +38,7 @@ export default function MemoriesPage() {
 		return baseMemories.filter((m) => {
 			if (
 				selectedSource !== "All" &&
-				(m.metadata?.source ?? "manual").toLowerCase() !==
+				(m.metadata?.source ?? "chat").toLowerCase() !==
 					selectedSource.toLowerCase()
 			)
 				return false;

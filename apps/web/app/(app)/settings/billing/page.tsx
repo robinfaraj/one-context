@@ -136,11 +136,11 @@ export default function BillingPage() {
 			{!sub.isPro && (
 				<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
 					{/* Monthly */}
-					<Card className="relative border-2">
+					<Card className="relative flex h-full flex-col border-2">
 						<CardHeader>
 							<CardTitle className="text-lg">Monthly</CardTitle>
 						</CardHeader>
-						<CardContent className="space-y-4">
+						<CardContent className="flex flex-1 flex-col gap-4">
 							<div>
 								<span className="text-3xl font-bold">
 									${monthlyPrice?.amount}
@@ -165,7 +165,7 @@ export default function BillingPage() {
 								</li>
 							</ul>
 							<Button
-								className="w-full bg-emerald-700 text-white hover:bg-emerald-800"
+								className="mt-auto w-full bg-emerald-700 text-white hover:bg-emerald-800"
 								onClick={() =>
 									monthlyPrice?.priceId && checkout.mutate(monthlyPrice.priceId)
 								}
@@ -177,14 +177,14 @@ export default function BillingPage() {
 					</Card>
 
 					{/* Annual */}
-					<Card className="relative border-2 border-emerald-700">
+					<Card className="relative flex h-full flex-col border-2 border-emerald-700">
 						<div className="absolute -top-3 left-4 rounded-full bg-emerald-700 px-3 py-0.5 text-xs font-medium text-white">
 							Best value
 						</div>
 						<CardHeader>
 							<CardTitle className="text-lg">Annual</CardTitle>
 						</CardHeader>
-						<CardContent className="space-y-4">
+						<CardContent className="flex flex-1 flex-col gap-4">
 							<div>
 								<span className="text-3xl font-bold">
 									${annualPrice?.amount}
@@ -204,7 +204,7 @@ export default function BillingPage() {
 								</li>
 							</ul>
 							<Button
-								className="w-full bg-emerald-700 text-white hover:bg-emerald-800"
+								className="mt-auto w-full bg-emerald-700 text-white hover:bg-emerald-800"
 								onClick={() =>
 									annualPrice?.priceId && checkout.mutate(annualPrice.priceId)
 								}

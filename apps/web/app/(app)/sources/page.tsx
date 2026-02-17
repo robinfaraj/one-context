@@ -26,9 +26,13 @@ export default function SourcesPage() {
 	}, [data?.pendingConnections]);
 
 	const connectedCount = data?.connectedSources.length ?? 0;
+	const integrationCount =
+		data?.connectedSources.filter((s) =>
+			data.integrations.some((i) => i.provider === s.provider && i.available),
+		).length ?? 0;
 	const atSourceLimit =
 		sub && sub.limits.sources !== "unlimited"
-			? connectedCount >= (sub.limits.sources as number)
+			? integrationCount >= (sub.limits.sources as number)
 			: false;
 
 	if (isError) {

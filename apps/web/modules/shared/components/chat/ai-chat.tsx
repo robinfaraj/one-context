@@ -31,9 +31,13 @@ interface ChatDetail {
 	}>;
 }
 
-export function AiChat() {
+interface AiChatProps {
+	id: string;
+}
+
+export function AiChat({ id }: AiChatProps) {
 	const [chats, setChats] = useState<ChatListItem[]>([]);
-	const [activeChatId, setActiveChatId] = useState<string | null>(null);
+	const [activeChatId, setActiveChatId] = useState<string>(id);
 	const [chatData, setChatData] = useState<ChatDetail | null>(null);
 	const [isLoadingList, setIsLoadingList] = useState(true);
 	const [isLoadingChat, setIsLoadingChat] = useState(false);
@@ -54,8 +58,16 @@ export function AiChat() {
 		fetchChats();
 	}, [fetchChats]);
 
+	// Check if the active chat is a known (existing) chat that needs loading.
+	const isKnownChat = useMemo(
+		() => chats.some((c) => c.id === activeChatId),
+		[chats, activeChatId],
+	);
+
+	// Fetch messages only for known chats (ones that exist in the DB).
+	// New chats (with a pre-generated UUID) won't be in the list yet.
 	useEffect(() => {
-		if (!activeChatId) {
+		if (!isKnownChat) {
 			setChatData(null);
 			return;
 		}
@@ -78,21 +90,12 @@ export function AiChat() {
 		return () => {
 			cancelled = true;
 		};
-	}, [activeChatId]);
+	}, [activeChatId, isKnownChat]);
 
-	const handleNewChat = useCallback(async () => {
-		const res = await fetch("/api/ai/chats", {
-			method: "POST",
-			credentials: "include",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({}),
-		});
-		if (res.ok) {
-			const chat = (await res.json()) as { id: string };
-			setActiveChatId(chat.id);
-			fetchChats();
-		}
-	}, [fetchChats]);
+	const handleNewChat = useCallback(() => {
+		setActiveChatId(crypto.randomUUID());
+		setChatData(null);
+	}, []);
 
 	const handleDeleteChat = useCallback(
 		async (chatId: string) => {
@@ -101,7 +104,7 @@ export function AiChat() {
 				credentials: "include",
 			});
 			if (activeChatId === chatId) {
-				setActiveChatId(null);
+				setActiveChatId(crypto.randomUUID());
 				setChatData(null);
 			}
 			fetchChats();
@@ -109,27 +112,32 @@ export function AiChat() {
 		[activeChatId, fetchChats],
 	);
 
-	const effectiveChatId = activeChatId ?? "new";
+	const handleSelectChat = useCallback((selectedId: string) => {
+		setActiveChatId(selectedId);
+	}, []);
+
 	const messages = useMemo(() => {
 		if (!chatData || chatData.id !== activeChatId) return [];
 		return chatData.messages ?? [];
 	}, [chatData, activeChatId]);
 
-	// For existing chats, wait until messages are loaded before mounting the
-	// ChatRuntimeProvider. useChat only reads initial messages at creation time,
-	// so we must have them ready before the provider mounts.
+	// For known chats, wait until messages are loaded before mounting the
+	// ChatRuntimeProvider so useChat gets the initial messages.
 	const isReadyToRender =
-		!activeChatId || (chatData?.id === activeChatId && !isLoadingChat);
+		!isKnownChat || (chatData?.id === activeChatId && !isLoadingChat);
 
 	const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
-	const handleSelectChatMobile = useCallback((id: string) => {
-		setActiveChatId(id);
-		setMobileSidebarOpen(false);
-	}, []);
+	const handleSelectChatMobile = useCallback(
+		(selectedId: string) => {
+			handleSelectChat(selectedId);
+			setMobileSidebarOpen(false);
+		},
+		[handleSelectChat],
+	);
 
-	const handleNewChatMobile = useCallback(async () => {
-		await handleNewChat();
+	const handleNewChatMobile = useCallback(() => {
+		handleNewChat();
 		setMobileSidebarOpen(false);
 	}, [handleNewChat]);
 
@@ -172,15 +180,15 @@ export function AiChat() {
 					activeChatId={activeChatId}
 					isLoading={isLoadingList}
 					onNewChat={handleNewChat}
-					onSelectChat={setActiveChatId}
+					onSelectChat={handleSelectChat}
 					onDeleteChat={handleDeleteChat}
 				/>
 			</aside>
 			<main className="flex flex-1 flex-col overflow-hidden">
 				{isReadyToRender ? (
 					<ChatRuntimeProvider
-						key={effectiveChatId}
-						chatId={effectiveChatId}
+						key={activeChatId}
+						chatId={activeChatId}
 						messages={messages}
 					>
 						<Thread />

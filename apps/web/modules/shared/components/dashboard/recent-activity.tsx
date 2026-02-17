@@ -51,8 +51,8 @@ export function RecentActivity({ activity, isLoading }: RecentActivityProps) {
 				<Activity className="h-4 w-4" />
 				Recent Activity
 			</h3>
-			<Card className="flex min-h-[225px] flex-col">
-				<CardContent className="flex-1 pt-4">
+			<Card className="flex max-h-[400px] min-h-[225px] flex-col">
+				<CardContent className="flex-1 overflow-y-auto pt-4">
 					{isLoading ? (
 						<div className="flex flex-col gap-3">
 							{Array.from({ length: 4 }).map((_, i) => (

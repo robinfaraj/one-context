@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@onecontext/auth/client";
 import { config } from "@onecontext/config";
 import { fadeUp, stagger } from "@ui/lib/animations";
 import { motion } from "framer-motion";
@@ -7,6 +8,10 @@ import { ArrowRight, Github } from "lucide-react";
 import { Button } from "./button";
 
 export function CTASection() {
+	const { data: session } = authClient.useSession();
+	const ctaHref = session ? "/dashboard" : "/signup";
+	const ctaLabel = session ? "Go to Dashboard" : "Get Started Free";
+
 	return (
 		<section className="border-t border-border py-24 md:py-32">
 			<div className="container">
@@ -37,8 +42,8 @@ export function CTASection() {
 						custom={2}
 						className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
 					>
-						<Button href="/signup" icon={<ArrowRight className="h-4 w-4" />}>
-							Start Free
+						<Button href={ctaHref} icon={<ArrowRight className="h-4 w-4" />}>
+							{ctaLabel}
 						</Button>
 						<Button
 							href={config.links.github}

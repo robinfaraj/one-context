@@ -3,7 +3,7 @@
 import { Button } from "@ui/components/button";
 import { cn } from "@ui/lib/utils";
 
-const SOURCE_OPTIONS = ["All", "Manual", "Twitter", "GitHub"] as const;
+const SOURCE_OPTIONS = ["All", "Chat", "Twitter", "GitHub"] as const;
 
 interface MemoryFiltersProps {
 	selectedSource: string;

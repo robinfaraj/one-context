@@ -1,5 +1,6 @@
 import { config } from "@onecontext/config";
 import { db } from "@onecontext/database/server";
+import { list } from "@onecontext/integrations";
 import { getAll } from "@onecontext/memory";
 import { stripe } from "@onecontext/stripe";
 import { createCheckoutSession } from "@onecontext/stripe/src/checkout";
@@ -131,7 +132,11 @@ const protectedRoutes = new Hono()
 
 			const [sourceCount, apiUsage, memories] = await Promise.all([
 				db.source.count({
-					where: { userId: sessionUser.id, status: "connected" },
+					where: {
+						userId: sessionUser.id,
+						status: "connected",
+						provider: { in: list().map((a) => a.provider) },
+					},
 				}),
 				db.apiUsage.findUnique({
 					where: { userId_date: { userId: sessionUser.id, date: today } },

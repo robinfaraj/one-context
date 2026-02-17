@@ -8,17 +8,22 @@
 		"lint:fix": "biome check . --write --unsafe",
 		"clean": "turbo clean",
 		"format": "biome format . --write",
-		"prepare": "husky"
+		"prepare": "husky",
+		"test:e2e": "playwright test",
+		"test:e2e:ui": "playwright test --ui"
 	},
-	"engines": { "node": ">=20" },
+	"engines": {
+		"node": ">=20"
+	},
 	"packageManager": "pnpm@9.3.0",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
-		"husky": "^9.1.7",
 		"@onecontext/tsconfig": "workspace:*",
+		"@playwright/test": "^1.58.2",
 		"@types/node": "^22.10.5",
 		"dotenv": "^16.4.7",
 		"dotenv-cli": "^8.0.0",
+		"husky": "^9.1.7",
 		"tsx": "^4.19.2",
 		"turbo": "^2.8.4",
 		"typescript": "5.7.2"

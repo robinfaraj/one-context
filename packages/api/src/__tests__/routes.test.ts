@@ -1,6 +1,7 @@
 import { db } from "@onecontext/database/server";
 import { get, getAvailable, list } from "@onecontext/integrations";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import * as memory from "@onecontext/memory";
+import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { app } from "../app";
 
 const DEV_API_KEY = process.env.DEV_API_KEY;
@@ -778,6 +779,55 @@ describe("API Routes", () => {
 			expect(Array.isArray(json.disconnectedProviders)).toBe(true);
 		});
 
+		it("should return 403 when syncing at memory limit", async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+
+			// Create a source with an adapter that exists (twitter)
+			const source = await db.source.create({
+				data: {
+					userId: user.id,
+					provider: "twitter",
+					status: "connected",
+				},
+			});
+
+			// Mock getAll to return enough memories to exceed the free plan limit (25)
+			const fakeMemories = Array.from({ length: 30 }, (_, i) => ({
+				id: `mock-memory-${i}`,
+				memory: `Test memory ${i}`,
+				metadata: { source: "chat" },
+			}));
+			const getAllSpy = vi
+				.spyOn(memory, "getAll")
+				.mockResolvedValueOnce(fakeMemories);
+
+			try {
+				const res = await app.request("/api/sources/twitter/sync", {
+					method: "POST",
+					headers: authHeaders,
+				});
+				expect(res.status).toBe(403);
+
+				const json = (await res.json()) as {
+					error: string;
+					limit: number;
+					current: number;
+					upgrade: boolean;
+				};
+				expect(json.error).toContain("Memory limit reached");
+				expect(json.current).toBe(30);
+				expect(json.limit).toBe(25);
+				expect(json.upgrade).toBe(true);
+			} finally {
+				getAllSpy.mockRestore();
+				await db.source.delete({ where: { id: source.id } }).catch(() => {});
+			}
+		});
+
 		it("should include memoriesDeleted in disconnect response", async () => {
 			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
 			const user = await db.user.findUnique({
@@ -844,6 +894,47 @@ describe("API Routes", () => {
 			expect(typeof json.stats.chatCount).toBe("number");
 			expect(Array.isArray(json.connectedSources)).toBe(true);
 			expect(Array.isArray(json.recentActivity)).toBe(true);
+		});
+
+		it("should not count non-integration sources in dashboard sourceCount", async () => {
+			const devUserEmail = process.env.DEV_API_USER_EMAIL ?? "";
+			const user = await db.user.findUnique({
+				where: { email: devUserEmail },
+			});
+			if (!user) throw new Error("Test user not found");
+
+			// Get baseline count
+			const before = await app.request("/api/dashboard", {
+				headers: authHeaders,
+			});
+			const beforeJson = (await before.json()) as {
+				stats: { sourceCount: number };
+			};
+			const baselineCount = beforeJson.stats.sourceCount;
+
+			// Create a non-integration source (e.g. credential, manual, unknown)
+			const nonIntegrationSource = await db.source.create({
+				data: {
+					userId: user.id,
+					provider: "credential",
+					status: "connected",
+				},
+			});
+
+			try {
+				// sourceCount should NOT increase
+				const after = await app.request("/api/dashboard", {
+					headers: authHeaders,
+				});
+				const afterJson = (await after.json()) as {
+					stats: { sourceCount: number };
+				};
+				expect(afterJson.stats.sourceCount).toBe(baselineCount);
+			} finally {
+				await db.source
+					.delete({ where: { id: nonIntegrationSource.id } })
+					.catch(() => {});
+			}
 		});
 	});
 
@@ -1166,6 +1257,111 @@ describe("API Routes", () => {
 			});
 		},
 	);
+
+	describe("Billing — Auth Guards", () => {
+		it("should return 401 for POST /api/billing/checkout without auth", async () => {
+			const res = await app.request("/api/billing/checkout", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({ priceId: "price_test" }),
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for POST /api/billing/portal without auth", async () => {
+			const res = await app.request("/api/billing/portal", {
+				method: "POST",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for GET /api/billing/subscription without auth", async () => {
+			const res = await app.request("/api/billing/subscription");
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 401 for POST /api/billing/cancel without auth", async () => {
+			const res = await app.request("/api/billing/cancel", {
+				method: "POST",
+			});
+			expect(res.status).toBe(401);
+		});
+
+		it("should return 400 for POST /api/billing/webhook without stripe-signature", async () => {
+			const res = await app.request("/api/billing/webhook", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({}),
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({ error: "Missing stripe-signature header" });
+		});
+	});
+
+	describe.runIf(!!DEV_API_KEY)("Authenticated — Billing", () => {
+		it("should return subscription info with correct shape", async () => {
+			const res = await app.request("/api/billing/subscription", {
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(200);
+
+			const json = (await res.json()) as {
+				plan: string;
+				planId: string;
+				isPro: boolean;
+				subscription: unknown;
+				usage: {
+					sources: number;
+					memories: number;
+					apiCallsToday: number;
+				};
+				limits: Record<string, unknown>;
+			};
+
+			expect(json.plan).toBeDefined();
+			expect(json.planId).toBeDefined();
+			expect(typeof json.isPro).toBe("boolean");
+			expect(json.usage).toBeDefined();
+			expect(typeof json.usage.sources).toBe("number");
+			expect(typeof json.usage.memories).toBe("number");
+			expect(typeof json.usage.apiCallsToday).toBe("number");
+			expect(json.limits).toBeDefined();
+		});
+
+		it("should return 400 for POST /api/billing/checkout without priceId", async () => {
+			const res = await app.request("/api/billing/checkout", {
+				method: "POST",
+				headers: { ...authHeaders, "Content-Type": "application/json" },
+				body: JSON.stringify({}),
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({ error: "priceId is required" });
+		});
+
+		it("should return 400 for POST /api/billing/portal without stripe customer", async () => {
+			const res = await app.request("/api/billing/portal", {
+				method: "POST",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({
+				error: "No Stripe customer ID found. Please subscribe first.",
+			});
+		});
+
+		it("should return 400 for POST /api/billing/cancel without active subscription", async () => {
+			const res = await app.request("/api/billing/cancel", {
+				method: "POST",
+				headers: authHeaders,
+			});
+			expect(res.status).toBe(400);
+			const json = await res.json();
+			expect(json).toEqual({ error: "No active subscription found" });
+		});
+	});
 
 	describe.runIf(!!DEV_API_KEY)(
 		"Functional — Pins, Export & Settings Persistence",

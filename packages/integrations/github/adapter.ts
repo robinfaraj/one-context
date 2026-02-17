@@ -70,19 +70,20 @@ export const githubAdapter: IntegrationAdapter = {
 				}
 			}
 
-			// Send to Mem0 for semantic indexing (batched)
-			if (contentItems.length > 0) {
-				const batchedText = contentItems
-					.map((item) => item.textContent)
-					.join("\n\n");
+			// Send to Mem0 for semantic indexing in small batches
+			const BATCH_SIZE = 5;
+			for (let i = 0; i < contentItems.length; i += BATCH_SIZE) {
+				const batch = contentItems.slice(i, i + BATCH_SIZE);
+				const batchText = batch.map((item) => item.textContent).join("\n\n");
+				const batchType = batch[0].type === "profile" ? "profile" : "repos";
 				try {
-					const result = await mem0.add(batchedText, userId, {
-						metadata: { source: "github", type: "profile_and_repos" },
+					const result = await mem0.add(batchText, userId, {
+						metadata: { source: "github", type: batchType },
 						categories: ["development", "github"],
 					});
-					memoriesAdded = Array.isArray(result) ? result.length : 1;
+					memoriesAdded += Array.isArray(result) ? result.length : 1;
 				} catch (err) {
-					logger.error("Mem0 add failed for GitHub sync:", err);
+					logger.error("Mem0 add failed for GitHub sync batch:", err);
 				}
 			}
 		} catch (err) {

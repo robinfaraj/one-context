@@ -34,7 +34,14 @@ interface SourcesResponse {
 
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+	if (!res.ok) {
+		const body = await res.json().catch(() => null);
+		const message = body?.error ?? `Request failed: ${res.status}`;
+		const err = new Error(message);
+		(err as any).status = res.status;
+		(err as any).upgrade = body?.upgrade;
+		throw err;
+	}
 	return res.json();
 }
 
@@ -45,29 +52,56 @@ export function useSources() {
 	});
 }
 
+interface SyncResult {
+	provider: string;
+	itemsSynced: number;
+	memoriesAdded: number;
+}
+
 export function useSyncSource() {
 	const qc = useQueryClient();
 	return useMutation({
 		mutationFn: (provider: string) =>
-			fetchJson(`/api/sources/${provider}/sync`, { method: "POST" }),
-		onSuccess: () => {
+			fetchJson<SyncResult>(`/api/sources/${provider}/sync`, {
+				method: "POST",
+			}),
+		onSuccess: (data) => {
 			qc.invalidateQueries({ queryKey: ["sources"] });
-			toast.success("Sync started");
+			if (data.itemsSynced > 0) {
+				toast.success(
+					`Synced ${data.itemsSynced} items, ${data.memoriesAdded} memories added`,
+				);
+			} else {
+				toast.success("Sync complete — no new items found");
+			}
 		},
-		onError: () => toast.error("Failed to start sync"),
+		onError: (err: Error) => toast.error(err.message),
 	});
+}
+
+interface ConnectResult {
+	source: Source;
+	syncResult: { itemsSynced: number; memoriesAdded: number } | null;
 }
 
 export function useConnectSource() {
 	const qc = useQueryClient();
 	return useMutation({
 		mutationFn: (provider: string) =>
-			fetchJson(`/api/sources/${provider}/connect`, { method: "POST" }),
-		onSuccess: () => {
+			fetchJson<ConnectResult>(`/api/sources/${provider}/connect`, {
+				method: "POST",
+			}),
+		onSuccess: (data) => {
 			qc.invalidateQueries({ queryKey: ["sources"] });
-			toast.success("Source connected and synced");
+			if (data.syncResult) {
+				toast.success(
+					`Connected and synced ${data.syncResult.itemsSynced} items`,
+				);
+			} else {
+				toast.success("Source connected");
+			}
 		},
-		onError: () => toast.error("Failed to connect source"),
+		onError: (err: Error) => toast.error(err.message),
 	});
 }
 

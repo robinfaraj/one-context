@@ -1,12 +1,14 @@
 "use client";
 
 import { authClient } from "@onecontext/auth/client";
+import { UpgradeModal } from "@shared/components/billing/upgrade-modal";
 import type { Integration } from "@shared/lib/sources-api";
 import { useConnectSource } from "@shared/lib/sources-api";
 import { Button } from "@ui/components/button";
 import { Card, CardContent } from "@ui/components/card";
 import { cn } from "@ui/lib/utils";
 import { Loader2 } from "lucide-react";
+import { useState } from "react";
 import { SourceIcon } from "./source-icon";
 
 interface AvailableSourceCardProps {
@@ -21,9 +23,14 @@ export function AvailableSourceCard({
 	atSourceLimit,
 }: AvailableSourceCardProps) {
 	const reconnect = useConnectSource();
+	const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
 	const handleConnect = () => {
 		if (integration.comingSoon || !integration.available) return;
+		if (isLimited) {
+			setShowUpgradeModal(true);
+			return;
+		}
 
 		if (isDisconnected) {
 			// OAuth account still exists — reconnect directly via API
@@ -65,10 +72,7 @@ export function AvailableSourceCard({
 						<Button
 							size="sm"
 							disabled={
-								integration.comingSoon ||
-								!integration.available ||
-								isPending ||
-								isLimited
+								integration.comingSoon || !integration.available || isPending
 							}
 							onClick={handleConnect}
 							className={cn(
@@ -83,14 +87,14 @@ export function AvailableSourceCard({
 							)}
 							{label}
 						</Button>
-						{isLimited && (
-							<p className="text-xs text-amber-600">
-								Upgrade to Pro for more sources
-							</p>
-						)}
 					</div>
 				</div>
 			</CardContent>
+			<UpgradeModal
+				open={showUpgradeModal}
+				onClose={() => setShowUpgradeModal(false)}
+				trigger={`sources:${integration.provider}`}
+			/>
 		</Card>
 	);
 }

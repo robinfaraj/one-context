@@ -1,4 +1,5 @@
 import { db } from "@onecontext/database/server";
+import { list } from "@onecontext/integrations";
 import * as mem0 from "@onecontext/memory";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
@@ -27,18 +28,31 @@ export const dashboardRouter = new Hono()
 				recentActivity,
 			] = await Promise.all([
 				mem0.getAll(user.id),
-				db.source.count({ where: { userId: user.id } }),
+				db.source.count({
+					where: {
+						userId: user.id,
+						status: "connected",
+						provider: { in: list().map((a) => a.provider) },
+					},
+				}),
 				db.chat.count({ where: { userId: user.id } }),
 				db.source.findMany({
 					where: { userId: user.id },
 					orderBy: { createdAt: "desc" },
 				}),
-				db.contentItem.findMany({
-					where: { source: { userId: user.id } },
-					orderBy: { importedAt: "desc" },
-					take: 10,
-					include: { source: true },
-				}),
+				db.contentItem
+					.findMany({
+						where: { source: { userId: user.id } },
+						orderBy: { importedAt: "desc" },
+						take: 10,
+						include: { source: true },
+					})
+					.then((items) =>
+						items.map((item) => ({
+							...item,
+							contentType: item.type,
+						})),
+					),
 			]);
 
 			const memoryCount = Array.isArray(memories) ? memories.length : 0;

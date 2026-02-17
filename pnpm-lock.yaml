@@ -14,6 +14,9 @@ importers:
       '@onecontext/tsconfig':
         specifier: workspace:*
         version: link:tooling/typescript
+      '@playwright/test':
+        specifier: ^1.58.2
+        version: 1.58.2
       '@types/node':
         specifier: ^22.10.5
         version: 22.10.5
@@ -124,7 +127,7 @@ importers:
         version: 0.3.2
       better-auth:
         specifier: 1.4.18
-        version: 1.4.18(@prisma/client@7.4.0(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(tsx@4.21.0))
+        version: 1.4.18(@prisma/client@7.4.0(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(tsx@4.21.0))
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -142,7 +145,7 @@ importers:
         version: 0.469.0(react@19.2.3)
       next:
         specifier: 16.1.1
-        version: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+        version: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       next-themes:
         specifier: ^0.4.4
         version: 0.4.6(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -238,6 +241,9 @@ importers:
       '@onecontext/ai':
         specifier: workspace:*
         version: link:../ai
+      '@onecontext/config':
+        specifier: workspace:*
+        version: link:../../config
       '@onecontext/database':
         specifier: workspace:*
         version: link:../database
@@ -356,7 +362,7 @@ importers:
         version: link:../utils
       better-auth:
         specifier: 1.4.18
-        version: 1.4.18(@prisma/client@7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@types/node@22.10.5)(tsx@4.21.0))
+        version: 1.4.18(@prisma/client@7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@types/node@22.10.5)(tsx@4.21.0))
       cookie:
         specifier: ^1.0.1
         version: 1.1.1
@@ -419,6 +425,9 @@ importers:
       '@onecontext/memory':
         specifier: workspace:*
         version: link:../memory
+      '@xdevplatform/xdk':
+        specifier: ^0.4.0
+        version: 0.4.0(node-fetch@3.3.2)
       zod:
         specifier: ^3.24.2
         version: 3.25.76
@@ -462,7 +471,7 @@ importers:
         version: 19.0.0(react@19.0.0)
       react-email:
         specifier: ^3.0.5
-        version: 3.0.7(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+        version: 3.0.7(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
     devDependencies:
       '@biomejs/biome':
         specifier: 1.9.4
@@ -2142,6 +2151,11 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
+  '@playwright/test@1.58.2':
+    resolution: {integrity: sha512-akea+6bHYBBfA9uQqSYmlJXn61cTa+jbO87xVLCWbTqbWadRVmhxlXATaOjOgcBaWU4ePo0wB41KMFv3o35IXA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   '@prisma/adapter-pg@7.4.0':
     resolution: {integrity: sha512-LWwTHaio0bMxvzahmpwpWqsZM0vTfMqwF8zo06YvILL/o47voaSfKzCVxZw/o9awf4fRgS5Vgthobikj9Dusaw==}
 
@@ -3541,6 +3555,15 @@ packages:
   '@vitest/utils@4.0.18':
     resolution: {integrity: sha512-msMRKLMVLWygpK3u2Hybgi4MNjcYJvwTb0Ru09+fOyCXIgT5raYP041DRRdiJiI3k/2U6SEbAETB3YtBrUkCFA==}
 
+  '@xdevplatform/xdk@0.4.0':
+    resolution: {integrity: sha512-jl0lPyMYVFaQOWvG2D4i8vC72/CMh/bOcMbjZA2jP5gUMV2MztC5zTEsF3I76VS8wxdDrtrOTiX2BRzKsua6LA==}
+    engines: {node: '>=16.14'}
+    peerDependencies:
+      node-fetch: ^3.3.0
+    peerDependenciesMeta:
+      node-fetch:
+        optional: true
+
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
 
@@ -4534,6 +4557,11 @@ packages:
 
   fs.realpath@1.0.0:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
+
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -5934,6 +5962,16 @@ packages:
 
   pkg-types@2.3.0:
     resolution: {integrity: sha512-SIqCzDRg0s9npO5XQ3tNZioRY1uK06lA41ynBC1YmFTmnY6FjUjVt6s4LoADmwoig1qqD0oK8h1p/8mlMx8Oig==}
+
+  playwright-core@1.58.2:
+    resolution: {integrity: sha512-yZkEtftgwS8CsfYo7nm0KE8jsvm6i/PTgVtB8DL726wNf6H2IMsDuxCpJj59KDaxCtSnrWan2AeDqM7JBaultg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.58.2:
+    resolution: {integrity: sha512-vA30H8Nvkq/cPBnNw4Q8TWz1EJyqgpuinBcHET0YVJVFldr8JDNiU9LaWAE1KqSkRYazuaBhTpB5ZzShOezQ6A==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   postcss-selector-parser@7.1.1:
     resolution: {integrity: sha512-orRsuYpJVw8LdAwqqLykBj9ecS5/cRHlI5+nvTo8LcCKmzDmqVORXtOIYEEQuL9D4BxtA1lm5isAqzQZCoQ6Eg==}
@@ -8951,6 +8989,10 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
+  '@playwright/test@1.58.2':
+    dependencies:
+      playwright: 1.58.2
+
   '@prisma/adapter-pg@7.4.0':
     dependencies:
       '@prisma/driver-adapter-utils': 7.4.0
@@ -10457,6 +10499,10 @@ snapshots:
       '@vitest/pretty-format': 4.0.18
       tinyrainbow: 3.0.3
 
+  '@xdevplatform/xdk@0.4.0(node-fetch@3.3.2)':
+    optionalDependencies:
+      node-fetch: 3.3.2
+
   abbrev@1.1.1:
     optional: true
 
@@ -10608,7 +10654,7 @@ snapshots:
 
   baseline-browser-mapping@2.9.19: {}
 
-  better-auth@1.4.18(@prisma/client@7.4.0(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(tsx@4.21.0)):
+  better-auth@1.4.18(@prisma/client@7.4.0(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(tsx@4.21.0)):
     dependencies:
       '@better-auth/core': 1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.0)
       '@better-auth/telemetry': 1.4.18(@better-auth/core@1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.0))
@@ -10625,14 +10671,14 @@ snapshots:
     optionalDependencies:
       '@prisma/client': 7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2)
       mysql2: 3.15.3
-      next: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       pg: 8.18.0
       prisma: 7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2)
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
       vitest: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.0.3)(jiti@2.6.1)(lightningcss@1.30.2)(msw@2.12.10(@types/node@25.0.3)(typescript@5.7.2))(tsx@4.21.0)
 
-  better-auth@1.4.18(@prisma/client@7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@types/node@22.10.5)(tsx@4.21.0)):
+  better-auth@1.4.18(@prisma/client@7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2))(mysql2@3.15.3)(next@16.1.1(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(pg@8.18.0)(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(vitest@4.0.18(@types/node@22.10.5)(tsx@4.21.0)):
     dependencies:
       '@better-auth/core': 1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.0)
       '@better-auth/telemetry': 1.4.18(@better-auth/core@1.4.18(@better-auth/utils@0.3.0)(@better-fetch/fetch@1.1.21)(better-call@1.1.8(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.0))
@@ -10649,7 +10695,7 @@ snapshots:
     optionalDependencies:
       '@prisma/client': 7.4.0(prisma@7.4.0(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2))(typescript@5.7.2)
       mysql2: 3.15.3
-      next: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
+      next: 16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
       pg: 8.18.0
       prisma: 7.4.0(@types/react@19.1.6)(react-dom@19.2.3(react@19.2.3))(react@19.2.3)(typescript@5.7.2)
       react: 19.2.3
@@ -11514,6 +11560,9 @@ snapshots:
       minipass: 3.3.6
 
   fs.realpath@1.0.0:
+    optional: true
+
+  fsevents@2.3.2:
     optional: true
 
   fsevents@2.3.3:
@@ -12800,7 +12849,7 @@ snapshots:
       react: 19.2.3
       react-dom: 19.2.3(react@19.2.3)
 
-  next@15.1.2(@babel/core@7.24.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  next@15.1.2(@babel/core@7.24.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@next/env': 15.1.2
       '@swc/counter': 0.1.3
@@ -12821,12 +12870,13 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 15.1.2
       '@next/swc-win32-x64-msvc': 15.1.2
       '@opentelemetry/api': 1.9.0
+      '@playwright/test': 1.58.2
       sharp: 0.33.5
     transitivePeerDependencies:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
+  next@16.1.1(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.2.3(react@19.2.3))(react@19.2.3):
     dependencies:
       '@next/env': 16.1.1
       '@swc/helpers': 0.5.15
@@ -12846,6 +12896,7 @@ snapshots:
       '@next/swc-win32-arm64-msvc': 16.1.1
       '@next/swc-win32-x64-msvc': 16.1.1
       '@opentelemetry/api': 1.9.0
+      '@playwright/test': 1.58.2
       sharp: 0.34.5
     transitivePeerDependencies:
       - '@babel/core'
@@ -13161,6 +13212,14 @@ snapshots:
       exsolve: 1.0.8
       pathe: 2.0.3
 
+  playwright-core@1.58.2: {}
+
+  playwright@1.58.2:
+    dependencies:
+      playwright-core: 1.58.2
+    optionalDependencies:
+      fsevents: 2.3.2
+
   postcss-selector-parser@7.1.1:
     dependencies:
       cssesc: 3.0.0
@@ -13342,7 +13401,7 @@ snapshots:
       react: 19.2.3
       scheduler: 0.27.0
 
-  react-email@3.0.7(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
+  react-email@3.0.7(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       '@babel/core': 7.24.5
       '@babel/parser': 7.24.5
@@ -13354,7 +13413,7 @@ snapshots:
       glob: 10.3.4
       log-symbols: 4.1.0
       mime-types: 2.1.35
-      next: 15.1.2(@babel/core@7.24.5)(@opentelemetry/api@1.9.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next: 15.1.2(@babel/core@7.24.5)(@opentelemetry/api@1.9.0)(@playwright/test@1.58.2)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       normalize-path: 3.0.0
       ora: 5.4.1
       socket.io: 4.8.1

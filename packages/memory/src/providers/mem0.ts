@@ -36,9 +36,33 @@ export class Mem0Provider implements MemoryProvider {
 	}
 
 	async getAll(userId: string) {
-		return this.client.getAll({
-			user_id: userId,
-		}) as any;
+		const PAGE_SIZE = 100;
+		const allMemories: any[] = [];
+		let page = 1;
+
+		// Fetch all pages — Mem0 paginates results
+		while (true) {
+			const response = await this.client.getAll({
+				user_id: userId,
+				page,
+				page_size: PAGE_SIZE,
+			});
+
+			// Unwrap paginated response format
+			const results = Array.isArray(response)
+				? response
+				: Array.isArray((response as any)?.results)
+					? (response as any).results
+					: [];
+
+			allMemories.push(...results);
+
+			// Stop if we got fewer than a full page (no more data)
+			if (results.length < PAGE_SIZE) break;
+			page++;
+		}
+
+		return allMemories;
 	}
 
 	async update(memoryId: string, content: string) {

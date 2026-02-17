@@ -25,8 +25,8 @@ export function ChatRuntimeProvider({
 	children,
 	messages = [],
 }: ChatRuntimeProviderProps) {
-	const chatIdRef = useRef(chatId);
-	chatIdRef.current = chatId;
+	const metadataRef = useRef({ chatId });
+	metadataRef.current = { chatId };
 
 	const transport = useMemo(() => {
 		return new DefaultChatTransport({
@@ -38,7 +38,7 @@ export function ChatRuntimeProvider({
 					messages,
 					trigger,
 					messageId,
-					chatId: chatIdRef.current,
+					chatId: metadataRef.current.chatId,
 				},
 			}),
 		});

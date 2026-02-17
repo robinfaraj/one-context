@@ -18,11 +18,11 @@ import {
 import {
 	Brain,
 	Code,
-	CreditCard,
 	LayoutDashboard,
 	MessageSquare,
 	Plug,
 	Settings,
+	Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -41,21 +41,42 @@ function PlanBadge() {
 	const { data: sub } = useSubscription();
 	if (!sub) return null;
 
+	if (!sub.isPro) {
+		return (
+			<SidebarMenu>
+				<SidebarMenuItem>
+					<SidebarMenuButton
+						asChild
+						size="lg"
+						className="bg-emerald-700 text-white hover:bg-emerald-800 hover:text-white focus-visible:ring-emerald-500 data-[active=true]:bg-emerald-700 data-[active=true]:text-white"
+					>
+						<Link href="/settings/billing">
+							<Sparkles className="h-4 w-4" />
+							<span className="flex flex-col items-start leading-tight">
+								<span className="text-sm font-semibold">Upgrade to Pro</span>
+								<span className="text-xs text-emerald-100">Only $9/month</span>
+							</span>
+						</Link>
+					</SidebarMenuButton>
+				</SidebarMenuItem>
+			</SidebarMenu>
+		);
+	}
+
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
-				<SidebarMenuButton asChild>
+				<SidebarMenuButton
+					className="border border-emerald-700"
+					asChild
+					variant="outline"
+				>
 					<Link href="/settings/billing">
-						<CreditCard className="h-4 w-4" />
-						<span className="flex items-center gap-2">
-							<span
-								className={`rounded-full px-2 py-0.5 text-xs font-medium ${sub.isPro ? "bg-emerald-700/10 text-emerald-700" : "bg-muted text-muted-foreground"}`}
-							>
-								{sub.isPro ? "Pro" : "Free"}
+						<span className="flex items-center justify-between">
+							<span className="font-medium">Pro Plan</span>
+							<span className="rounded-full bg-emerald-700/10 px-2 py-0.5 text-xs font-medium text-emerald-700">
+								Active
 							</span>
-							{!sub.isPro && (
-								<span className="text-xs text-emerald-700">Upgrade</span>
-							)}
 						</span>
 					</Link>
 				</SidebarMenuButton>

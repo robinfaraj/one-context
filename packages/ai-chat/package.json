@@ -1,6 +1,7 @@
 {
 	"dependencies": {
 		"@onecontext/ai": "workspace:*",
+		"@onecontext/config": "workspace:*",
 		"@onecontext/database": "workspace:*",
 		"@onecontext/memory": "workspace:*",
 		"@tavily/ai-sdk": "^0.4.1",

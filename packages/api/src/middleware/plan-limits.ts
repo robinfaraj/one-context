@@ -1,5 +1,6 @@
 import { config } from "@onecontext/config";
 import { db } from "@onecontext/database/server";
+import { list } from "@onecontext/integrations";
 
 export function getPlanLimits(plan: string) {
 	const planConfig = config.payments.plans[plan] ?? config.payments.plans.free;
@@ -19,8 +20,13 @@ export async function checkSourceLimit(
 		return { allowed: true, current: 0, limit: "unlimited" };
 	}
 
+	const integrationProviders = list().map((a) => a.provider);
 	const count = await db.source.count({
-		where: { userId, status: "connected" },
+		where: {
+			userId,
+			status: "connected",
+			provider: { in: integrationProviders },
+		},
 	});
 	return {
 		allowed: count < limits.sources,

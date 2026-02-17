@@ -10,7 +10,7 @@ import { deleteMemory, getAll } from "@onecontext/memory";
 import { Hono } from "hono";
 import { describeRoute } from "hono-openapi";
 import { authMiddleware } from "../middleware/auth";
-import { checkSourceLimit } from "../middleware/plan-limits";
+import { checkMemoryLimit, checkSourceLimit } from "../middleware/plan-limits";
 
 export const sourcesRouter = new Hono()
 	.basePath("/sources")
@@ -68,12 +68,13 @@ export const sourcesRouter = new Hono()
 
 			// Attempt initial sync
 			const adapter = get(provider);
-			if (!adapter || !account.accessToken) {
+			const accessToken = await getAccessToken(user.id, provider);
+			if (!adapter || !accessToken) {
 				return c.json({ source, syncResult: null });
 			}
 
 			try {
-				const result = await adapter.sync(user.id, account.accessToken);
+				const result = await adapter.sync(user.id, accessToken);
 				await persistSyncResult(source.id, user.id, result);
 				return c.json({
 					source,
@@ -179,6 +180,21 @@ export const sourcesRouter = new Hono()
 				return c.json({ error: "Integration not available" }, 404);
 			}
 
+			// Check memory limit before syncing
+			const allMemories = await getAll(user.id);
+			const memoryCheck = await checkMemoryLimit(user.id, allMemories.length);
+			if (!memoryCheck.allowed) {
+				return c.json(
+					{
+						error: `Memory limit reached (${memoryCheck.current}/${memoryCheck.limit}). Upgrade your plan to sync more.`,
+						limit: memoryCheck.limit,
+						current: memoryCheck.current,
+						upgrade: true,
+					},
+					403,
+				);
+			}
+
 			const accessToken = await getAccessToken(user.id, provider);
 			if (!accessToken) {
 				return c.json(
@@ -187,14 +203,20 @@ export const sourcesRouter = new Hono()
 				);
 			}
 
-			const result = await adapter.sync(user.id, accessToken);
-			await persistSyncResult(source.id, user.id, result);
+			try {
+				const result = await adapter.sync(user.id, accessToken);
+				await persistSyncResult(source.id, user.id, result);
 
-			return c.json({
-				provider,
-				itemsSynced: result.contentItems.length,
-				memoriesAdded: result.memoriesAdded,
-			});
+				return c.json({
+					provider,
+					itemsSynced: result.contentItems.length,
+					memoriesAdded: result.memoriesAdded,
+				});
+			} catch (err) {
+				const message =
+					err instanceof Error ? err.message : "Sync failed unexpectedly";
+				return c.json({ error: message }, 500);
+			}
 		},
 	)
 	.delete(
