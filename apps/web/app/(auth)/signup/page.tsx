@@ -78,7 +78,7 @@ export default function SignupPage() {
 		setSocialLoading(provider);
 		authClient.signIn.social({
 			provider,
-			callbackURL: "/dashboard",
+			callbackURL: "/onboarding",
 		});
 	}
 
