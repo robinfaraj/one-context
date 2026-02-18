@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Inter } from "next/font/google";
+import Script from "next/script";
 import type { PropsWithChildren } from "react";
 import { Providers } from "../modules/shared/components/providers";
 import "./globals.css";
@@ -46,6 +47,22 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: PropsWithChildren) {
 	return (
 		<html lang="en" suppressHydrationWarning>
+			<head>
+				{process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_ID && (
+					<>
+						<Script
+							async
+							src={`https://plausible.io/js/${process.env.NEXT_PUBLIC_PLAUSIBLE_SCRIPT_ID}.js`}
+							strategy="afterInteractive"
+						/>
+						<Script id="plausible-init" strategy="afterInteractive">
+							{
+								"window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)};plausible.init=plausible.init||function(i){plausible.o=i||{}};plausible.init();"
+							}
+						</Script>
+					</>
+				)}
+			</head>
 			<body
 				className={`${inter.variable} ${instrumentSerif.variable} font-sans antialiased`}
 			>
