@@ -6,4 +6,5 @@ export {
 	deleteChat,
 } from "./src/services/chat";
 export { generateChatTitle } from "./src/services/title";
+export { generateIdentitySummary } from "./src/services/identity-summary";
 export type { ChatMetadata, ChatStreamOptions } from "./src/types";

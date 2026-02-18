@@ -2,6 +2,7 @@ import { sValidator } from "@hono/standard-validator";
 import {
 	createChat,
 	deleteChat,
+	generateIdentitySummary,
 	getChat,
 	handleChatRequest,
 	listChats,
@@ -50,6 +51,23 @@ export const aiRouter = new Hono()
 			});
 
 			return response;
+		},
+	)
+	.get(
+		"/identity-summary",
+		describeRoute({
+			tags: ["AI"],
+			summary: "Generate AI identity summary",
+			description:
+				"Uses AI to summarize what OneContext has learned about the user from their memories and sources",
+			responses: {
+				200: { description: "Identity summary" },
+			},
+		}),
+		async (c) => {
+			const user = c.get("user");
+			const summary = await generateIdentitySummary(user.id, user.name);
+			return c.json({ summary });
 		},
 	)
 	.get(
