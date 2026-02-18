@@ -69,7 +69,7 @@ export function ConnectedSourcesStrip({
 						<div
 							key={source.id}
 							className="relative"
-							title={source.displayName}
+							title={source.displayName ?? undefined}
 						>
 							<div className="flex h-9 w-9 items-center justify-center rounded-full border bg-background">
 								<SourceIcon icon={source.provider} className="h-4 w-4" />
