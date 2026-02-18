@@ -22,6 +22,25 @@ export const metadata: Metadata = {
 	},
 	description:
 		"Stop repeating yourself to every AI tool. Set up your AI identity once, auto-sync from X, GitHub, Notion. Use everywhere via MCP or API.",
+	metadataBase: new URL("https://onecontext.dev"),
+	openGraph: {
+		type: "website",
+		siteName: "OneContext",
+		title: {
+			default: "OneContext — Your AI identity, everywhere",
+			template: "%s | OneContext",
+		},
+		description:
+			"Stop repeating yourself to every AI tool. Set up your AI identity once, auto-sync from X, GitHub, Notion. Use everywhere via MCP or API.",
+		images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "OneContext — Your AI identity, everywhere",
+		description:
+			"Stop repeating yourself to every AI tool. Set up your AI identity once, auto-sync from X, GitHub, Notion. Use everywhere via MCP or API.",
+		images: ["/og-image.png"],
+	},
 };
 
 export default function RootLayout({ children }: PropsWithChildren) {
