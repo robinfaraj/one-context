@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1200">
+<title>OneContext OG Image</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    width: 1200px;
+    height: 630px;
+    overflow: hidden;
+    font-family: 'Inter', sans-serif;
+    background: #ffffff;
+  }
+
+  .container {
+    width: 1200px;
+    height: 630px;
+    display: flex;
+    flex-direction: column;
+    padding: 44px 64px 36px;
+    position: relative;
+  }
+
+  /* Subtle dot grid background */
+  .container::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header-logo {
+    width: 110px;
+    height: auto;
+    color: #047857;
+  }
+
+  .header-text {
+    font-size: 22px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -0.5px;
+  }
+
+  /* Headline */
+  .headline {
+    margin-top: 24px;
+    font-size: 46px;
+    font-weight: 700;
+    color: #111827;
+    letter-spacing: -1.5px;
+    line-height: 1.1;
+    max-width: 700px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Flow diagram area */
+  .flow {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+    padding: 0 20px;
+  }
+
+  .flow-inner {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  /* Source / Tool columns */
+  .flow-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 160px;
+  }
+
+  .flow-column.right-col {
+    align-items: flex-start;
+    margin-left: 12px;
+  }
+
+  .flow-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    color: #374151;
+  }
+
+  .flow-icon {
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+  }
+
+  /* SVG connection lines */
+  .flow-connections {
+    width: 120px;
+    height: 140px;
+    flex-shrink: 0;
+  }
+
+  /* Center hub */
+  .flow-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 0 16px;
+    flex-shrink: 0;
+    position: relative;
+    top: 14px;
+  }
+
+  .center-circle {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #047857;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 8px rgba(4, 120, 87, 0.08), 0 0 0 16px rgba(4, 120, 87, 0.04);
+  }
+
+  .center-circle svg {
+    width: 44px;
+    height: auto;
+    color: #fff;
+  }
+
+  .center-badge {
+    font-size: 12px;
+    font-weight: 600;
+    color: #047857;
+    background: rgba(4, 120, 87, 0.08);
+    padding: 4px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Footer */
+  .footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tagline {
+    font-size: 16px;
+    font-weight: 500;
+    color: #6b7280;
+    letter-spacing: 0.3px;
+  }
+
+  .tagline span {
+    color: #047857;
+    font-weight: 600;
+  }
+
+  .footer-meta {
+    font-size: 14px;
+    color: #9ca3af;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <!-- Header -->
+  <div class="header">
+    <svg class="header-logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" fill="none">
+      <circle cx="18" cy="24" r="9" stroke="currentColor" stroke-width="3.5" fill="none"/>
+      <line x1="27" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="3.5"/>
+      <circle cx="60" cy="24" r="14" fill="currentColor"/>
+      <line x1="74" y1="24" x2="93" y2="24" stroke="currentColor" stroke-width="3.5"/>
+      <circle cx="102" cy="24" r="9" stroke="currentColor" stroke-width="3.5" fill="none"/>
+    </svg>
+    <span class="header-text">OneContext</span>
+  </div>
+
+  <!-- Headline -->
+  <h1 class="headline">Stop Repeating Yourself<br>to Every AI Tool</h1>
+
+  <!-- Flow Diagram -->
+  <div class="flow">
+    <div class="flow-inner">
+      <!-- Sources -->
+      <div class="flow-column">
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+            <path d="M304.7 216.8 495.2 0h-45.1L284.6 188.2 152.6 0H.2l199.7 284.7L.2 512h45.1L220 313.2 359.4 512h152.3M61.6 33.3h69.3l319.1 447h-69.3"/>
+          </svg>
+          <span>Twitter</span>
+        </div>
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="#24292f">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M256 6.3C114.6 6.3 0 120.9 0 262.3c0 113.3 73.3 209 175 242.9 12.8 2.2 17.6-5.4 17.6-12.2 0-6.1-.3-26.2-.3-47.7-64.3 11.8-81-15.7-86.1-30.1-2.9-7.4-15.4-30.1-26.2-36.2-9-4.8-21.8-16.6-.3-17 20.2-.3 34.6 18.6 39.4 26.2 23 38.7 59.8 27.8 74.6 21.1 2.2-16.6 9-27.8 16.3-34.2-57-6.4-116.5-28.5-116.5-126.4 0-27.8 9.9-50.9 26.2-68.8-2.6-6.4-11.5-32.6 2.6-67.8 0 0 21.4-6.7 70.4 26.2 20.5-5.8 42.2-8.6 64-8.6s43.5 2.9 64 8.6c49-33.3 70.4-26.2 70.4-26.2 14.1 35.2 5.1 61.4 2.6 67.8 16.3 17.9 26.2 40.6 26.2 68.8 0 98.2-59.8 120-116.8 126.4 9.3 8 17.3 23.4 17.3 47.4 0 34.2-.3 61.8-.3 70.4 0 6.7 4.8 14.7 17.6 12.2C438.7 471.3 512 375.3 512 262.3c0-141.4-114.6-256-256-256"/>
+          </svg>
+          <span>GitHub</span>
+        </div>
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path d="M41.8 22.1 325.1 1.2c34.8-3 43.7-1 65.6 14.9l90.4 63.7c14.9 11 19.9 13.9 19.9 25.9v349.4c0 21.9-8 34.9-35.8 36.8l-329 19.9c-20.9 1-30.8-2-41.8-15.9l-66.6-86.6C15.9 393.4 11 381.4 11 367.5V56.9c0-17.9 7.9-32.8 30.8-34.8" fill="#fff"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M325.1 1.2 41.8 22.1C18.9 24.1 11 39 11 56.9v310.6c0 13.9 5 25.9 16.9 41.8l66.6 86.6c10.9 13.9 20.9 16.9 41.8 15.9l329-19.9c27.8-2 35.8-14.9 35.8-36.8V105.7c0-11.3-4.5-14.6-17.6-24.2l-92.7-65.4C368.8.2 359.9-1.8 325.1 1.2M143.7 100c-26.9 1.8-33 2.2-48.2-10.2L56.7 58.9c-3.9-4-2-9 8-10L337 29.1c22.9-2 34.8 6 43.7 12.9l46.7 33.8c2 1 7 7 1 7L147.2 99.7zm-31.3 352.1V155.5c0-13 4-18.9 15.9-19.9l323-18.9c11-1 15.9 6 15.9 18.9v294.6c0 13-2 23.9-19.9 24.9L138.2 473c-17.9 1-25.8-5-25.8-20.9m305.1-280.7c2 9 0 17.9-9 18.9l-14.9 3v219c-12.9 7-24.8 10.9-34.8 10.9-15.9 0-19.9-5-31.8-19.9L229.6 250v148.3l30.8 7s0 17.9-24.9 17.9l-68.6 4c-2-4 0-13.9 6.9-15.9l17.9-5V210.2l-24.8-2c-2-9 3-21.9 16.9-22.9l73.6-5 101.4 155.3V198.3l-25.8-3c-2-11 6-18.9 15.9-19.9z" fill="#000"/>
+          </svg>
+          <span>Notion</span>
+        </div>
+      </div>
+
+      <!-- Left fan-out connections (SVG) -->
+      <svg class="flow-connections" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Top: source row 1 → center -->
+        <path d="M0 22 C60 22, 60 70, 120 70" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <!-- Middle: source row 2 → center -->
+        <path d="M0 70 L120 70" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <!-- Bottom: source row 3 → center -->
+        <path d="M0 118 C60 118, 60 70, 120 70" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <!-- Arrow head -->
+        <polygon points="120,70 112,65 112,75" fill="#d1d5db"/>
+      </svg>
+
+      <!-- Center: OneContext hub -->
+      <div class="flow-center">
+        <div class="center-circle">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 48" fill="none">
+            <circle cx="18" cy="24" r="9" stroke="currentColor" stroke-width="3.5" fill="none"/>
+            <line x1="27" y1="24" x2="46" y2="24" stroke="currentColor" stroke-width="3.5"/>
+            <circle cx="60" cy="24" r="14" fill="currentColor"/>
+            <line x1="74" y1="24" x2="93" y2="24" stroke="currentColor" stroke-width="3.5"/>
+            <circle cx="102" cy="24" r="9" stroke="currentColor" stroke-width="3.5" fill="none"/>
+          </svg>
+        </div>
+        <span class="center-badge">auto-sync daily</span>
+      </div>
+
+      <!-- Right fan-out connections (SVG) -->
+      <svg class="flow-connections" viewBox="0 0 120 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Center → top tool -->
+        <path d="M0 70 C60 70, 60 22, 120 22" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <polygon points="120,22 112,17 112,27" fill="#d1d5db"/>
+        <!-- Center → middle tool -->
+        <path d="M0 70 L120 70" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <polygon points="120,70 112,65 112,75" fill="#d1d5db"/>
+        <!-- Center → bottom tool -->
+        <path d="M0 70 C60 70, 60 118, 120 118" stroke="#d1d5db" stroke-width="2" fill="none"/>
+        <polygon points="120,118 112,113 112,123" fill="#d1d5db"/>
+      </svg>
+
+      <!-- AI Tools -->
+      <div class="flow-column right-col">
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2406 2406" fill="#10a37f">
+            <path id="petal" d="M1107.3 299.1c-197.999 0-373.9 127.3-435.2 315.3L650 743.5v427.9c0 21.4 11 40.4 29.4 51.4l344.5 198.515V833.3h.1v-27.9L1372.7 604c33.715-19.52 70.44-32.857 108.47-39.828L1447.6 450.3C1361 353.5 1237.1 298.5 1107.3 299.1zm0 117.5-.6.6c79.699 0 156.3 27.5 217.6 78.4-2.5 1.2-7.4 4.3-11 6.1L952.8 709.3c-18.4 10.4-29.4 30-29.4 51.4V1248l-155.1-89.4V755.8c-.1-187.099 151.601-338.9 339-339.2z"/>
+            <use href="#petal" transform="rotate(60 1203 1203)"/>
+            <use href="#petal" transform="rotate(120 1203 1203)"/>
+            <use href="#petal" transform="rotate(180 1203 1203)"/>
+            <use href="#petal" transform="rotate(240 1203 1203)"/>
+            <use href="#petal" transform="rotate(300 1203 1203)"/>
+          </svg>
+          <span>ChatGPT</span>
+        </div>
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1200" fill="#d97757">
+            <path d="M233.959793 800.214905 L468.644287 668.536987 L472.590637 657.100647 L468.644287 650.738403 L457.208069 650.738403 L417.986633 648.322144 L283.892639 644.69812 L167.597321 639.865845 L54.926208 633.825623 L26.577238 627.785339 L3.3e-05 592.751709 L2.73832 575.27533 L26.577238 559.248352 L60.724873 562.228149 L136.187973 567.382629 L249.422867 575.194763 L331.570496 580.026978 L453.261841 592.671082 L472.590637 592.671082 L475.328857 584.859009 L468.724915 580.026978 L463.570557 575.194763 L346.389313 495.785217 L219.543671 411.865906 L153.100723 363.543762 L117.181267 339.060425 L99.060455 316.107361 L91.248367 266.01355 L123.865784 230.093994 L167.677887 233.073853 L178.872513 236.053772 L223.248367 270.201477 L318.040283 343.570496 L441.825592 434.738342 L459.946411 449.798706 L467.194672 444.64447 L468.080597 441.020203 L459.946411 427.409485 L392.617493 305.718323 L320.778564 181.932983 L288.80542 130.630859 L280.348999 99.865845 C277.369171 87.221436 275.194641 76.590698 275.194641 63.624268 L312.322174 13.20813 L332.8591 6.604126 L382.389313 13.20813 L403.248352 31.328979 L434.013519 101.71814 L483.865753 212.537048 L561.181274 363.221497 L583.812134 407.919434 L595.892639 449.315491 L600.40271 461.959839 L608.214783 461.959839 L608.214783 454.711609 L614.577271 369.825623 L626.335632 265.61084 L637.771851 131.516846 L641.718201 93.745117 L660.402832 48.483276 L697.530334 24.000122 L726.52356 37.852417 L750.362549 72 L747.060486 94.067139 L732.886047 186.201416 L705.100708 330.52356 L686.979919 427.167847 L697.530334 427.167847 L709.61084 415.087341 L758.496704 350.174561 L840.644348 247.490051 L876.885925 206.738342 L919.167847 161.71814 L946.308838 140.29541 L997.61084 140.29541 L1035.38269 196.429626 L1018.469849 254.416199 L965.637634 321.422852 L921.825562 378.201538 L859.006714 462.765259 L819.785278 530.41626 L823.409424 535.812073 L832.75177 534.92627 L974.657776 504.724915 L1051.328979 490.872559 L1142.818848 475.167786 L1184.214844 494.496582 L1188.724854 514.147644 L1172.456421 554.335693 L1074.604126 578.496765 L959.838989 601.449829 L788.939636 641.879272 L786.845764 643.409485 L789.261841 646.389343 L866.255127 653.637634 L899.194702 655.409424 L979.812134 655.409424 L1129.932861 666.604187 L1169.154419 692.537109 L1192.671265 724.268677 L1188.724854 748.429688 L1128.322144 779.194641 L1046.818848 759.865845 L856.590759 714.604126 L791.355774 698.335754 L782.335693 698.335754 L782.335693 703.731567 L836.69812 756.885986 L936.322205 846.845581 L1061.073975 962.81897 L1067.436279 991.490112 L1051.409424 1014.120911 L1034.496704 1011.704712 L924.885986 929.234924 L882.604126 892.107544 L786.845764 811.48999 L780.483276 811.48999 L780.483276 819.946289 L802.550415 852.241699 L919.087341 1027.409424 L925.127625 1081.127686 L916.671204 1098.604126 L886.469849 1109.154419 L853.288696 1103.114136 L785.073914 1007.355835 L714.684631 899.516785 L657.906067 802.872498 L650.979858 806.81897 L617.476624 1167.704834 L601.771851 1186.147705 L565.530212 1200 L535.328857 1177.046997 L519.302124 1139.919556 L535.328857 1066.550537 L554.657776 970.792053 L570.362488 894.68457 L584.536926 800.134277 L592.993347 768.724976 L592.429626 766.630859 L585.503479 767.516968 L514.22821 865.369263 L405.825531 1011.865906 L320.053711 1103.677979 L299.516815 1111.812256 L263.919525 1093.369263 L267.221497 1060.429688 L287.114136 1031.114136 L405.825531 880.107361 L477.422913 786.52356 L523.651062 732.483276 L523.328918 724.671265 L520.590698 724.671265 L205.288605 929.395935 L149.154434 936.644409 L124.993355 914.01355 L127.973183 876.885986 L139.409409 864.80542 L234.201385 799.570435 L233.879227 799.8927Z"/>
+          </svg>
+          <span>Claude</span>
+        </div>
+        <div class="flow-item">
+          <svg class="flow-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+            <defs>
+              <linearGradient id="oc-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#ff4d4d"/>
+                <stop offset="100%" stop-color="#991b1b"/>
+              </linearGradient>
+            </defs>
+            <path d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z" fill="url(#oc-grad)"/>
+            <path d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z" fill="url(#oc-grad)"/>
+            <path d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z" fill="url(#oc-grad)"/>
+            <circle cx="45" cy="35" r="6" fill="#050810"/>
+            <circle cx="75" cy="35" r="6" fill="#050810"/>
+            <circle cx="46" cy="34" r="2.5" fill="#00e5cc"/>
+            <circle cx="76" cy="34" r="2.5" fill="#00e5cc"/>
+          </svg>
+          <span>OpenClaw</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="tagline">
+      <span>Connect once</span> &middot; Stay current &middot; Use everywhere
+    </div>
+    <div class="footer-meta">onecontext.dev &middot; Open Source</div>
+  </div>
+</div>
+</body>
+</html>
