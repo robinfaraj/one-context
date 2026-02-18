@@ -2,21 +2,15 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-	return res.json();
-}
+import { apiClient } from "./api-client";
 
 export function useUpdateProfile() {
 	return useMutation({
-		mutationFn: (data: { name?: string; profileSummary?: string }) =>
-			fetchJson("/api/settings/profile", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
-			}),
+		mutationFn: async (data: { name?: string; profileSummary?: string }) => {
+			const res = await apiClient.settings.profile.$put({ json: data });
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
+		},
 		onSuccess: () => toast.success("Profile updated"),
 		onError: () => toast.error("Failed to update profile"),
 	});
@@ -24,12 +18,11 @@ export function useUpdateProfile() {
 
 export function useUpdateSyncSettings() {
 	return useMutation({
-		mutationFn: (data: { syncEnabled: boolean }) =>
-			fetchJson("/api/settings/sync", {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(data),
-			}),
+		mutationFn: async (data: { syncEnabled: boolean }) => {
+			const res = await apiClient.settings.sync.$put({ json: data });
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
+		},
 		onSuccess: () => toast.success("Sync settings updated"),
 		onError: () => toast.error("Failed to update sync settings"),
 	});
@@ -38,9 +31,7 @@ export function useUpdateSyncSettings() {
 export function useExportData() {
 	return useMutation({
 		mutationFn: async () => {
-			const res = await fetch("/api/settings/export", {
-				credentials: "include",
-			});
+			const res = await apiClient.settings.export.$get();
 			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 			const data = await res.json();
 			const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -60,7 +51,10 @@ export function useExportData() {
 
 export function useDeleteAccount() {
 	return useMutation({
-		mutationFn: () => fetchJson("/api/settings/account", { method: "DELETE" }),
+		mutationFn: async () => {
+			const res = await apiClient.settings.account.$delete();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+		},
 		onError: () => toast.error("Failed to delete account"),
 	});
 }

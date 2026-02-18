@@ -1,40 +1,44 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "./api-client";
 
 export interface Memory {
 	id: string;
 	memory: string;
-	categories: string[];
+	categories?: string[];
+	created_at?: string;
+	updated_at?: string;
+	score?: number;
 	metadata: {
-		source?: string;
 		pinned?: boolean;
+		source?: string;
+		user_id?: string;
 		[key: string]: unknown;
 	};
-	created_at: string;
-	updated_at: string;
-}
-
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-	return res.json();
 }
 
 export function useMemories() {
-	return useQuery<Memory[]>({
+	return useQuery({
 		queryKey: ["memories"],
-		queryFn: () => fetchJson<Memory[]>("/api/memories"),
+		queryFn: async (): Promise<Memory[]> => {
+			const res = await apiClient.memories.$get();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return (await res.json()) as unknown as Memory[];
+		},
 	});
 }
 
 export function useSearchMemories(query: string) {
-	return useQuery<Memory[]>({
+	return useQuery({
 		queryKey: ["memories", "search", query],
-		queryFn: () =>
-			fetchJson<Memory[]>(
-				`/api/memories/search?q=${encodeURIComponent(query)}`,
-			),
+		queryFn: async (): Promise<Memory[]> => {
+			const res = await apiClient.memories.search.$get({
+				query: { q: query },
+			});
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return (await res.json()) as unknown as Memory[];
+		},
 		enabled: query.length > 0,
 	});
 }
@@ -42,12 +46,14 @@ export function useSearchMemories(query: string) {
 export function useUpdateMemory() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: ({ id, content }: { id: string; content: string }) =>
-			fetchJson(`/api/memories/${id}`, {
-				method: "PUT",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ content }),
-			}),
+		mutationFn: async ({ id, content }: { id: string; content: string }) => {
+			const res = await apiClient.memories[":id"].$put({
+				param: { id },
+				json: { content },
+			});
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
+		},
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["memories"] }),
 	});
 }
@@ -55,8 +61,12 @@ export function useUpdateMemory() {
 export function useDeleteMemory() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) =>
-			fetchJson(`/api/memories/${id}`, { method: "DELETE" }),
+		mutationFn: async (id: string) => {
+			const res = await apiClient.memories[":id"].$delete({
+				param: { id },
+			});
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+		},
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["memories"] }),
 	});
 }
@@ -64,8 +74,13 @@ export function useDeleteMemory() {
 export function usePinMemory() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) =>
-			fetchJson(`/api/memories/${id}/pin`, { method: "POST" }),
+		mutationFn: async (id: string) => {
+			const res = await apiClient.memories[":id"].pin.$post({
+				param: { id },
+			});
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
+		},
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["memories"] }),
 	});
 }
@@ -73,8 +88,12 @@ export function usePinMemory() {
 export function useUnpinMemory() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) =>
-			fetchJson(`/api/memories/${id}/pin`, { method: "DELETE" }),
+		mutationFn: async (id: string) => {
+			const res = await apiClient.memories[":id"].pin.$delete({
+				param: { id },
+			});
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+		},
 		onSuccess: () => qc.invalidateQueries({ queryKey: ["memories"] }),
 	});
 }
