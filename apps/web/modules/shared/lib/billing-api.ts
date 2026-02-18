@@ -2,15 +2,17 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { apiClient } from "./api-client";
 
-interface SubscriptionInfo {
+export interface SubscriptionInfo {
 	plan: string;
+	planId: string;
 	isPro: boolean;
 	subscription: {
+		id: string;
 		status: string;
 		currentPeriodEnd: string;
 		cancelAtPeriodEnd: boolean;
-		stripePriceId: string;
 	} | null;
 	usage: {
 		sources: number;
@@ -18,34 +20,32 @@ interface SubscriptionInfo {
 		apiCallsToday: number;
 	};
 	limits: {
-		sources: number | "unlimited";
 		memories: number | "unlimited";
+		sources: number | "unlimited";
 		apiCallsPerDay: number | "unlimited";
+		[key: string]: number | "unlimited";
 	};
 }
 
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-	return res.json();
-}
-
 export function useSubscription() {
-	return useQuery<SubscriptionInfo>({
+	return useQuery({
 		queryKey: ["billing", "subscription"],
-		queryFn: () => fetchJson<SubscriptionInfo>("/api/billing/subscription"),
+		queryFn: async (): Promise<SubscriptionInfo> => {
+			const res = await apiClient.billing.subscription.$get();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return (await res.json()) as unknown as SubscriptionInfo;
+		},
 	});
 }
 
 export function useCheckout() {
 	return useMutation({
 		mutationFn: async (priceId: string) => {
-			const res = await fetchJson<{ url: string }>("/api/billing/checkout", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ priceId }),
+			const res = await apiClient.billing.checkout.$post({
+				json: { priceId },
 			});
-			return res;
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
 		},
 		onSuccess: (data) => {
 			if (data.url) {
@@ -59,10 +59,9 @@ export function useCheckout() {
 export function useCreatePortalSession() {
 	return useMutation({
 		mutationFn: async () => {
-			const res = await fetchJson<{ url: string }>("/api/billing/portal", {
-				method: "POST",
-			});
-			return res;
+			const res = await apiClient.billing.portal.$post();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return res.json();
 		},
 		onSuccess: (data) => {
 			if (data.url) {
@@ -77,7 +76,9 @@ export function useCancelSubscription() {
 	const qc = useQueryClient();
 	return useMutation({
 		mutationFn: async () => {
-			await fetchJson("/api/billing/cancel", { method: "POST" });
+			const res = await apiClient.billing.cancel.$post();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			await res.json();
 		},
 		onSuccess: () => {
 			qc.invalidateQueries({ queryKey: ["billing"] });
@@ -86,5 +87,3 @@ export function useCancelSubscription() {
 		onError: () => toast.error("Failed to cancel subscription"),
 	});
 }
-
-export type { SubscriptionInfo };

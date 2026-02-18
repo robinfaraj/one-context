@@ -67,8 +67,10 @@ test.describe("Chat", () => {
 		await sendAndWait(page, "repeat exactly: BRAVO");
 
 		// Both user messages should be visible (all in same chat, not split)
-		await expect(page.getByText("repeat exactly: ALPHA")).toBeVisible();
-		await expect(page.getByText("repeat exactly: BRAVO")).toBeVisible();
+		// Use the inner main (thread area) to avoid matching sidebar titles
+		const thread = page.locator("main main");
+		await expect(thread.getByText("repeat exactly: ALPHA")).toBeVisible();
+		await expect(thread.getByText("repeat exactly: BRAVO")).toBeVisible();
 	});
 
 	test("chat history persists after navigating away and back", async ({

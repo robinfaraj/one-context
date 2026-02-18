@@ -1,63 +1,61 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { apiClient } from "./api-client";
 
-interface DashboardUser {
+export interface DashboardUser {
 	name: string;
 	email: string;
-	image: string | null;
+	image?: string | null;
 }
 
-interface DashboardStats {
+export interface DashboardStats {
 	memoryCount: number;
 	sourceCount: number;
 	chatCount: number;
 }
 
-interface DashboardSource {
+export interface DashboardSource {
 	id: string;
 	provider: string;
-	displayName: string;
+	displayName: string | null;
 	status: string;
-	lastSyncAt: string | null;
-	itemCount: number;
+	userId: string;
 	createdAt: string;
 	updatedAt: string;
+	metadata: unknown;
+	lastSyncedAt: string | null;
 }
 
-interface DashboardActivity {
+export interface DashboardActivity {
 	id: string;
+	type: string;
 	contentType: string;
-	externalId: string;
-	rawData: any;
+	rawData: unknown;
 	importedAt: string;
-	source: DashboardSource;
+	source: {
+		id: string;
+		provider: string;
+		displayName: string | null;
+		[key: string]: unknown;
+	};
+	[key: string]: unknown;
 }
 
-interface DashboardResponse {
+export interface DashboardResponse {
 	user: DashboardUser;
 	stats: DashboardStats;
 	connectedSources: DashboardSource[];
 	recentActivity: DashboardActivity[];
 }
 
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-	return res.json();
-}
-
 export function useDashboard() {
-	return useQuery<DashboardResponse>({
+	return useQuery({
 		queryKey: ["dashboard"],
-		queryFn: () => fetchJson<DashboardResponse>("/api/dashboard"),
+		queryFn: async (): Promise<DashboardResponse> => {
+			const res = await apiClient.dashboard.$get();
+			if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+			return (await res.json()) as unknown as DashboardResponse;
+		},
 	});
 }
-
-export type {
-	DashboardResponse,
-	DashboardUser,
-	DashboardStats,
-	DashboardSource,
-	DashboardActivity,
-};

@@ -1,20 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { apiClient } from "./api-client";
 
-interface Chat {
+export interface ChatMessage {
+	id: string;
+	role: string;
+	parts: Array<{ type: string; text: string }>;
+	createdAt: string;
+	chatId: string;
+	parentId: string | null;
+	data: unknown;
+}
+
+export interface Chat {
 	id: string;
 	title: string | null;
 	createdAt: string;
 	updatedAt: string;
+	userId: string;
 }
 
-interface ChatWithMessages extends Chat {
-	messages: Array<{
-		id: string;
-		chatId: string;
-		role: string;
-		parts: Array<{ type: string; text: string }>;
-		createdAt: string;
-	}>;
+export interface ChatWithMessages extends Chat {
+	messages: ChatMessage[];
 }
 
 export const chatKeys = {
@@ -22,27 +28,27 @@ export const chatKeys = {
 	detail: (id: string) => ["chats", id] as const,
 };
 
-async function fetchApi<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, {
-		credentials: "include",
-		...init,
-	});
-	if (!res.ok) throw new Error(`Failed to fetch ${url}: ${res.statusText}`);
-	if (res.status === 204) return undefined as T;
-	return res.json();
-}
-
 export function useChats() {
 	return useQuery({
 		queryKey: chatKeys.all,
-		queryFn: () => fetchApi<Chat[]>("/api/ai/chats"),
+		queryFn: async (): Promise<Chat[]> => {
+			const res = await apiClient.ai.chats.$get();
+			if (!res.ok) throw new Error(`Failed to fetch chats: ${res.statusText}`);
+			return (await res.json()) as unknown as Chat[];
+		},
 	});
 }
 
 export function useChat(id: string | undefined) {
 	return useQuery({
 		queryKey: chatKeys.detail(id ?? ""),
-		queryFn: () => fetchApi<ChatWithMessages>(`/api/ai/chats/${id}`),
+		queryFn: async (): Promise<ChatWithMessages> => {
+			const res = await apiClient.ai.chats[":id"].$get({
+				param: { id: id! },
+			});
+			if (!res.ok) throw new Error(`Failed to fetch chat: ${res.statusText}`);
+			return (await res.json()) as unknown as ChatWithMessages;
+		},
 		enabled: !!id,
 	});
 }
@@ -50,8 +56,12 @@ export function useChat(id: string | undefined) {
 export function useDeleteChat() {
 	const queryClient = useQueryClient();
 	return useMutation({
-		mutationFn: (id: string) =>
-			fetchApi(`/api/ai/chats/${id}`, { method: "DELETE" }),
+		mutationFn: async (id: string) => {
+			const res = await apiClient.ai.chats[":id"].$delete({
+				param: { id },
+			});
+			if (!res.ok) throw new Error(`Failed to delete chat: ${res.statusText}`);
+		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: chatKeys.all });
 		},

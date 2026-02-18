@@ -2,19 +2,23 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { apiClient } from "./api-client";
 
-interface Source {
+export interface Source {
 	id: string;
 	provider: string;
-	displayName: string;
+	displayName: string | null;
 	status: string;
-	lastSyncAt: string | null;
 	itemCount: number;
+	lastSyncAt: string | null;
+	userId: string;
 	createdAt: string;
 	updatedAt: string;
+	metadata: unknown;
+	lastSyncedAt: string | null;
 }
 
-interface Integration {
+export interface Integration {
 	provider: string;
 	displayName: string;
 	icon: string;
@@ -22,10 +26,10 @@ interface Integration {
 	available: boolean;
 	comingSoon?: boolean;
 	connected: boolean;
-	source?: Source;
+	source: Source | null;
 }
 
-interface SourcesResponse {
+export interface SourcesResponse {
 	integrations: Integration[];
 	connectedSources: Source[];
 	pendingConnections: string[];
@@ -43,26 +47,32 @@ class ApiError extends Error {
 	}
 }
 
-async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
-	const res = await fetch(url, { credentials: "include", ...init });
-	if (!res.ok) {
-		const body = await res.json().catch((err) => {
-			console.warn("Failed to parse error response body", {
-				status: res.status,
-				err,
-			});
-			return null;
-		});
-		const message = body?.error ?? `Request failed: ${res.status}`;
-		throw new ApiError(message, res.status, body?.upgrade);
-	}
-	return res.json();
-}
-
 export function useSources() {
-	return useQuery<SourcesResponse>({
+	return useQuery({
 		queryKey: ["sources"],
-		queryFn: () => fetchJson<SourcesResponse>("/api/sources"),
+		queryFn: async (): Promise<SourcesResponse> => {
+			const res = await apiClient.sources.$get();
+			if (!res.ok) {
+				const body = await res.json().catch((err: unknown) => {
+					console.warn("Failed to parse error response body", {
+						status: res.status,
+						err,
+					});
+					return null;
+				});
+				const message =
+					(body as Record<string, unknown> | null)?.error ??
+					`Request failed: ${res.status}`;
+				throw new ApiError(
+					message as string,
+					res.status,
+					(body as Record<string, unknown> | null)?.upgrade as
+						| boolean
+						| undefined,
+				);
+			}
+			return (await res.json()) as unknown as SourcesResponse;
+		},
 	});
 }
 
@@ -75,10 +85,31 @@ interface SyncResult {
 export function useSyncSource() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (provider: string) =>
-			fetchJson<SyncResult>(`/api/sources/${provider}/sync`, {
-				method: "POST",
-			}),
+		mutationFn: async (provider: string): Promise<SyncResult> => {
+			const res = await apiClient.sources[":provider"].sync.$post({
+				param: { provider },
+			});
+			if (!res.ok) {
+				const body = await res.json().catch((err: unknown) => {
+					console.warn("Failed to parse error response body", {
+						status: res.status,
+						err,
+					});
+					return null;
+				});
+				const message =
+					(body as Record<string, unknown> | null)?.error ??
+					`Request failed: ${res.status}`;
+				throw new ApiError(
+					message as string,
+					res.status,
+					(body as Record<string, unknown> | null)?.upgrade as
+						| boolean
+						| undefined,
+				);
+			}
+			return (await res.json()) as unknown as SyncResult;
+		},
 		onSuccess: (data) => {
 			qc.invalidateQueries({ queryKey: ["sources"] });
 			if (data.itemsSynced > 0) {
@@ -101,10 +132,31 @@ interface ConnectResult {
 export function useConnectSource() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (provider: string) =>
-			fetchJson<ConnectResult>(`/api/sources/${provider}/connect`, {
-				method: "POST",
-			}),
+		mutationFn: async (provider: string): Promise<ConnectResult> => {
+			const res = await apiClient.sources[":provider"].connect.$post({
+				param: { provider },
+			});
+			if (!res.ok) {
+				const body = await res.json().catch((err: unknown) => {
+					console.warn("Failed to parse error response body", {
+						status: res.status,
+						err,
+					});
+					return null;
+				});
+				const message =
+					(body as Record<string, unknown> | null)?.error ??
+					`Request failed: ${res.status}`;
+				throw new ApiError(
+					message as string,
+					res.status,
+					(body as Record<string, unknown> | null)?.upgrade as
+						| boolean
+						| undefined,
+				);
+			}
+			return (await res.json()) as unknown as ConnectResult;
+		},
 		onSuccess: (data) => {
 			qc.invalidateQueries({ queryKey: ["sources"] });
 			if (data.syncResult) {
@@ -122,14 +174,29 @@ export function useConnectSource() {
 export function useDisconnectSource() {
 	const qc = useQueryClient();
 	return useMutation({
-		mutationFn: (provider: string) =>
-			fetchJson(`/api/sources/${provider}`, { method: "DELETE" }),
+		mutationFn: async (provider: string) => {
+			const res = await apiClient.sources[":provider"].$delete({
+				param: { provider },
+			});
+			if (!res.ok) {
+				const body = await res.json().catch((err: unknown) => {
+					console.warn("Failed to parse error response body", {
+						status: res.status,
+						err,
+					});
+					return null;
+				});
+				const message =
+					(body as Record<string, unknown> | null)?.error ??
+					`Request failed: ${res.status}`;
+				throw new Error(message as string);
+			}
+			return res.json();
+		},
 		onMutate: async (provider) => {
-			// Cancel outgoing refetches so they don't overwrite our optimistic update
 			await qc.cancelQueries({ queryKey: ["sources"] });
 			const previous = qc.getQueryData<SourcesResponse>(["sources"]);
 
-			// Optimistically move the source to disconnected
 			if (previous) {
 				qc.setQueryData<SourcesResponse>(["sources"], {
 					...previous,
@@ -138,7 +205,7 @@ export function useDisconnectSource() {
 					),
 					integrations: previous.integrations.map((i) =>
 						i.provider === provider
-							? { ...i, connected: false, source: undefined }
+							? { ...i, connected: false, source: null }
 							: i,
 					),
 					pendingConnections: previous.pendingConnections.filter(
@@ -155,7 +222,6 @@ export function useDisconnectSource() {
 			toast.success("Source disconnected");
 		},
 		onError: (_err, _provider, context) => {
-			// Rollback on error
 			if (context?.previous) {
 				qc.setQueryData(["sources"], context.previous);
 			}
@@ -163,5 +229,3 @@ export function useDisconnectSource() {
 		},
 	});
 }
-
-export type { Source, Integration, SourcesResponse };

@@ -167,7 +167,7 @@ export function MemoryCard({ memory }: MemoryCardProps) {
 					<div className="flex flex-wrap items-center gap-2">
 						<SourceIcon source={memory.metadata?.source as string} />
 						<span className="text-xs text-muted-foreground">
-							{formatRelativeTime(memory.updated_at)}
+							{memory.updated_at ? formatRelativeTime(memory.updated_at) : ""}
 						</span>
 						{memory.categories?.map((cat) => (
 							<span
