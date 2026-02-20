@@ -25,7 +25,7 @@
 		"@onecontext/tsconfig": "workspace:*",
 		"dotenv": "^16.4.7",
 		"dotenv-cli": "^8.0.0",
-		"typescript": "5.7.2",
+		"typescript": "5.9.3",
 		"vitest": "^4.0.18"
 	},
 	"main": "./index.ts",
