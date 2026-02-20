@@ -5,6 +5,14 @@ import {
 } from "@onecontext/database/queries";
 import * as mem0 from "@onecontext/memory";
 
+export async function addMemory(
+	content: string,
+	userId: string,
+	categories?: string[],
+) {
+	return mem0.add(content, userId, categories ? { categories } : undefined);
+}
+
 export async function listMemories(userId: string) {
 	const [memories, pinnedRows] = await Promise.all([
 		mem0.getAll(userId),

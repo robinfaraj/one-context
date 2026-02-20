@@ -71,6 +71,41 @@ export const authMiddleware = createMiddleware<{
 		}
 	}
 
+	// Check for BetterAuth API key (x-api-key header or Authorization: Bearer)
+	const apiKey =
+		c.req.header("x-api-key") ??
+		(authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
+	if (apiKey) {
+		try {
+			const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
+			if (result.valid && result.key) {
+				const user = await db.user.findUnique({
+					where: { id: result.key.userId },
+				});
+				if (user) {
+					const mockSession: AuthSession["session"] = {
+						id: result.key.id,
+						userId: user.id,
+						token: "api-key-session",
+						expiresAt:
+							result.key.expiresAt ??
+							new Date(Date.now() + 24 * 60 * 60 * 1000),
+						createdAt: new Date(),
+						updatedAt: new Date(),
+						ipAddress: null,
+						userAgent: c.req.header("User-Agent") ?? null,
+						impersonatedBy: null,
+					};
+					c.set("session", mockSession);
+					c.set("user", user as AuthSession["user"]);
+					return next();
+				}
+			}
+		} catch {
+			// API key validation failed, fall through to cookie auth
+		}
+	}
+
 	// Fall back to cookie-based auth
 	const session = await auth.api.getSession({
 		headers: c.req.raw.headers,

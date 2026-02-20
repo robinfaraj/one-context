@@ -4,6 +4,7 @@ import { describeRoute } from "hono-openapi";
 import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
 import {
+	addMemory,
 	deleteMemory,
 	listMemories,
 	pinMemory,
@@ -12,6 +13,11 @@ import {
 	updateMemory,
 } from "../services/memories";
 
+const memoryCreateSchema = z.object({
+	content: z.string().min(1, "Content is required"),
+	categories: z.array(z.string()).optional(),
+});
+
 const memoryUpdateSchema = z.object({
 	content: z.string().min(1, "Content is required"),
 });
@@ -19,6 +25,22 @@ const memoryUpdateSchema = z.object({
 export const memoriesRouter = new Hono()
 	.basePath("/memories")
 	.use(authMiddleware)
+	.post(
+		"/",
+		describeRoute({
+			tags: ["Memories"],
+			summary: "Add a memory",
+			description: "Add a new memory for the authenticated user",
+			responses: { 201: { description: "Memory created" } },
+		}),
+		sValidator("json", memoryCreateSchema),
+		async (c) => {
+			const user = c.get("user");
+			const { content, categories } = c.req.valid("json");
+			const result = await addMemory(content, user.id, categories);
+			return c.json(result, 201);
+		},
+	)
 	.get(
 		"/",
 		describeRoute({

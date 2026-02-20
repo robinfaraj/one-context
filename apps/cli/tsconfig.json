@@ -2,7 +2,9 @@
 	"extends": "@onecontext/tsconfig/base.json",
 	"compilerOptions": {
 		"outDir": "./dist",
-		"rootDir": "./src"
+		"rootDir": "./src",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext"
 	},
 	"include": ["src/**/*.ts"],
 	"exclude": ["dist", "node_modules"]
