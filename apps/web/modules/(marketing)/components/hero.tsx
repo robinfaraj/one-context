@@ -101,22 +101,22 @@ export function Hero() {
 						<TerminalWindow>
 							<p className="text-[var(--terminal-text-dim)]">
 								<span className="text-[var(--terminal-success)]">$</span> npx
-								@onecontext/mcp-server init
-							</p>
-							<p className="mt-2 text-[var(--terminal-text)]">
-								<span className="text-[var(--terminal-success)]">✓</span>{" "}
-								Connected to OneContext
+								octx login
 							</p>
 							<p className="text-[var(--terminal-text)]">
 								<span className="text-[var(--terminal-success)]">✓</span>{" "}
-								Profile synced (3 integrations)
+								Logged in as Robin Faraj (robin@onecontext.dev)
+							</p>
+							<p className="mt-2 text-[var(--terminal-text-dim)]">
+								<span className="text-[var(--terminal-success)]">$</span> npx
+								octx memories list
 							</p>
 							<p className="text-[var(--terminal-text)]">
-								<span className="text-[var(--terminal-success)]">✓</span> MCP
-								server running on localhost:3100
+								<span className="text-[var(--terminal-success)]">✓</span> 12
+								memories loaded
 							</p>
 							<p className="mt-2 text-[var(--terminal-text-muted)]">
-								Ready. Your AI identity is now available to any MCP client.
+								Your AI identity is ready. Use via CLI, MCP, or API.
 							</p>
 						</TerminalWindow>
 					</motion.div>

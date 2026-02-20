@@ -39,7 +39,7 @@ const features = [
 		icon: Terminal,
 		title: "Developer-first",
 		description:
-			"npm package, CLI tools, clear docs. Built by developers, for developers.",
+			"npx octx to manage from the terminal. MCP and REST API for everything else.",
 	},
 ];
 

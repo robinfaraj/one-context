@@ -65,11 +65,27 @@ docker run -p 3000:3000 \
   onecontext
 ```
 
+## CLI
+
+[![npm](https://img.shields.io/npm/v/octx)](https://www.npmjs.com/package/octx)
+
+Manage your AI identity from the terminal:
+
+```bash
+npx octx login          # authenticate with your API key
+npx octx whoami          # check current user
+npx octx memories list   # list your memories
+npx octx sources list    # list connected integrations
+```
+
+Or install globally: `npm install -g octx`
+
+Full command reference: `npx octx --help`
+
 ## Roadmap
 
-- **Now:** Landing page, core auth, project scaffolding
-- **Next:** X and GitHub integrations, MCP server, REST API, self-host via Docker
-- **Later:** Notion sync, CLI, webhooks, team profiles, calendar/Linear integrations
+- **Done:** Auth, integrations (X, GitHub, Notion), MCP server, REST API, CLI, Docker self-host
+- **Next:** Webhooks, team profiles, calendar/Linear integrations
 
 ## Contributing
 
