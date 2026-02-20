@@ -9,12 +9,10 @@ export function registerUpdateCommand(parent: Command): void {
 		.argument("<id>", "Memory ID")
 		.argument("<content>", "New content")
 		.action(async (id: string, content: string) => {
-			const spinner = createSpinner("Updating memory…");
+			const spinner = createSpinner("Updating memory…").start();
 			try {
-				spinner.start();
 				await apiRequest(`/api/memories/${id}`, {
 					method: "PUT",
-					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify({ content }),
 				});
 				spinner.stop();

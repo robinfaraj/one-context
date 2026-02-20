@@ -9,18 +9,17 @@ export function registerAddCommand(parent: Command): void {
 		.argument("<content>", "Memory content")
 		.option("--categories <categories>", "Comma-separated categories")
 		.action(async (content: string, opts) => {
-			const spinner = createSpinner("Adding memory…");
+			const body: { content: string; categories?: string[] } = { content };
+			if (opts.categories) {
+				body.categories = opts.categories
+					.split(",")
+					.map((c: string) => c.trim());
+			}
+
+			const spinner = createSpinner("Adding memory…").start();
 			try {
-				spinner.start();
-				const body: { content: string; categories?: string[] } = { content };
-				if (opts.categories) {
-					body.categories = opts.categories
-						.split(",")
-						.map((c: string) => c.trim());
-				}
 				await apiRequest("/api/memories", {
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
 					body: JSON.stringify(body),
 				});
 				spinner.stop();

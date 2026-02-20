@@ -20,7 +20,8 @@ export function readConfig(): CliConfig | null {
 	try {
 		const raw = readFileSync(CONFIG_FILE, "utf-8");
 		return JSON.parse(raw) as CliConfig;
-	} catch {
+	} catch (err) {
+		console.warn(`Failed to parse config at ${CONFIG_FILE}:`, err);
 		return null;
 	}
 }

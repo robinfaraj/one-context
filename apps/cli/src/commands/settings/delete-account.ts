@@ -11,7 +11,7 @@ export function registerDeleteAccountCommand(parent: Command): void {
 		.action(async () => {
 			console.log(
 				chalk.red(
-					"\n⚠ WARNING: This will permanently delete your account and all associated data.\n",
+					"\nWARNING: This will permanently delete your account and all associated data.\n",
 				),
 			);
 
@@ -20,31 +20,27 @@ export function registerDeleteAccountCommand(parent: Command): void {
 				output: process.stdout,
 			});
 
+			const answer = await rl.question(chalk.red("Type DELETE to confirm: "));
+			rl.close();
+
+			if (answer !== "DELETE") {
+				printError("Account deletion cancelled.");
+				return;
+			}
+
+			const spinner = createSpinner("Deleting account…").start();
+
 			try {
-				const answer = await rl.question(chalk.red("Type DELETE to confirm: "));
-				rl.close();
-
-				if (answer !== "DELETE") {
-					printError("Account deletion cancelled.");
-					return;
+				await apiRequest("/api/settings/account", { method: "DELETE" });
+				spinner.succeed("Account deleted.");
+				printSuccess("Your account has been permanently deleted.");
+			} catch (error) {
+				spinner.fail("Failed to delete account.");
+				if (error instanceof ApiError) {
+					printError(error.message);
+				} else {
+					throw error;
 				}
-
-				const spinner = createSpinner("Deleting account…");
-
-				try {
-					await apiRequest("/api/settings/account", { method: "DELETE" });
-					spinner.succeed("Account deleted.");
-					printSuccess("Your account has been permanently deleted.");
-				} catch (error) {
-					spinner.fail("Failed to delete account.");
-					if (error instanceof ApiError) {
-						printError(`${error.message}`);
-					} else {
-						throw error;
-					}
-				}
-			} finally {
-				rl.close();
 			}
 		});
 }

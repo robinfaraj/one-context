@@ -21,7 +21,7 @@ export function registerSyncCommand(parent: Command): void {
 			const syncEnabled = !!options.enable;
 			const spinner = createSpinner(
 				syncEnabled ? "Enabling sync…" : "Disabling sync…",
-			);
+			).start();
 
 			try {
 				await apiRequest("/api/settings/sync", {
@@ -35,7 +35,7 @@ export function registerSyncCommand(parent: Command): void {
 			} catch (error) {
 				spinner.fail("Failed to update sync settings.");
 				if (error instanceof ApiError) {
-					printError(`${error.message}`);
+					printError(error.message);
 				} else {
 					throw error;
 				}

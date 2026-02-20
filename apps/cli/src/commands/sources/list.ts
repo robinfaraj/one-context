@@ -45,7 +45,7 @@ export function registerListCommand(parent: Command): void {
 				printTable(
 					["Provider", "Connected", "Status", "Last Synced"],
 					data.integrations.map((i) => [
-						i.name || i.provider,
+						i.name ?? i.provider,
 						i.connected ? "yes" : "no",
 						i.source?.status ?? "–",
 						i.source?.lastSyncedAt

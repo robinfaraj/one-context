@@ -6,7 +6,15 @@ export class ApiError extends Error {
 		public status: number,
 		public body: unknown,
 	) {
-		super(`API request failed with status ${status}`);
+		const bodyMsg =
+			body && typeof body === "object"
+				? String(
+						(body as Record<string, unknown>).error ??
+							(body as Record<string, unknown>).message ??
+							"",
+					)
+				: "";
+		super(bodyMsg || `API request failed with status ${status}`);
 	}
 }
 

@@ -4,6 +4,10 @@ export async function findUserById(userId: string) {
 	return db.user.findUnique({ where: { id: userId } });
 }
 
+export async function findUserByEmail(email: string) {
+	return db.user.findUnique({ where: { email } });
+}
+
 export async function findUserStripeCustomerId(userId: string) {
 	return db.user.findUnique({
 		where: { id: userId },

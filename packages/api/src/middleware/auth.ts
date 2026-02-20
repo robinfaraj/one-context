@@ -1,5 +1,5 @@
 import { auth } from "@onecontext/auth";
-import { db } from "@onecontext/database/server";
+import { findUserByEmail, findUserById } from "@onecontext/database/queries";
 import { createMiddleware } from "hono/factory";
 
 // Infer the correct session type from the auth instance
@@ -26,9 +26,7 @@ async function getDevApiKeySession(token: string): Promise<{
 	}
 
 	// Fetch the test user
-	const user = await db.user.findUnique({
-		where: { email: devUserEmail },
-	});
+	const user = await findUserByEmail(devUserEmail);
 
 	if (!user) {
 		console.warn(`[Dev Auth] User not found: ${devUserEmail}`);
@@ -79,9 +77,7 @@ export const authMiddleware = createMiddleware<{
 		try {
 			const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
 			if (result.valid && result.key) {
-				const user = await db.user.findUnique({
-					where: { id: result.key.userId },
-				});
+				const user = await findUserById(result.key.userId);
 				if (user) {
 					const mockSession: AuthSession["session"] = {
 						id: result.key.id,
@@ -101,8 +97,11 @@ export const authMiddleware = createMiddleware<{
 					return next();
 				}
 			}
-		} catch {
-			// API key validation failed, fall through to cookie auth
+		} catch (err) {
+			console.warn(
+				"[Auth] API key validation failed:",
+				err instanceof Error ? err.message : String(err),
+			);
 		}
 	}
 

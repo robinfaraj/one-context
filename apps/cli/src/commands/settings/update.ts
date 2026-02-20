@@ -14,12 +14,13 @@ export function registerUpdateCommand(parent: Command): void {
 				process.exit(1);
 			}
 
-			const spinner = createSpinner("Updating profile…");
-			try {
-				const body: Record<string, string> = {};
-				if (options.name) body.name = options.name;
-				if (options.summary) body.profileSummary = options.summary;
+			const body: Record<string, string> = {};
+			if (options.name) body.name = options.name;
+			if (options.summary) body.profileSummary = options.summary;
 
+			const spinner = createSpinner("Updating profile…").start();
+
+			try {
 				const result = await apiRequest<Record<string, unknown>>(
 					"/api/settings/profile",
 					{
@@ -34,7 +35,7 @@ export function registerUpdateCommand(parent: Command): void {
 			} catch (error) {
 				spinner.fail("Failed to update profile.");
 				if (error instanceof ApiError) {
-					printError(`${error.message}`);
+					printError(error.message);
 				} else {
 					throw error;
 				}

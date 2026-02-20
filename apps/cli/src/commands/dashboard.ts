@@ -23,7 +23,7 @@ export function registerDashboardCommand(program: Command): void {
 		.description("View your account dashboard")
 		.option("--json", "Output as JSON")
 		.action(async (options: { json?: boolean }) => {
-			const spinner = createSpinner("Loading dashboard…");
+			const spinner = createSpinner("Loading dashboard…").start();
 
 			try {
 				const data = await apiRequest<DashboardResponse>("/api/dashboard");
@@ -34,18 +34,15 @@ export function registerDashboardCommand(program: Command): void {
 					return;
 				}
 
-				// User info
 				console.log(chalk.bold("\n Profile"));
 				console.log(`  Name:     ${data.user.name ?? "—"}`);
 				console.log(`  Email:    ${data.user.email}`);
 
-				// Stats
-				console.log(chalk.bold("\n📊 Stats"));
+				console.log(chalk.bold("\n Stats"));
 				console.log(`  Memories: ${data.stats.memoryCount}`);
 				console.log(`  Sources:  ${data.stats.sourceCount}`);
 
-				// Connected sources
-				console.log(chalk.bold("\n🔗 Connected Sources"));
+				console.log(chalk.bold("\n Connected Sources"));
 				if (data.connectedSources.length === 0) {
 					console.log("  No sources connected.");
 				} else {
@@ -62,7 +59,7 @@ export function registerDashboardCommand(program: Command): void {
 			} catch (error) {
 				spinner.fail("Failed to load dashboard.");
 				if (error instanceof ApiError) {
-					printError(`${error.message}`);
+					printError(error.message);
 				} else {
 					throw error;
 				}

@@ -14,7 +14,7 @@ export function registerExportCommand(parent: Command): void {
 		.description("Export your account data")
 		.option("--output <file>", "Write export to a file instead of stdout")
 		.action(async (options: { output?: string }) => {
-			const spinner = createSpinner("Exporting data…");
+			const spinner = createSpinner("Exporting data…").start();
 
 			try {
 				const data = await apiRequest<unknown>("/api/settings/export");
@@ -33,7 +33,7 @@ export function registerExportCommand(parent: Command): void {
 			} catch (error) {
 				spinner.fail("Failed to export data.");
 				if (error instanceof ApiError) {
-					printError(`${error.message}`);
+					printError(error.message);
 				} else {
 					throw error;
 				}

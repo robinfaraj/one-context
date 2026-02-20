@@ -37,7 +37,7 @@ export function registerBillingCommand(program: Command): void {
 		.description("Open the billing portal")
 		.option("--json", "Output as JSON")
 		.action(async (options: { json?: boolean }) => {
-			const spinner = createSpinner("Getting billing portal…");
+			const spinner = createSpinner("Getting billing portal…").start();
 
 			try {
 				const data = await apiRequest<PortalResponse>("/api/billing/portal", {
@@ -50,12 +50,12 @@ export function registerBillingCommand(program: Command): void {
 					return;
 				}
 
-				console.log(chalk.bold("\n🔗 Billing Portal"));
+				console.log(chalk.bold("\n Billing Portal"));
 				console.log(`  ${data.url}\n`);
 			} catch (error) {
 				spinner.fail("Failed to get billing portal.");
 				if (error instanceof ApiError) {
-					printError(`${error.message}`);
+					printError(error.message);
 				} else {
 					throw error;
 				}
@@ -64,7 +64,7 @@ export function registerBillingCommand(program: Command): void {
 }
 
 async function showSubscriptionStatus(json?: boolean): Promise<void> {
-	const spinner = createSpinner("Loading subscription…");
+	const spinner = createSpinner("Loading subscription…").start();
 
 	try {
 		const data = await apiRequest<SubscriptionInfo>(
@@ -84,12 +84,12 @@ async function showSubscriptionStatus(json?: boolean): Promise<void> {
 		const formatLimit = (v: number | "unlimited") =>
 			v === "unlimited" ? "unlimited" : String(v);
 
-		console.log(chalk.bold("\n💳 Subscription"));
+		console.log(chalk.bold("\n Subscription"));
 		console.log(`  Plan:       ${data.plan}`);
 		console.log(`  Status:     ${data.status}`);
 		console.log(`  Period End: ${periodEnd}`);
 
-		console.log(chalk.bold("\n📊 Usage"));
+		console.log(chalk.bold("\n Usage"));
 		console.log(
 			`  Memories: ${data.usage.memories} / ${formatLimit(data.limits.memories)}`,
 		);
@@ -100,7 +100,7 @@ async function showSubscriptionStatus(json?: boolean): Promise<void> {
 	} catch (error) {
 		spinner.fail("Failed to load subscription.");
 		if (error instanceof ApiError) {
-			printError(`${error.message}`);
+			printError(error.message);
 		} else {
 			throw error;
 		}
