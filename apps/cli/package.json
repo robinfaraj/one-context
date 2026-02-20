@@ -1,14 +1,32 @@
 {
-	"name": "@onecontext/cli",
-	"version": "0.0.0",
+	"name": "octx",
+	"version": "0.1.3",
+	"description": "OneContext CLI — manage your AI identity from the terminal",
+	"type": "module",
 	"bin": {
-		"onecontext": "./dist/index.js"
+		"octx": "dist/index.js"
 	},
-	"main": "./src/index.ts",
+	"main": "./dist/index.js",
+	"files": ["dist", "README.md"],
+	"keywords": ["ai", "identity", "mcp", "cli", "onecontext"],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/onecontextdev/onecontext.git",
+		"directory": "apps/cli"
+	},
+	"engines": {
+		"node": ">=18"
+	},
 	"scripts": {
 		"build": "tsc",
-		"dev": "tsx src/index.ts",
-		"type-check": "tsc --noEmit"
+		"type-check": "tsc --noEmit",
+		"prepublishOnly": "tsc"
+	},
+	"dependencies": {
+		"chalk": "^5.4.1",
+		"commander": "^13.1.0",
+		"ora": "^8.2.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",

@@ -1,5 +1,5 @@
 import { auth } from "@onecontext/auth";
-import { db } from "@onecontext/database/server";
+import { findUserByEmail, findUserById } from "@onecontext/database/queries";
 import { createMiddleware } from "hono/factory";
 
 // Infer the correct session type from the auth instance
@@ -26,9 +26,7 @@ async function getDevApiKeySession(token: string): Promise<{
 	}
 
 	// Fetch the test user
-	const user = await db.user.findUnique({
-		where: { email: devUserEmail },
-	});
+	const user = await findUserByEmail(devUserEmail);
 
 	if (!user) {
 		console.warn(`[Dev Auth] User not found: ${devUserEmail}`);
@@ -60,14 +58,52 @@ export const authMiddleware = createMiddleware<{
 		user: AuthSession["user"];
 	};
 }>(async (c, next) => {
-	// Check for dev API key authentication (bearer token)
 	const authHeader = c.req.header("Authorization");
-	if (authHeader?.startsWith("Bearer ")) {
-		const devSession = await getDevApiKeySession(authHeader.slice(7));
+	const bearerToken = authHeader?.startsWith("Bearer ")
+		? authHeader.slice(7)
+		: null;
+
+	// Check for dev API key authentication (bearer token)
+	if (bearerToken) {
+		const devSession = await getDevApiKeySession(bearerToken);
 		if (devSession) {
 			c.set("session", devSession.session);
 			c.set("user", devSession.user);
 			return next();
+		}
+	}
+
+	// Check for BetterAuth API key (x-api-key header or Authorization: Bearer)
+	const apiKey = c.req.header("x-api-key") ?? bearerToken;
+	if (apiKey) {
+		try {
+			const result = await auth.api.verifyApiKey({ body: { key: apiKey } });
+			if (result.valid && result.key) {
+				const user = await findUserById(result.key.userId);
+				if (user) {
+					const mockSession: AuthSession["session"] = {
+						id: result.key.id,
+						userId: user.id,
+						token: "api-key-session",
+						expiresAt:
+							result.key.expiresAt ??
+							new Date(Date.now() + 24 * 60 * 60 * 1000),
+						createdAt: new Date(),
+						updatedAt: new Date(),
+						ipAddress: null,
+						userAgent: c.req.header("User-Agent") ?? null,
+						impersonatedBy: null,
+					};
+					c.set("session", mockSession);
+					c.set("user", user as AuthSession["user"]);
+					return next();
+				}
+			}
+		} catch (err) {
+			console.warn(
+				"[Auth] API key validation failed:",
+				err instanceof Error ? err.message : String(err),
+			);
 		}
 	}
 
