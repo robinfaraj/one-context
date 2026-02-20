@@ -44,3 +44,10 @@ export function printSuccess(message: string): void {
 export function printWarning(message: string): void {
 	console.log(chalk.yellow(message));
 }
+
+export function validateId(id: string): void {
+	if (!id || id.includes("../") || id.includes("/") || id.includes("\\")) {
+		printError("Invalid resource ID.");
+		process.exit(1);
+	}
+}

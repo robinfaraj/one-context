@@ -58,10 +58,14 @@ export const authMiddleware = createMiddleware<{
 		user: AuthSession["user"];
 	};
 }>(async (c, next) => {
-	// Check for dev API key authentication (bearer token)
 	const authHeader = c.req.header("Authorization");
-	if (authHeader?.startsWith("Bearer ")) {
-		const devSession = await getDevApiKeySession(authHeader.slice(7));
+	const bearerToken = authHeader?.startsWith("Bearer ")
+		? authHeader.slice(7)
+		: null;
+
+	// Check for dev API key authentication (bearer token)
+	if (bearerToken) {
+		const devSession = await getDevApiKeySession(bearerToken);
 		if (devSession) {
 			c.set("session", devSession.session);
 			c.set("user", devSession.user);
@@ -70,9 +74,7 @@ export const authMiddleware = createMiddleware<{
 	}
 
 	// Check for BetterAuth API key (x-api-key header or Authorization: Bearer)
-	const apiKey =
-		c.req.header("x-api-key") ??
-		(authHeader?.startsWith("Bearer ") ? authHeader.slice(7) : null);
+	const apiKey = c.req.header("x-api-key") ?? bearerToken;
 	if (apiKey) {
 		try {
 			const result = await auth.api.verifyApiKey({ body: { key: apiKey } });

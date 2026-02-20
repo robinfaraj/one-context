@@ -1,6 +1,11 @@
 import type { Command } from "commander";
 import { ApiError, apiRequest } from "../../lib/api-client.js";
-import { createSpinner, printError, printSuccess } from "../../lib/output.js";
+import {
+	createSpinner,
+	printError,
+	printSuccess,
+	validateId,
+} from "../../lib/output.js";
 
 export function registerPinCommand(parent: Command): void {
 	parent
@@ -8,6 +13,7 @@ export function registerPinCommand(parent: Command): void {
 		.description("Pin a memory")
 		.argument("<id>", "Memory ID")
 		.action(async (id: string) => {
+			validateId(id);
 			const spinner = createSpinner("Pinning memory…");
 			try {
 				spinner.start();

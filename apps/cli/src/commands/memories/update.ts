@@ -1,6 +1,11 @@
 import type { Command } from "commander";
 import { ApiError, apiRequest } from "../../lib/api-client.js";
-import { createSpinner, printError, printSuccess } from "../../lib/output.js";
+import {
+	createSpinner,
+	printError,
+	printSuccess,
+	validateId,
+} from "../../lib/output.js";
 
 export function registerUpdateCommand(parent: Command): void {
 	parent
@@ -9,6 +14,7 @@ export function registerUpdateCommand(parent: Command): void {
 		.argument("<id>", "Memory ID")
 		.argument("<content>", "New content")
 		.action(async (id: string, content: string) => {
+			validateId(id);
 			const spinner = createSpinner("Updating memory…").start();
 			try {
 				await apiRequest(`/api/memories/${id}`, {

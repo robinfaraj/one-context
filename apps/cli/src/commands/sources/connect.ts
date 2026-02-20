@@ -1,6 +1,8 @@
+import chalk from "chalk";
 import type { Command } from "commander";
-import { ApiError, apiRequest } from "../../lib/api-client.js";
-import { createSpinner, printError, printSuccess } from "../../lib/output.js";
+import { printWarning } from "../../lib/output.js";
+
+const OAUTH_PROVIDERS = ["github", "twitter", "notion"];
 
 export function registerConnectCommand(parent: Command): void {
 	parent
@@ -8,21 +10,18 @@ export function registerConnectCommand(parent: Command): void {
 		.description("Connect a source provider")
 		.argument("<provider>", "Provider name (e.g. github, twitter, notion)")
 		.action(async (provider: string) => {
-			const spinner = createSpinner(`Connecting ${provider}…`);
-			try {
-				spinner.start();
-				await apiRequest(`/api/sources/${provider}/connect`, {
-					method: "POST",
-				});
-				spinner.stop();
-				printSuccess(`${provider} connected.`);
-			} catch (error) {
-				spinner.stop();
-				if (error instanceof ApiError) {
-					printError(`Failed to connect ${provider}: ${error.message}`);
-				} else {
-					throw error;
-				}
+			if (OAUTH_PROVIDERS.includes(provider.toLowerCase())) {
+				printWarning(
+					`${provider} requires browser-based OAuth and cannot be connected via the CLI.`,
+				);
+				console.log(
+					`\nConnect your sources on the web dashboard:\n  ${chalk.cyan("https://onecontext.dev/sources")}\n`,
+				);
+				return;
 			}
+
+			printWarning(
+				`Unknown provider "${provider}". Connect sources via the web dashboard:\n  ${chalk.cyan("https://onecontext.dev/sources")}`,
+			);
 		});
 }

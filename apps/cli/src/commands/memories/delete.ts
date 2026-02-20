@@ -1,7 +1,12 @@
 import { createInterface } from "node:readline/promises";
 import type { Command } from "commander";
 import { ApiError, apiRequest } from "../../lib/api-client.js";
-import { createSpinner, printError, printSuccess } from "../../lib/output.js";
+import {
+	createSpinner,
+	printError,
+	printSuccess,
+	validateId,
+} from "../../lib/output.js";
 
 export function registerDeleteCommand(parent: Command): void {
 	parent
@@ -10,6 +15,7 @@ export function registerDeleteCommand(parent: Command): void {
 		.argument("<id>", "Memory ID")
 		.option("--force", "Skip confirmation")
 		.action(async (id: string, opts) => {
+			validateId(id);
 			if (!opts.force) {
 				const rl = createInterface({
 					input: process.stdin,
