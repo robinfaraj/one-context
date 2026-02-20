@@ -9,7 +9,7 @@
 		"react-email": "^3.0.5"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.3",
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "22.10.5",
 		"@types/nodemailer": "^6.4.17",

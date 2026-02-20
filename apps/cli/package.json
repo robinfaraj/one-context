@@ -29,7 +29,7 @@
 		"ora": "^8.2.0"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.3",
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "^22.10.5",
 		"tsx": "^4.19.2",
