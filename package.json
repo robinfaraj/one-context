@@ -22,7 +22,7 @@
 		"@playwright/test": "^1.58.2",
 		"@types/node": "^22.10.5",
 		"dotenv": "^16.4.7",
-		"dotenv-cli": "^8.0.0",
+		"dotenv-cli": "^11.0.0",
 		"husky": "^9.1.7",
 		"tsx": "^4.19.2",
 		"turbo": "^2.8.4",
