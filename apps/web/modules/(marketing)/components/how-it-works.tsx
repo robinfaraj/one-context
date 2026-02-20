@@ -23,9 +23,9 @@ const steps = [
 	},
 	{
 		number: "03",
-		title: "Use anywhere via MCP or API",
+		title: "Use anywhere via CLI, MCP, or API",
 		description:
-			"Plug into ChatGPT, Claude, OpenClaw, Cursor—any AI tool. One command, zero friction.",
+			"Manage from the terminal with npx octx. Plug into Claude, OpenClaw, Cursor—any AI tool.",
 		icon: Zap,
 	},
 ];
