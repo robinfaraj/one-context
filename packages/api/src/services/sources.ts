@@ -174,12 +174,16 @@ export async function disconnectSource(userId: string, provider: string) {
 		const sourceMemories = (allMemories as any[]).filter(
 			(m) => m.metadata?.source === provider,
 		);
-		for (const memory of sourceMemories) {
-			try {
-				await deleteMemory(memory.id);
+		const results = await Promise.allSettled(
+			sourceMemories.map((memory) => deleteMemory(memory.id)),
+		);
+		for (const result of results) {
+			if (result.status === "fulfilled") {
 				memoriesDeleted++;
-			} catch (e) {
-				logger.warn(`Failed to delete Mem0 memory ${memory.id}`, { error: e });
+			} else {
+				logger.warn("Failed to delete Mem0 memory during disconnect", {
+					error: result.reason,
+				});
 			}
 		}
 	} catch (e) {

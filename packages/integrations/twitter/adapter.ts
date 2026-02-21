@@ -6,6 +6,33 @@ import type {
 	IntegrationAdapter,
 	SyncResult,
 } from "../types";
+import { getUserTweets } from "./twitterapi-client";
+import type { Tweet } from "./types";
+
+const MEM0_SYSTEM_INSTRUCTION = `You are extracting factual information about a person from their tweets.
+
+ONLY extract concrete, verifiable facts such as:
+- Professional role, company, job title
+- Technical skills, programming languages, tools they use
+- Projects they are building or contributing to
+- Industries or domains they work in
+- Geographic location, city, country
+- Educational background
+- Real opinions on technologies, products, or industry topics
+- Hobbies, interests, and activities they genuinely engage in
+
+DO NOT extract memories from:
+- Jokes, sarcasm, irony, or shitposts
+- Memes, copypastas, or internet humor
+- Hypothetical scenarios or thought experiments
+- Retweet-style commentary or dunking on others
+- Vague or generic statements that could apply to anyone
+- Song lyrics, quotes, or references to media
+
+If a tweet is clearly humorous or non-literal, skip it entirely. Only extract what you are confident is a genuine fact about this person.`;
+
+const TOP_TWEETS_FOR_MEM0 = 60;
+const MEM0_BATCH_SIZE = 10;
 
 export const twitterAdapter: IntegrationAdapter = {
 	provider: "twitter",
@@ -20,7 +47,7 @@ export const twitterAdapter: IntegrationAdapter = {
 		let memoriesAdded = 0;
 
 		try {
-			// Get authenticated user profile via XDK
+			// Get authenticated user profile via official X SDK (user is OAuth'd)
 			const meResponse = await client.users.getMe({
 				userFields: [
 					"description",
@@ -32,10 +59,9 @@ export const twitterAdapter: IntegrationAdapter = {
 				],
 			});
 			const profile = meResponse.data;
-			const twitterUserId = profile?.id;
 
-			if (!twitterUserId) {
-				logger.error("Twitter /users/me returned no user ID");
+			if (!profile?.username) {
+				logger.error("Twitter /users/me returned no username");
 				return { contentItems, memoriesAdded };
 			}
 
@@ -57,47 +83,66 @@ export const twitterAdapter: IntegrationAdapter = {
 				textContent: profileText,
 			});
 
-			// Fetch recent original posts only (no replies, no retweets)
-			const tweetsResponse = await client.users.getPosts(twitterUserId, {
-				maxResults: 50,
-				exclude: ["retweets", "replies"],
-				tweetFields: [
-					"created_at",
-					"public_metrics",
-					"text",
-					"referenced_tweets",
-				],
-			});
+			// Fetch tweets via twitterapi.io (paginated, ~200 tweets)
+			const allTweets = await getUserTweets(profile.username, 200);
+			logger.info(
+				`Fetched ${allTweets.length} tweets for @${profile.username}`,
+			);
 
-			const tweets = tweetsResponse.data ?? [];
+			// Filter out replies, retweets, and quote tweets
+			const originalTweets = allTweets.filter(
+				(t) =>
+					!t.isReply && !t.isRetweet && !t.retweeted_tweet && !t.quoted_tweet,
+			);
+			logger.info(`${originalTweets.length} original tweets after filtering`);
 
-			for (const tweet of tweets) {
-				// Skip quote tweets (API exclude only supports retweets/replies)
-				const refs = (tweet as any).referencedTweets ?? [];
-				if (refs.some((r: any) => r.type === "quoted")) continue;
-
+			// Store ALL filtered tweets as content items
+			for (const tweet of originalTweets) {
 				contentItems.push({
-					externalId: tweet.id ?? "",
+					externalId: tweet.id,
 					type: "tweet",
 					rawData: tweet,
-					contentDate: new Date(tweet.createdAt ?? Date.now()),
-					textContent: tweet.text ?? "",
+					contentDate: new Date(tweet.createdAt),
+					textContent: tweet.text,
 				});
 			}
 
-			// Send to Mem0 for semantic indexing
-			// Send profile separately, then tweets in small batches so Mem0
-			// extracts granular memories instead of collapsing everything into one.
-			const BATCH_SIZE = 5;
-			for (let i = 0; i < contentItems.length; i += BATCH_SIZE) {
-				const batch = contentItems.slice(i, i + BATCH_SIZE);
-				const batchText = batch.map((item) => item.textContent).join("\n\n");
-				const batchType = batch[0].type === "profile" ? "profile" : "tweets";
-				try {
-					const result = await mem0.add(batchText, userId, {
-						metadata: { source: "twitter", type: batchType },
+			// Rank by engagement score
+			const ranked = [...originalTweets].sort(
+				(a, b) => engagementScore(b) - engagementScore(a),
+			);
+			const topTweets = ranked.slice(0, TOP_TWEETS_FOR_MEM0);
+
+			// Send profile to Mem0
+			try {
+				const profileResult = await mem0.add(
+					`${MEM0_SYSTEM_INSTRUCTION}\n\n${profileText}`,
+					userId,
+					{
+						metadata: { source: "twitter", type: "profile" },
 						categories: ["social", "twitter"],
-					});
+					},
+				);
+				memoriesAdded += Array.isArray(profileResult)
+					? profileResult.length
+					: 1;
+			} catch (err) {
+				logger.error("Mem0 add failed for Twitter profile:", err);
+			}
+
+			// Send top tweets to Mem0 in batches
+			for (let i = 0; i < topTweets.length; i += MEM0_BATCH_SIZE) {
+				const batch = topTweets.slice(i, i + MEM0_BATCH_SIZE);
+				const batchText = batch.map((t) => t.text).join("\n\n");
+				try {
+					const result = await mem0.add(
+						`${MEM0_SYSTEM_INSTRUCTION}\n\n${batchText}`,
+						userId,
+						{
+							metadata: { source: "twitter", type: "tweets" },
+							categories: ["social", "twitter"],
+						},
+					);
 					memoriesAdded += Array.isArray(result) ? result.length : 1;
 				} catch (err) {
 					logger.error("Mem0 add failed for Twitter sync batch:", err);
@@ -111,3 +156,12 @@ export const twitterAdapter: IntegrationAdapter = {
 		return { contentItems, memoriesAdded };
 	},
 };
+
+function engagementScore(tweet: Tweet): number {
+	return (
+		tweet.likeCount +
+		tweet.retweetCount * 2 +
+		tweet.replyCount +
+		tweet.quoteCount
+	);
+}

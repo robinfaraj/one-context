@@ -88,7 +88,15 @@ export class Mem0Provider implements MemoryProvider {
 	}
 
 	async deleteMemory(memoryId: string): Promise<void> {
-		await this.client.delete(memoryId);
+		try {
+			await this.client.delete(memoryId);
+		} catch (error: unknown) {
+			// Treat "not found" as success — the memory is already gone
+			const message =
+				error instanceof Error ? error.message : String(error);
+			if (message.includes("Memory not found")) return;
+			throw error;
+		}
 	}
 
 	async deleteAll(userId: string): Promise<void> {
