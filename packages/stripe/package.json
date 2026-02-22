@@ -9,7 +9,7 @@
 		"@onecontext/logs": "workspace:*"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.3",
 		"@onecontext/tsconfig": "workspace:*",
 		"typescript": "5.7.2"
 	},

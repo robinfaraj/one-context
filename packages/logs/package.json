@@ -3,7 +3,7 @@
 		"consola": "^3.3.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.3",
 		"@onecontext/tsconfig": "workspace:*"
 	},
 	"main": "./index.ts",

@@ -6,7 +6,7 @@
 		"zod": "^4.2.1"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
+		"@biomejs/biome": "2.4.3",
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "22.10.5",
 		"@types/pg": "^8.15.5",
