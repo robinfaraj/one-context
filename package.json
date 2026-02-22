@@ -26,6 +26,6 @@
 		"husky": "^9.1.7",
 		"tsx": "^4.19.2",
 		"turbo": "^2.8.4",
-		"typescript": "5.7.2"
+		"typescript": "5.9.3"
 	}
 }

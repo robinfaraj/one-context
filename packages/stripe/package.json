@@ -11,7 +11,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@onecontext/tsconfig": "workspace:*",
-		"typescript": "5.7.2"
+		"typescript": "5.9.3"
 	},
 	"scripts": {
 		"type-check": "tsc --noEmit"

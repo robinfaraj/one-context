@@ -63,6 +63,6 @@
 		"postcss": "8.4.49",
 		"shadcn": "^3.8.5",
 		"tailwindcss": "4.1.18",
-		"typescript": "5.7.2"
+		"typescript": "5.9.3"
 	}
 }
