@@ -10,7 +10,7 @@
 		"@onecontext/tsconfig": "workspace:*",
 		"@types/node": "22.10.5",
 		"@types/pg": "^8.15.5",
-		"dotenv": "^16.4.7",
+		"dotenv": "^17.3.1",
 		"dotenv-cli": "^8.0.0",
 		"prisma": "^7.3.0"
 	},
