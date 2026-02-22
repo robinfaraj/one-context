@@ -33,6 +33,7 @@
 	},
 	"files": {
 		"ignore": [
+			"apps/video",
 			".next",
 			".turbo",
 			"node_modules/*",
