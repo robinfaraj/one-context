@@ -104,8 +104,8 @@ export function Hero() {
 								octx login
 							</p>
 							<p className="text-[var(--terminal-text)]">
-								<span className="text-[var(--terminal-success)]">✓</span>{" "}
-								Logged in as Robin Faraj (robin@onecontext.dev)
+								<span className="text-[var(--terminal-success)]">✓</span> Logged
+								in as Robin Faraj (robin@onecontext.dev)
 							</p>
 							<p className="mt-2 text-[var(--terminal-text-dim)]">
 								<span className="text-[var(--terminal-success)]">$</span> npx
